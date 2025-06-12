@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{admin/admin-layout :: view(~{::title}, ~{::.content})}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý sản phẩm</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="content">
+      <h2>Quản lý sản phẩm</h2>
+      
+			<form th:action="@{/admin/management/product/save}" method="post" th:object="${product}" enctype="multipart/form-data">
+			    <input type="hidden" th:field="*{id}" />
+			
+			    <div class="mb-3">
+			        <label class="form-label">Tên sản phẩm</label>
+			        <input type="text" class="form-control" th:field="*{productName}" placeholder="Tên sản phẩm" required />
+			    </div>
+			
+			    <div class="mb-3">
+			        <label class="form-label">Mô tả</label>
+			        <input type="text" class="form-control" th:field="*{description}" placeholder="Mô tả" />
+			    </div>
+			
+			    <div class="mb-3">
+			        <label class="form-label">Giá</label>
+			        <input type="text" class="form-control" th:field="*{price}" placeholder="Giá" required />
+			    </div>
+			
+			    <!-- Hiển thị ảnh hiện tại -->
+			    <div class="mb-3">
+			        <label class="form-label">Ảnh hiện tại</label>
+			        <div>
+			            <img th:src="@{|/img/${product.imageUrl}|}" th:alt="${product.imageUrl}" width="150" th:if="${product.imageUrl}" />
+			        </div>
+			    </div>
+			
+			    <!-- Cho phép chọn ảnh mới -->
+			    <div class="mb-3">
+			        <label class="form-label">Chọn ảnh mới</label>
+			        <input type="file" class="form-control" name="imageFile" />
+			    </div>
+			
+			    <button type="submit" class="btn btn-primary">Lưu</button>
+			    <a th:href="@{/admin/management/product}" class="btn btn-secondary">Hủy</a>
+			</form>
+
+      <hr />
+
+      <h2>Danh sách Sản phẩm</h2>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Tên sản phẩm</th>
+            <th>Mô tả</th>
+            <th>Giá</th>
+            <th>Hình</th>
+            <th>Hành động</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="u : ${products}">
+            <td th:text="${u.id}"></td>
+            <td th:text="${u.productName}"></td>
+            <td th:text="${u.description}"></td>
+            <td th:text="${u.price}"></td>
+			<td>
+			    <img th:src="@{|/img/${u.imageUrl}|}" th:alt="${u.imageUrl}" width="100">
+			</td>
+            <td>
+              <a th:href="@{/admin/management/product/edit/{id}(id=${u.id})}" class="btn btn-warning btn-sm">Sửa</a>
+<!--               <a th:href="@{/admin/management/product/delete/{id}(id=${u.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa không?')">Xóa</a>
+ -->            </td>
+          </tr>
+        </tbody>
+         <div>
+		    <nav>
+		        <ul class="pagination">
+		            <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" class="page-item">
+		                <a class="page-link" th:href="@{/admin/management/product?page={id}(id=${i})}" th:text="${i + 1}"></a>
+		            </li>
+		        </ul>
+		    </nav>
+		</div>
+      </table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
