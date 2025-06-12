@@ -1,0 +1,404 @@
+:root {
+    --primary-color:#60A3D9;
+    --secondary-color: #FF6B6B;
+}
+.card {
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+.card-title1{
+	
+	text-align: left;
+}
+.card-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+.form-label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+    text-align: left;
+}
+
+
+.btn-primary {
+    background-color: #007bff;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+.bg-primary-custom {
+    background-color: var(--primary-color);
+}
+
+.price-sale {
+    color: var(--secondary-color);
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.product-price {
+    height: 40px; /* Đảm bảo giá tiền đều nhau */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    color: red;
+    margin-bottom: 10px; /* Tạo khoảng cách giữa giá tiền và nút */
+}
+
+.product-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+}
+
+.product-price {
+    height: 40px; /* Đảm bảo giá tiền đều nhau */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    color: red;
+    margin-bottom: 10px; /* Tạo khoảng cách giữa giá tiền và nút */
+}
+
+.add-to-cart-btn {
+    margin-top: auto; /* Đưa nút xuống cuối để tất cả sản phẩm đều nhau */
+    padding: 10px 15px;
+    background-color: orange;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+
+.product-card:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+    transition: all 0.3s;
+}
+
+.nav-link {
+    color: #333;
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    color: var(--secondary-color);
+}
+
+.btn-outline-light:hover {
+    color: var(--primary-color);
+}
+.btn-custom {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+.btn-custom:hover {
+    background-color: #bb2d3b;
+    border-color: #bb2d3b;
+    color: white;
+}
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
+.card-img-top {
+    width: 100%; /* Chiều rộng tối đa */
+    height: 300px; /* Chiều cao cố định */
+    object-fit: cover; /* Cắt ảnh để vừa khung */
+    border-radius: 10px; /* Bo góc nhẹ */
+    object-fit: cover; /* Hiển thị đầy đủ ảnh mà không méo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.card-title{
+	text-align: center;
+	
+}
+.text-danger{
+		text-align: center;
+	
+}
+.custom-title{
+    text-transform: uppercase; /* Chữ in hoa */
+    font-weight: bold; /* Chữ đậm */
+    color: rgb(0, 0, 0); /* Màu xanh dương */
+    padding-bottom: 10px; /* Khoảng cách dưới */
+    display: block; /* Hiển thị dạng block */
+    margin: 0 auto 16px; /* Căn giữa + khoảng cách dưới */
+    font-size: 18px; /* Kích thước chữ */
+    text-align: center; /* Căn giữa nội dung */
+}
+   .sale-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: red;
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+        .product-card {
+            position: relative;
+            text-align: center;
+            padding: 15px;
+        }
+        .discount-banner {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .discount-item {
+            flex: 1;
+            padding: 40px;
+            color: black;
+            font-weight: bold;
+        }
+        .left-banner {
+            background-color: #d2ecf2;
+            text-align: left;
+        }
+        .right-banner {
+            background-color: #fde5e5;
+            text-align: left;
+        }
+        .img-fluid{
+        width: 50%;
+        height: 100px;
+        }
+         .product-card img {
+            border-radius: 10px;
+            object-fit: cover;
+            height: 200px;
+        }
+        .card-body {
+            text-align: center;
+        }
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .text-danger {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .btn-primary {
+            background-color: #ff9800;
+            border: none;
+            font-weight: bold;
+        }
+        .btn-primary:hover {
+            background-color: #e68900;
+        }
+
+/* ---------------------------------MENU CON---------------------------------------------*/
+/* Định dạng menu chính */
+.navbar-nav .nav-item {
+    position: relative;
+}
+
+/* Định dạng dropdown menu */
+.navbar-nav .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 200px;
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 10px 0;
+    z-index: 1000;
+}
+
+/* Hiển thị menu con khi hover */
+.navbar-nav .nav-item:hover .dropdown-menu {
+    display: block;
+}
+
+/* Định dạng item trong dropdown */
+.navbar-nav .dropdown-menu .dropdown-item {
+    padding: 10px 20px;
+    font-size: 14px;
+    color: #333;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Hiệu ứng hover cho item */
+.navbar-nav .dropdown-menu .dropdown-item:hover {
+    background: #007bff;
+    color: #fff;
+}
+
+
+/* -------our product--------------------------*/
+ 
+        .product-card1 {
+            border-radius: 10px;
+            padding: 10px;
+            transition: transform 0.3s ease-in-out;
+        }
+      
+
+        .product-card1 p {
+            margin-top: 10px;
+            font-weight: bold;
+
+        }
+       .row {
+        display: flex;
+        justify-content: center;
+        gap: -10px; /* Giảm khoảng cách giữa các cột */
+        flex-wrap: wrap;
+    }
+
+    .col1 {
+        flex: 1 1 calc(25% - 10px); /* Đảm bảo 4 cột trên 1 hàng */
+        max-width: 200px; /* Giới hạn kích thước cột */
+        text-align: center;
+    }
+
+    .product-card1 img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .discount-banner {
+        display: flex;
+        justify-content: space-between;
+        margin: 20px auto;
+        max-width: 900px;
+    }
+
+    .discount-item {
+        flex: 1;
+        padding: 15px;
+        background: #f8f9fa;
+        text-align: center;
+        margin: 0 10px; /* Để cách lề trái và phải */
+        border-radius: 10px;
+    }
+    
+    /* -------------------------------TOP TREDDING--------------------------------------------------------- */
+    
+
+     .trending-section {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+    }
+    .trending-left {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .trending-left img {
+        width: 100%;
+        border-radius: 10px;
+    }
+    .trending-left button {
+        width: 100%;
+        margin-top: 10px;
+    }
+    .product-slider {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+    }
+    .col2 {
+        flex: 0 0 calc(30% - 5px); /* Giảm kích thước của col2 */
+        max-width: calc(30% - 5px);
+    }
+    .product-card {
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform 0.3s ease-in-out;
+        
+            display: flex;
+	    flex-direction: column;
+	    justify-content: space-between;
+	    height: 100%; /* Giữ chiều cao đồng đều */
+	    text-align: center;
+	    border-radius: 10px;
+	    overflow: hidden;
+    }
+    .product-card:hover {
+        transform: scale(1.05);
+    }
+    .product-card img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+    .product-card .card-body {
+            display: flex;
+	    flex-direction: column;
+	    flex-grow: 1;
+	    justify-content: flex-end;
+    }
+    .product-card .card-title {
+        font-size: 14px;
+        font-weight: bold;
+    }
+    .product-card p {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+    .product-card button {
+        font-size: 14px;
+        padding: 5px 10px;
+    }
+    
+    
+/*     -------------------SIDEBAR-----------------------*/     
+.sidebar {
+            position: absolute;
+            width: 20%;
+            height: auto;
+            background: #f8f9fa;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .sidebar a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #000;
+            border-radius: 5px;
+        }
+        .sidebar a:hover {
+            background: #007bff;
+            color: #fff;
+        }
+        .content {
+            margin-left: 270px;
+          
+        }
+        section {
+            padding: 50px 0;
+        }
+        
