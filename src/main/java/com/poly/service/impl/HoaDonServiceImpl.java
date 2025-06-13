@@ -74,6 +74,18 @@ public class HoaDonServiceImpl implements HoaDonService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<HoaDon> findByPtThanhToan(String ptThanhToan) {
+        return hoaDonRepository.findByPtThanhToan(ptThanhToan);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<HoaDon> findByTrangThaiAndPtThanhToan(String trangThai, String ptThanhToan) {
+        return hoaDonRepository.findByTrangThaiAndPtThanhToan(trangThai, ptThanhToan);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public boolean existsById(String id) {
         return hoaDonRepository.existsById(id);
     }

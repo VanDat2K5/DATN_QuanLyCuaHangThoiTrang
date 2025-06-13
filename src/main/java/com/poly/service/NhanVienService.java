@@ -24,4 +24,10 @@ public interface NhanVienService {
     List<NhanVien> findByEmail(String email);
 
     boolean existsById(String id);
+
+    List<NhanVien> findByIsAdmin(Boolean isAdmin);
+
+    List<NhanVien> findByIsActivity(Boolean isActivity);
+
+    List<NhanVien> findByIsAdminAndIsActivity(Boolean isAdmin, Boolean isActivity);
 }

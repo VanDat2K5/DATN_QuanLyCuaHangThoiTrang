@@ -12,7 +12,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Entity
 @Table(name = "ChiTietSanPham")
 @Data
@@ -21,7 +20,7 @@ import lombok.NoArgsConstructor;
 public class ChiTietSanPham {
 
     @Id
-    @Column(name = "ID_SPCT", length = 20)
+    @Column(name = "ID_SPCT", length = 50)
     private String id;
 
     @ManyToOne
