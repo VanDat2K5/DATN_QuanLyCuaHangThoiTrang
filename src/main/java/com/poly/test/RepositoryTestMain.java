@@ -13,7 +13,6 @@ import java.util.List;
 public class RepositoryTestMain {
 
     public static void main(String[] args) {
-        // Tìm chi tiết hóa đơn có mã HD001
         ApplicationContext context = SpringApplication.run(RepositoryTestMain.class, args);
         ChiTietHoaDonService chiTietHoaDonService = context.getBean(ChiTietHoaDonService.class);
 
@@ -35,7 +34,6 @@ public class RepositoryTestMain {
             System.out.println("=> Không tìm thấy hóa đơn!");
         }
 
-        // Tắt context nếu cần
         SpringApplication.exit(context);
     }
 }
