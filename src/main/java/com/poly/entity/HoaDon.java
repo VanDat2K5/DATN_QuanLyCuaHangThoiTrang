@@ -42,10 +42,10 @@ public class HoaDon {
     @Column(name = "NgayLap", nullable = false)
     private LocalDate ngayLap;
 
-    @Column(name = "TrangThai")
-    private String trangThai;
+    @Column(name = "TrangThai", nullable = false, columnDefinition = "NVARCHAR(255) CHECK (TrangThai IN ('DaThanhToan', 'DangVanChuyen', 'DaNhanHang', 'DaHuy', 'Doi-Tra_Hang')) DEFAULT 'ChoXacNhan'")
+    private String trangThai = "ChoXacNhan";
 
-    @Column(name = "PT_ThanhToan", nullable = false)
+    @Column(name = "PT_ThanhToan", nullable = false, columnDefinition = "NVARCHAR(255) CHECK (PT_ThanhToan IN ('COD', 'Bank'))")
     private String ptThanhToan;
 
     @Column(name = "SoDT_NhanHang", nullable = false, length = 10)

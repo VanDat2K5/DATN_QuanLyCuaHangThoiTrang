@@ -26,5 +26,9 @@ public interface HoaDonService {
 
     List<HoaDon> findByNgayLapBetween(LocalDate startDate, LocalDate endDate);
 
+    List<HoaDon> findByPtThanhToan(String ptThanhToan);
+
+    List<HoaDon> findByTrangThaiAndPtThanhToan(String trangThai, String ptThanhToan);
+
     boolean existsById(String id);
 }
