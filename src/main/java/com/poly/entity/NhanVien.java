@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Entity
 @Table(name = "NhanVien")
 @Data
@@ -23,9 +22,15 @@ public class NhanVien {
     @Column(name = "TenNV", nullable = false)
     private String tenNV;
 
-    @Column(name = "Email", nullable = false, length = 50)
+    @Column(name = "Email", nullable = false, unique = true, length = 50)
     private String email;
 
     @Column(name = "SoDT", nullable = false, length = 10)
     private String soDT;
-} 
+
+    @Column(name = "isAdmin", nullable = false)
+    private Boolean isAdmin = false;
+
+    @Column(name = "isActivity", nullable = false)
+    private Boolean isActivity = true;
+}
