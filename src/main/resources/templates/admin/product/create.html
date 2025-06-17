@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm sản phẩm</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+</head>
+<body>
+<div class="container mt-4">
+    <h1>Thêm sản phẩm</h1>
+
+    <form th:action="@{/admin/product/save}"
+          th:object="${product}"
+          method="post"
+          enctype="multipart/form-data">
+        <div class="mb-3">
+            <label class="form-label">Mã SP</label>
+            <input th:field="*{maSP}" class="form-control" placeholder="VD: SP001" required/>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Tên SP</label>
+            <input th:field="*{tenSP}" class="form-control" required/>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Giá</label>
+            <input th:field="*{gia}" type="number" class="form-control" required/>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Danh mục</label>
+            <select th:field="*{loaiSanPham.maLoaiSP}" class="form-select" required>
+                <option th:each="c: ${categories}"
+                        th:value="${c.maLoaiSP}"
+                        th:text="${c.loaiSP}">
+                </option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Size</label>
+            <select th:field="*{size.maSize}" class="form-select" required>
+                <option th:each="s: ${sizes}"
+                        th:value="${s.maSize}"
+                        th:text="${s.tenSize}">
+                </option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Màu</label>
+            <select th:field="*{mau.maMau}" class="form-select" required>
+                <option th:each="m: ${colors}"
+                        th:value="${m.maMau}"
+                        th:text="${m.tenMau}">
+                </option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Hình ảnh</label>
+            <input type="file"
+                   name="imageFiles"
+                   multiple
+                   class="form-control"/>
+        </div>
+        <button type="submit" class="btn btn-primary">Lưu</button>
+        <a th:href="@{/admin/product/list}" class="btn btn-secondary ms-2">Hủy</a>
+    </form>
+</div>
+</body>
+</html>
