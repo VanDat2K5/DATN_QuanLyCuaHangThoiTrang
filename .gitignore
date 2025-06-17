@@ -31,3 +31,13 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Environment Variables ###
+.env
+.env.*
+
+### Firebase ###
+src/main/resources/firebase-config.json
+
+### Application Properties ###
+src/main/resources/application.properties

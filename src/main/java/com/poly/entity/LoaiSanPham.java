@@ -1,12 +1,11 @@
 package com.poly.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Table(name = "LoaiSanPham")
@@ -19,7 +18,9 @@ public class LoaiSanPham {
     @Column(name = "MaLoaiSP", length = 20)
     private String maLoaiSP;
 
-    @Column(name = "LoaiSP", nullable = false)
+    @Column(name = "LoaiSP", nullable = false, length = 150)
     private String loaiSP;
-}
 
+    @OneToMany(mappedBy = "loaiSP")
+    private List<SanPham> dsSanPham;
+}

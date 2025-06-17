@@ -39,10 +39,10 @@ public class LoaiSPManagementController {
     @GetMapping("/edit{id}")
     public String showEditForm(@PathVariable("id") String id, Model model) {
         LoaiSanPham loaiSanPham = loaiSanPhamService.findById(id).orElse(null);
-        if(loaiSanPham!=null){
+        if (loaiSanPham != null) {
             model.addAttribute("loaiSanPham", loaiSanPham);
             return "category/edit";
-        }else {
+        } else {
             return "redirect:/category/list";
         }
     }
@@ -57,8 +57,8 @@ public class LoaiSPManagementController {
     @GetMapping("/delete{id}")
     public String deleteLoaiSP(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
         LoaiSanPham loaiSanPham = loaiSanPhamService.findById(id).orElse(null);
-        if(loaiSanPham!=null){
-            if (loaiSanPham.getSanPham() != null && !loaiSanPham.getSanPham().isEmpty()) {
+        if (loaiSanPham != null) {
+            if (loaiSanPham.getDsSanPham() != null && !loaiSanPham.getDsSanPham().isEmpty()) {
                 redirectAttributes.addFlashAttribute("error", "Danh muc nay co san pham, ko the xoa!");
             } else {
                 loaiSanPhamService.deleteById(id);
