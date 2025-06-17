@@ -58,7 +58,7 @@ public class LoaiSPManagementController {
     public String deleteLoaiSP(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
         LoaiSanPham loaiSanPham = loaiSanPhamService.findById(id).orElse(null);
         if (loaiSanPham != null) {
-            if (loaiSanPham.getSanPham() != null && !loaiSanPham.getSanPham().isEmpty()) {
+            if (loaiSanPham.getDsSanPham() != null && !loaiSanPham.getDsSanPham().isEmpty()) {
                 redirectAttributes.addFlashAttribute("error", "Danh muc nay co san pham, ko the xoa!");
             } else {
                 loaiSanPhamService.deleteById(id);
