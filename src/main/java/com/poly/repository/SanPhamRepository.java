@@ -10,5 +10,5 @@ public interface SanPhamRepository extends JpaRepository<SanPham, String> {
 
     List<SanPham> findByTenSPContaining(String tenSP);
 
-    List<SanPham> findByLoaiSanPham_MaLoaiSP(String maLoaiSP);
+    List<SanPham> findByLoaiSP_MaLoaiSP(String maLoaiSP);
 }
