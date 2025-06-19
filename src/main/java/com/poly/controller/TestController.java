@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
-public class QRCodeTestController {
+public class TestController {
     @Autowired
     private QRCodeServlet qrCodeServlet;
 
@@ -22,9 +22,14 @@ public class QRCodeTestController {
     public Map<String, String> testQR(@RequestBody Map<String, String> body) {
         String tien = body.getOrDefault("tien", "");
         String noidung = body.getOrDefault("noidung", "");
-        String qrBase64 = qrCodeServlet.generateQRCodeBase64(tien, noidung);
+        String qrBase64 = qrCodeServlet.generateQRCodeWithLogoBase64(tien, noidung);
         Map<String, String> result = new HashMap<>();
         result.put("qrBase64", qrBase64);
         return result;
+    }
+
+    @GetMapping("/test-firebase")
+    public String testFirebasePage() {
+        return "test-firebase";
     }
 }
