@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test QR Code Thanh Toán</title>
     <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body { font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; }
         .form-group { margin-bottom: 16px; }
@@ -28,47 +29,6 @@
         <button type="submit">Tạo QR</button>
     </form>
     <div class="qr-preview" id="qrPreview"></div>
-    <script>
-        document.getElementById('qrForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const tien = document.getElementById('tien').value;
-            const noidung = document.getElementById('noidung').value;
-            const response = await fetch('/test-qr', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ tien, noidung })
-            });
-            const data = await response.json();
-            if (data && data.qrBase64) {
-                document.getElementById('qrPreview').innerHTML = `<img src="${data.qrBase64}" alt="QR Code" style="max-width:300px;">
-                                                                    <div style="margin-top: 10px; font-size: 24px; color: #666; text-align: justify;">
-                                                                        <table>
-                                                                            <tr>
-                                                                                <td>Ngân hàng:</td>
-                                                                                <td>BIDV</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Tên TK:</td>
-                                                                                <td>Nguyen Van Dat</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Số TK:</td>
-                                                                                <td>6910915396</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Số tiền:</td>
-                                                                                <td>${tien} VND</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Nội dung:</td>
-                                                                                <td>${noidung}</td>
-                                                                            </tr>
-                                                                        </table>
-                                                                    </div>`;
-            } else {
-                document.getElementById('qrPreview').innerHTML = '<span style="color:red">Không tạo được QR code!</span>';
-            }
-        });
-    </script>
+    <script src="/js/QRCode.js"></script>
 </body>
 </html> 
