@@ -24,5 +24,7 @@ public interface KhachHangService {
 
     List<KhachHang> findBySoDT(String soDT);
 
+    Optional<KhachHang> findByEmail(String email);
+
     boolean existsById(String id);
 }

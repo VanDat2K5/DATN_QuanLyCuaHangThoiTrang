@@ -1,5 +1,6 @@
 package com.poly.service.impl;
 
+import com.poly.entity.KhachHang;
 import com.poly.entity.TaiKhoan;
 import com.poly.repository.TaiKhoanRepository;
 import com.poly.service.TaiKhoanService;
@@ -63,6 +64,12 @@ public class TaiKhoanServiceImpl implements TaiKhoanService {
     @Transactional(readOnly = true)
     public Optional<TaiKhoan> findByTenTKAndMatKhau(String tenTK, String matKhau) {
         return taiKhoanRepository.findByTenTKAndMatKhau(tenTK, matKhau);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<TaiKhoan> findByKhachHangAndMatKhau(KhachHang khachHang, String matKhau) {
+        return taiKhoanRepository.findByKhachHangAndMatKhau(khachHang, matKhau);
     }
 
     @Override

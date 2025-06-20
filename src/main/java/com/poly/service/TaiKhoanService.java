@@ -1,5 +1,6 @@
 package com.poly.service;
 
+import com.poly.entity.KhachHang;
 import com.poly.entity.TaiKhoan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,8 @@ public interface TaiKhoanService {
     List<TaiKhoan> findByTenTKContaining(String tenTK);
 
     Optional<TaiKhoan> findByTenTKAndMatKhau(String tenTK, String matKhau);
+
+    Optional<TaiKhoan> findByKhachHangAndMatKhau(KhachHang khachHang, String matKhau);
 
     boolean existsById(Integer id);
 }
