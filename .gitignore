@@ -38,6 +38,3 @@ build/
 
 ### Firebase ###
 src/main/resources/firebase-config.json
-
-### Application Properties ###
-src/main/resources/application.properties
