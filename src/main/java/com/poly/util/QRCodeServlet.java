@@ -89,7 +89,7 @@ public class QRCodeServlet {
             BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
 
             // Chèn logo vào giữa QR code
-            BufferedImage logo = ImageIO.read(new File("src/main/resources/static/img/logoST.png"));
+            BufferedImage logo = ImageIO.read(new File("src/main/resources/static/images/logoST.png"));
             int logoWidth = qrImage.getWidth() / 5;
             int logoHeight = qrImage.getHeight() / 5;
             int logoX = (qrImage.getWidth() - logoWidth) / 2;
