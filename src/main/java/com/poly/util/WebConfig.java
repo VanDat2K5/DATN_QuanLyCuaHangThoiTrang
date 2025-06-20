@@ -19,10 +19,6 @@ public class WebConfig implements WebMvcConfigurer {
             registry.addInterceptor(adminInterceptor)
                     .addPathPatterns("/admin/**")
                     .excludePathPatterns(
-                            "/test-firebase.html",
-                            "/static/test-firebase.html",
-                            "/js/firebase.js",
-                            "/static/js/firebase.js",
                             "/css/**",
                             "/img/**",
                             "/static/**");
@@ -31,10 +27,9 @@ public class WebConfig implements WebMvcConfigurer {
             registry.addInterceptor(userInterceptor)
                     .addPathPatterns("/user/**", "/cart/**", "/order/**")
                     .excludePathPatterns(
-                            "/test-firebase.html",
-                            "/static/test-firebase.html",
-                            "/js/firebase.js",
-                            "/static/js/firebase.js",
+                            "/login",
+                            "/register",
+                            "/access-denied",
                             "/css/**",
                             "/img/**",
                             "/static/**");

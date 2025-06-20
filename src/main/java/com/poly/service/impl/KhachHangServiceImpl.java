@@ -61,6 +61,12 @@ public class KhachHangServiceImpl implements KhachHangService {
 
     @Override
     @Transactional(readOnly = true)
+    public Optional<KhachHang> findByEmail(String email) {
+        return khachHangRepository.findByEmail(email);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public boolean existsById(String id) {
         return khachHangRepository.existsById(id);
     }

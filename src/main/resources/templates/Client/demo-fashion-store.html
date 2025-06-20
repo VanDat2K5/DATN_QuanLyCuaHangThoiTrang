@@ -24,6 +24,20 @@
     </head>
     <body data-mobile-nav-style="classic">
         <div th:replace="Client/header :: header"></div>
+        
+        <!-- Success/Error messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show m-3" role="alert" style="position: fixed; top: 80px; right: 20px; z-index: 9999; min-width: 300px;">
+            <i class="feather icon-check-circle me-2"></i>
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show m-3" role="alert" style="position: fixed; top: 80px; right: 20px; z-index: 9999; min-width: 300px;">
+            <i class="feather icon-alert-circle me-2"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
         <!-- start section -->
         <section class="p-0">
             <div class="swiper full-screen top-space-margin md-h-600px sm-h-500px magic-cursor magic-cursor-vertical swiper-number-pagination-progress swiper-number-pagination-progress-vertical" data-slider-options='{ "slidesPerView": 1, "direction": "horizontal", "loop": true, "parallax": true, "speed": 1000, "pagination": { "el": ".swiper-number", "clickable": true }, "autoplay": { "delay": 4000, "disableOnInteraction": false },  "keyboard": { "enabled": true, "onlyInViewport": true }, "breakpoints": { "1199": { "direction": "vertical" }}, "effect": "slide" }' data-swiper-number-pagination-progress="true">
@@ -1105,5 +1119,20 @@
         <script th:src="@{/js/vendors.min.js}"></script>
         <script th:src="@{/js/main.js}"></script>
         <script th:src="@{/js/sticky-header.js}"></script>
+        
+        <!-- Auto-hide alerts -->
+        <script>
+            $(document).ready(function() {
+                // Auto-hide alerts after 5 seconds
+                setTimeout(function() {
+                    $('.alert').fadeOut('slow');
+                }, 5000);
+                
+                // Auto-hide alerts when close button is clicked
+                $('.btn-close').on('click', function() {
+                    $(this).closest('.alert').fadeOut('slow');
+                });
+            });
+        </script>
     </body>
 </html>
