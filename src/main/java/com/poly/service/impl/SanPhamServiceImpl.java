@@ -56,7 +56,7 @@ public class SanPhamServiceImpl implements SanPhamService {
     @Override
     @Transactional(readOnly = true)
     public List<SanPham> findByLoaiSanPham_MaLoaiSP(String maLoaiSP) {
-        return sanPhamRepository.findByLoaiSanPham_MaLoaiSP(maLoaiSP);
+        return sanPhamRepository.findByLoaiSP_MaLoaiSP(maLoaiSP);
     }
 
     @Override

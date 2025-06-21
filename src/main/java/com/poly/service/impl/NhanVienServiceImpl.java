@@ -70,4 +70,22 @@ public class NhanVienServiceImpl implements NhanVienService {
     public boolean existsById(String id) {
         return nhanVienRepository.existsById(id);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<NhanVien> findByIsAdmin(Boolean isAdmin) {
+        return nhanVienRepository.findByIsAdmin(isAdmin);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<NhanVien> findByIsActivity(Boolean isActivity) {
+        return nhanVienRepository.findByIsActivity(isActivity);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<NhanVien> findByIsAdminAndIsActivity(Boolean isAdmin, Boolean isActivity) {
+        return nhanVienRepository.findByIsAdminAndIsActivity(isAdmin, isActivity);
+    }
 }

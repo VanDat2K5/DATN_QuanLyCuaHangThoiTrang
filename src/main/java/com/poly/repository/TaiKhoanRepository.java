@@ -1,5 +1,6 @@
 package com.poly.repository;
 
+import com.poly.entity.KhachHang;
 import com.poly.entity.TaiKhoan;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
@@ -11,4 +12,6 @@ public interface TaiKhoanRepository extends JpaRepository<TaiKhoan, Integer> {
     List<TaiKhoan> findByTenTKContaining(String tenTK);
 
     Optional<TaiKhoan> findByTenTKAndMatKhau(String tenTK, String matKhau);
+
+    Optional<TaiKhoan> findByKhachHangAndMatKhau(KhachHang khachHang, String matKhau);
 }

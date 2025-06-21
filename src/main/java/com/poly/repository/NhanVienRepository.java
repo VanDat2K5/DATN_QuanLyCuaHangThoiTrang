@@ -10,4 +10,10 @@ public interface NhanVienRepository extends JpaRepository<NhanVien, String> {
     List<NhanVien> findBySoDT(String soDT);
 
     List<NhanVien> findByEmail(String email);
+
+    List<NhanVien> findByIsAdmin(Boolean isAdmin);
+
+    List<NhanVien> findByIsActivity(Boolean isActivity);
+
+    List<NhanVien> findByIsAdminAndIsActivity(Boolean isAdmin, Boolean isActivity);
 }
