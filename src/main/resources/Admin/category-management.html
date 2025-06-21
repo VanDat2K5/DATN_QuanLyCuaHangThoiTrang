@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{admin/admin-layout :: view(~{::title}, ~{::.content})}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý danh mục</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" />
+  </head>
+  <body class="bg-light">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+          <div class="content">
+            <h2 class="my-4 ">Thêm danh mục mới</h2>
+            <div class="row">
+              <!-- Form tạo danh mục -->
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-body">
+                    <form>
+                      <div class="mb-3">
+                        <label class="form-label">Tên danh mục</label>
+                        <input type="text" class="form-control" placeholder="Nhập tên danh mục" />
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Đường dẫn tĩnh</label>
+                        <input type="text" class="form-control" placeholder="Ví dụ: danh-muc" />
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Danh mục cha</label>
+                        <select class="form-select">
+                          <option>Không có</option>
+                          <option>Điện thoại</option>
+                          <option>Laptop</option>
+                          <option>Phụ kiện</option>
+                        </select>
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Mô tả</label>
+                        <textarea class="form-control" rows="3" placeholder="Mô tả danh mục..."></textarea>
+                      </div>
+                      <button type="submit" class="btn btn-primary">Thêm danh mục</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+  
+              <!-- Danh sách danh mục -->
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-body">
+                    <!-- Thanh điều khiển (Hành động hàng loạt + Phân trang trên) -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <div class="d-flex">
+                        <select class="form-select me-2 w-auto action-select">
+                          <option value="">Hành động</option>
+                          <option value="delete">Xóa</option>
+                        </select>
+                        <button class="btn btn-primary apply-action-btn">Áp dụng</button>
+                      </div>
+  
+                      <form class="w-auto">
+                        <input type="text" class="form-control" placeholder="Tìm danh mục" />
+                      </form>
+                      <nav>
+                        <ul class="pagination pagination-sm m-0">
+                          <li class="page-item"><a class="page-link" href="#">«</a></li>
+                          <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                          <li class="page-item"><a class="page-link" href="#">2</a></li>
+                          <li class="page-item"><a class="page-link" href="#">»</a></li>
+                        </ul>
+                      </nav>
+                    </div>
+  
+                    <!-- Bảng danh mục -->
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th><input type="checkbox" id="select-all" /></th>
+                          <th>Tên danh mục</th>
+                          <th>Đường dẫn</th>
+                          <th>Thao tác</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><input type="checkbox" class="select-checkbox" /></td>
+                          <td>Điện thoại</td>
+                          <td>dien-thoai</td>
+                          <td>
+                            <button class="btn btn-warning btn-sm">Sửa</button>
+                            <button class="btn btn-danger btn-sm">Xóa</button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><input type="checkbox" class="select-checkbox" /></td>
+                          <td>Laptop</td>
+                          <td>laptop</td>
+                          <td>
+                            <button class="btn btn-warning btn-sm">Sửa</button>
+                            <button class="btn btn-danger btn-sm">Xóa</button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><input type="checkbox" class="select-checkbox" /></td>
+                          <td>Phụ kiện</td>
+                          <td>phu-kien</td>
+                          <td>
+                            <button class="btn btn-warning btn-sm">Sửa</button>
+                            <button class="btn btn-danger btn-sm">Xóa</button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+  
+                    <!-- Phân trang dưới -->
+                    <nav>
+                      <ul class="pagination pagination-sm m-0 justify-content-end">
+                        <li class="page-item"><a class="page-link" href="#">«</a></li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">»</a></li>
+                      </ul>
+                    </nav>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+  </body>
+</html>
