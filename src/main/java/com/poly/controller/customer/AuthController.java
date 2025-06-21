@@ -45,16 +45,16 @@ public class AuthController {
 
     @PostMapping("/login")
     public String login(@RequestParam("username") String usernameOrEmail,
-                        @RequestParam("password") String password,
-                        HttpSession session,
-                        RedirectAttributes redirectAttributes,
-                        Model model) {
+            @RequestParam("password") String password,
+            HttpSession session,
+            RedirectAttributes redirectAttributes,
+            Model model) {
 
         // Kiểm tra xem input là username hay email
         boolean isEmail = usernameOrEmail.contains("@");
-        
+
         Optional<TaiKhoan> taiKhoanOpt;
-        
+
         if (isEmail) {
             // Nếu là email, tìm theo email của khách hàng
             Optional<KhachHang> khachHangOpt = khachHangService.findByEmail(usernameOrEmail);
@@ -71,18 +71,21 @@ public class AuthController {
 
         if (taiKhoanOpt.isPresent()) {
             TaiKhoan taiKhoan = taiKhoanOpt.get();
-            
+
             if (taiKhoan.getKhachHang() != null) {
                 // Đăng nhập thành công cho khách hàng
                 session.setAttribute("user", taiKhoan.getKhachHang());
                 session.setAttribute("userRole", "CUSTOMER");
                 session.setAttribute("username", taiKhoan.getTenTK());
-                redirectAttributes.addFlashAttribute("success", "Đăng nhập thành công! Chào mừng " + taiKhoan.getKhachHang().getTenKH());
                 return "redirect:/";
             } else if (taiKhoan.getNhanVien() != null) {
                 // Đăng nhập thành công cho nhân viên/admin
                 session.setAttribute("user", taiKhoan.getNhanVien());
-                session.setAttribute("userRole", "ADMIN"); // Giả sử tất cả nhân viên đều có quyền admin
+                if (taiKhoan.getNhanVien().getIsAdmin()) {
+                    session.setAttribute("userRole", "ADMIN");
+                } else {
+                    session.setAttribute("userRole", "EMPLOYEE");
+                }
                 session.setAttribute("username", taiKhoan.getTenTK());
                 return "redirect:/";
             } else {
@@ -106,12 +109,12 @@ public class AuthController {
 
     @PostMapping("/register")
     public String register(@RequestParam("username") String username,
-                           @RequestParam("password") String password,
-                           @RequestParam("confirmPassword") String confirmPassword,
-                           @RequestParam("fullname") String fullname,
-                           @RequestParam("email") String email,
-                           @RequestParam("phone") String phone,
-                           RedirectAttributes redirectAttributes) {
+            @RequestParam("password") String password,
+            @RequestParam("confirmPassword") String confirmPassword,
+            @RequestParam("fullname") String fullname,
+            @RequestParam("email") String email,
+            @RequestParam("phone") String phone,
+            RedirectAttributes redirectAttributes) {
 
         // Validation
         if (!password.equals(confirmPassword)) {
@@ -137,7 +140,7 @@ public class AuthController {
             khachHang.setTenKH(fullname);
             khachHang.setEmail(email);
             khachHang.setSoDT(phone);
-            
+
             khachHangService.save(khachHang);
 
             // Tạo tài khoản mới
@@ -145,7 +148,7 @@ public class AuthController {
             taiKhoan.setTenTK(username);
             taiKhoan.setMatKhau(password);
             taiKhoan.setKhachHang(khachHang);
-            
+
             taiKhoanService.save(taiKhoan);
 
             redirectAttributes.addFlashAttribute("success", "Đăng ký thành công! Vui lòng đăng nhập.");
@@ -180,4 +183,4 @@ public class AuthController {
             return false;
         }
     }
-} 
+}

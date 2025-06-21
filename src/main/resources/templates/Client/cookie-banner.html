@@ -1,0 +1,26 @@
+<!-- cookie-banner.html -->
+<th:block th:fragment="cookie-banner">
+    <!-- start cookie banner -->
+    <div id="cookies-model" class="cookie-message-box bg-dark-gray border-radius-8px md-w-90" data-cookies-setting='{
+        "cookieNames": ["Crafto_cookie_privacy_24_hours"],
+        "cookieExpireDays": 1
+    }'>
+        <div class="cookie-content">
+            <span class="cookie-title text-white">We use cookies</span>
+            <p class="w-90 sm-w-100">We use cookies to enhance your browsing experience, serve personalized ads or content, and analyze our traffic. By clicking "Allow cookies" you consent to our use of cookies.</p>
+        </div>
+        <div class="cookie-buttons">
+            <a href="#" class="btn btn-transparent-white-light btn-very-small btn-switch-text btn-rounded cookie-policy-btn me-15px">
+                <span>
+                    <span class="btn-double-text" data-text="Cookie policy">Cookie policy</span>
+                </span>
+            </a>
+            <a href="#" class="btn btn-white btn-very-small btn-switch-text btn-rounded close-cookies-model">
+                <span>
+                    <span class="btn-double-text" data-text="Allow cookies">Allow cookies</span>
+                </span>
+            </a>
+        </div>
+    </div>
+    <!-- end cookie banner -->
+</th:block> 
