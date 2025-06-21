@@ -225,14 +225,14 @@
                                 <div class="dropdown">
                                     <a href="javascript:void(0)" class="dropdown-toggle" data-bs-toggle="dropdown">
                                         <i class="feather icon-feather-user me-5px"></i>
-                                        <span class="d-none d-xxl-inline-block" th:text="${session.username}">User</span>
+                                        <span class="d-none d-xxl-inline-block" th:text="${session.userRole == 'CUSTOMER' ? session.user.tenKH : session.user.tenNV}">User</span>
                                     </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="/user/profile" class="dropdown-item">My Profile</a></li>
-                                        <li><a href="/user/orders" class="dropdown-item">My Orders</a></li>
-                                        <li><a href="/user/wishlist" class="dropdown-item">Wishlist</a></li>
+                                    <ul class="dropdown-menu" style="transform: translateX(-20px); margin-top: 10px;">
+                                        <li style="padding: 9px;"><a href="/user/profile" class="dropdown-item">My Profile</a></li>
+                                        <li style="padding: 9px;"><a href="/user/orders" class="dropdown-item">My Orders</a></li>
+                                        <li style="padding: 9px;"><a href="/user/wishlist" class="dropdown-item">Wishlist</a></li>
                                         <li><hr class="dropdown-divider"></li>
-                                        <li><a href="/logout" class="dropdown-item">Logout</a></li>
+                                        <li style="padding: 9px;"><a href="/logout" class="dropdown-item">Logout</a></li>
                                     </ul>
                                 </div>
                             </div>

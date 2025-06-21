@@ -184,14 +184,14 @@
                     <!-- start categories style -->
                     <div class="col categories-style-02 lg-mb-30px">
                         <div class="categories-box">
-                            <a href="demo-fashion-store-shop.html">
-                                <img class="sm-w-100" src="https://via.placeholder.com/600x450" alt=""/>
+                            <a th:href="@{/demo-fashion-store-shop.html}">
+                                <img class="sm-w-100" th:src="@{/images/demo-fashion-store-about-12.png}" alt=""/>
                             </a>
-                            <div class="border-color-transparent-dark-very-light border alt-font fw-500 text-dark-gray text-uppercase ps-15px pe-15px fs-11 lh-26 border-radius-100px d-inline-block position-absolute right-20px top-20px">8 items</div>
+                            <div class="border-color-transparent-dark-very-light border alt-font fw-500 text-dark-gray text-uppercase ps-15px pe-15px fs-11 lh-26 border-radius-100px d-inline-block position-absolute right-20px top-20px">9 items</div>
                             <div class="absolute-bottom-center bottom-40px md-bottom-25px">
-                                <a href="demo-fashion-store-shop.html" class="btn btn-white btn-switch-text btn-round-edge btn-box-shadow fs-18 text-uppercase-inherit p-5 min-w-150px">
+                                <a th:href="@{/demo-fashion-store-shop.html}" class="btn btn-white btn-switch-text btn-round-edge btn-box-shadow fs-18 text-uppercase-inherit p-5 min-w-150px">
                                     <span>
-                                        <span class="btn-double-text ls-0px" data-text="Women">Women</span>
+                                        <span class="btn-double-text ls-0px" data-text="Men">Men</span>
                                     </span>
                                 </a>
                             </div>
@@ -218,12 +218,12 @@
                     <!-- start categories style -->
                     <div class="col categories-style-02 sm-mb-30px">
                         <div class="categories-box">
-                            <a href="demo-fashion-store-shop.html">
-                                <img class="sm-w-100" src="https://via.placeholder.com/600x450" alt=""/>
+                            <a th:href="@{/demo-fashion-store-shop.html}">
+                                <img class="sm-w-100" th:src="@{/images/demo-fashion-store.jpg}" alt=""/>
                             </a>
                             <div class="border-color-transparent-dark-very-light border alt-font fw-500 text-dark-gray text-uppercase ps-15px pe-15px fs-11 lh-26 border-radius-100px d-inline-block position-absolute right-20px top-20px">8 items</div>
                             <div class="absolute-bottom-center bottom-40px md-bottom-25px">
-                                <a href="demo-fashion-store-shop.html" class="btn btn-white btn-switch-text btn-round-edge btn-box-shadow fs-18 text-uppercase-inherit p-5 min-w-150px">
+                                <a th:href="@{/demo-fashion-store-shop.html}" class="btn btn-white btn-switch-text btn-round-edge btn-box-shadow fs-18 text-uppercase-inherit p-5 min-w-150px">
                                     <span>
                                         <span class="btn-double-text ls-0px" data-text="Accessories">Accessories</span>
                                     </span>
@@ -235,12 +235,12 @@
                     <!-- start categories style -->
                     <div class="col categories-style-02">
                         <div class="categories-box">
-                            <a href="demo-fashion-store-shop.html">
-                                <img class="sm-w-100" src="https://via.placeholder.com/600x450" alt=""/>
+                            <a th:href="@{/demo-fashion-store-shop.html}">
+                                <img class="sm-w-100" th:src="@{/images/demo-fashion-store-about-02.png}" alt=""/>
                             </a>
                             <div class="border-color-transparent-dark-very-light border alt-font fw-500 text-dark-gray text-uppercase ps-15px pe-15px fs-11 lh-26 border-radius-100px d-inline-block position-absolute right-20px top-20px">8 items</div>
                             <div class="absolute-bottom-center bottom-40px md-bottom-25px">
-                                <a href="demo-fashion-store-shop.html" class="btn btn-white btn-switch-text btn-round-edge btn-box-shadow fs-18 text-uppercase-inherit p-5 min-w-150px">
+                                <a th:href="@{/demo-fashion-store-shop.html}" class="btn btn-white btn-switch-text btn-round-edge btn-box-shadow fs-18 text-uppercase-inherit p-5 min-w-150px">
                                     <span>
                                         <span class="btn-double-text ls-0px" data-text="Kids">Kids</span>
                                     </span>
@@ -271,13 +271,13 @@
                             <li class="grid-item">
                                 <div class="shop-box mb-10px">
                                     <div class="shop-image mb-20px">
-                                        <a href="demo-fashion-store-single-product.html">
-                                            <img src="https://via.placeholder.com/600x765" alt=""> 
+                                        <a th:href="@{/demo-fashion-store-single-product.html}">
+                                            <img th:src="@{/images/portfolio-single-gallery-07.jpg}" alt=""> 
                                             <span class="lable new">New</span>
                                             <div class="shop-overlay bg-gradient-gray-light-dark-transparent"></div>
                                         </a>
                                         <div class="shop-buttons-wrap">
-                                            <a href="demo-fashion-store-single-product.html" class="alt-font btn btn-small btn-box-shadow btn-white btn-round-edge left-icon add-to-cart">
+                                            <a th:href="@{/demo-fashion-store-single-product.html}" class="alt-font btn btn-small btn-box-shadow btn-white btn-round-edge left-icon add-to-cart">
                                                 <i class="feather icon-feather-shopping-bag"></i><span class="quick-view-text button-text">Add to cart</span>
                                             </a>
                                         </div>
@@ -293,295 +293,14 @@
                                         </div>
                                     </div>
                                     <div class="shop-footer text-center">
-                                        <a href="demo-fashion-store-single-product.html" class="alt-font text-dark-gray fs-19 fw-500">Textured sweater</a>
+                                        <a th:href="@{/demo-fashion-store-single-product.html}" class="alt-font text-dark-gray fs-19 fw-500">Textured sweater</a>
                                         <div class="price lh-22 fs-16"><del>$200.00</del>$189.00</div>
                                     </div>
                                 </div>
                             </li>
                             <!-- end shop item -->
-                            <!-- start shop item -->
-                            <li class="grid-item">
-                                <div class="shop-box mb-10px">
-                                    <div class="shop-image mb-20px">
-                                        <a href="demo-fashion-store-single-product.html">
-                                            <img src="https://via.placeholder.com/600x765" alt=""> 
-                                            <div class="shop-overlay bg-gradient-gray-light-dark-transparent"></div>
-                                        </a>
-                                        <div class="shop-buttons-wrap">
-                                            <a href="demo-fashion-store-single-product.html" class="alt-font btn btn-small btn-box-shadow btn-white btn-round-edge left-icon add-to-cart">
-                                                <i class="feather icon-feather-shopping-bag"></i><span class="quick-view-text button-text">Add to cart</span>
-                                            </a>
-                                        </div>
-                                        <div class="shop-hover d-flex justify-content-center"> 
-                                            <ul>
-                                                <li>
-                                                    <a href="#" class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px" data-bs-toggle="tooltip" data-bs-placement="left" title="Add to wishlist"><i class="feather icon-feather-heart fs-16"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="#" class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px" data-bs-toggle="tooltip" data-bs-placement="left" title="Quick shop"><i class="feather icon-feather-eye fs-16"></i></a>
-                                                </li>
-                                            </ul> 
-                                        </div>
-                                    </div>
-                                    <div class="shop-footer text-center">
-                                        <a href="demo-fashion-store-single-product.html" class="alt-font text-dark-gray fs-19 fw-500">Traveller shirt</a>
-                                        <div class="price lh-22 fs-16"><del>$350.00</del>$289.00</div>
-                                    </div>
-                                </div>
-                            </li>
-                            <!-- end shop item -->
-                            <!-- start shop item -->
-                            <li class="grid-item">
-                                <div class="shop-box mb-10px">
-                                    <div class="shop-image mb-20px">
-                                        <a href="demo-fashion-store-single-product.html">
-                                            <img src="https://via.placeholder.com/600x765" alt=""> 
-                                            <div class="shop-overlay bg-gradient-gray-light-dark-transparent"></div>
-                                        </a>
-                                        <div class="shop-buttons-wrap">
-                                            <a href="demo-fashion-store-single-product.html" class="alt-font btn btn-small btn-box-shadow btn-white btn-round-edge left-icon add-to-cart">
-                                                <i class="feather icon-feather-shopping-bag"></i><span class="quick-view-text button-text">Add to cart</span>
-                                            </a>
-                                        </div>
-                                        <div class="shop-hover d-flex justify-content-center"> 
-                                            <ul>
-                                                <li>
-                                                    <a href="#" class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px" data-bs-toggle="tooltip" data-bs-placement="left" title="Add to wishlist"><i class="feather icon-feather-heart fs-16"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="#" class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px" data-bs-toggle="tooltip" data-bs-placement="left" title="Quick shop"><i class="feather icon-feather-eye fs-16"></i></a>
-                                                </li>
-                                            </ul> 
-                                        </div>
-                                    </div>
-                                    <div class="shop-footer text-center">
-                                        <a href="demo-fashion-store-single-product.html" class="alt-font text-dark-gray fs-19 fw-500">Crewneck sweatshirt</a>
-                                        <div class="price lh-22 fs-16"><del>$220.00</del>$199.00</div>
-                                    </div>
-                                </div>
-                            </li>
-                            <!-- end shop item -->
-                            <!-- start shop item -->
-                            <li class="grid-item">
-                                <div class="shop-box mb-10px">
-                                    <div class="shop-image mb-20px">
-                                        <a href="demo-fashion-store-single-product.html">
-                                            <img src="https://via.placeholder.com/600x765" alt=""> 
-                                            <div class="shop-overlay bg-gradient-gray-light-dark-transparent"></div>
-                                        </a>
-                                        <div class="shop-buttons-wrap">
-                                            <a href="demo-fashion-store-single-product.html" class="alt-font btn btn-small btn-box-shadow btn-white btn-round-edge left-icon add-to-cart">
-                                                <i class="feather icon-feather-shopping-bag"></i><span class="quick-view-text button-text">Add to cart</span>
-                                            </a>
-                                        </div>
-                                        <div class="shop-hover d-flex justify-content-center"> 
-                                            <ul>
-                                                <li>
-                                                    <a href="#" class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px" data-bs-toggle="tooltip" data-bs-placement="left" title="Add to wishlist"><i class="feather icon-feather-heart fs-16"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="#" class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px" data-bs-toggle="tooltip" data-bs-placement="left" title="Quick shop"><i class="feather icon-feather-eye fs-16"></i></a>
-                                                </li>
-                                            </ul> 
-                                        </div>
-                                    </div>
-                                    <div class="shop-footer text-center">
-                                        <a href="demo-fashion-store-single-product.html" class="alt-font text-dark-gray fs-19 fw-500">Skinny trousers</a>
-                                        <div class="price lh-22 fs-16"><del>$300.00</del>$259.00</div>
-                                    </div>
-                                </div>
-                            </li>
-                            <!-- end shop item -->
-                            <!-- start shop item -->
-                            <li class="grid-item">
-                                <div class="shop-box mb-10px">
-                                    <div class="shop-image mb-20px">
-                                        <a href="demo-fashion-store-single-product.html">
-                                            <img src="https://via.placeholder.com/600x765" alt=""> 
-                                            <div class="shop-overlay bg-gradient-gray-light-dark-transparent"></div>
-                                        </a>
-                                        <div class="shop-buttons-wrap">
-                                            <a href="demo-fashion-store-single-product.html" class="alt-font btn btn-small btn-box-shadow btn-white btn-round-edge left-icon add-to-cart">
-                                                <i class="feather icon-feather-shopping-bag"></i><span class="quick-view-text button-text">Add to cart</span>
-                                            </a>
-                                        </div>
-                                        <div class="shop-hover d-flex justify-content-center"> 
-                                            <ul>
-                                                <li>
-                                                    <a href="#" class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px" data-bs-toggle="tooltip" data-bs-placement="left" title="Add to wishlist"><i class="feather icon-feather-heart fs-16"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="#" class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px" data-bs-toggle="tooltip" data-bs-placement="left" title="Quick shop"><i class="feather icon-feather-eye fs-16"></i></a>
-                                                </li>
-                                            </ul> 
-                                        </div>
-                                    </div>
-                                    <div class="shop-footer text-center">
-                                        <a href="demo-fashion-store-single-product.html" class="alt-font text-dark-gray fs-19 fw-500">Sleeve sweater</a>
-                                        <div class="price lh-22 fs-16"><del>$250.00</del>$239.00</div>
-                                    </div>
-                                </div>
-                            </li>
-                            <!-- end shop item -->
-                            <!-- start shop item -->
-                            <li class="grid-item">
-                                <div class="shop-box mb-10px">
-                                    <div class="shop-image mb-20px">
-                                        <a href="demo-fashion-store-single-product.html">
-                                            <img src="https://via.placeholder.com/600x765" alt=""> 
-                                            <span class="lable hot">Hot</span>
-                                            <div class="shop-overlay bg-gradient-gray-light-dark-transparent"></div>
-                                        </a>
-                                        <div class="shop-buttons-wrap">
-                                            <a href="demo-fashion-store-single-product.html" class="alt-font btn btn-small btn-box-shadow btn-white btn-round-edge left-icon add-to-cart">
-                                                <i class="feather icon-feather-shopping-bag"></i><span class="quick-view-text button-text">Add to cart</span>
-                                            </a>
-                                        </div>
-                                        <div class="shop-hover d-flex justify-content-center"> 
-                                            <ul>
-                                                <li>
-                                                    <a href="#" class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px" data-bs-toggle="tooltip" data-bs-placement="left" title="Add to wishlist"><i class="feather icon-feather-heart fs-16"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="#" class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px" data-bs-toggle="tooltip" data-bs-placement="left" title="Quick shop"><i class="feather icon-feather-eye fs-16"></i></a>
-                                                </li>
-                                            </ul> 
-                                        </div>
-                                    </div>
-                                    <div class="shop-footer text-center">
-                                        <a href="demo-fashion-store-single-product.html" class="alt-font text-dark-gray fs-19 fw-500">Pocket sweatshirt</a>
-                                        <div class="price lh-22 fs-16"><del>$200.00</del>$189.00</div>
-                                    </div>
-                                </div>
-                            </li>
-                            <!-- end shop item -->
-                            <!-- start shop item -->
-                            <li class="grid-item">
-                                <div class="shop-box mb-10px">
-                                    <div class="shop-image mb-20px">
-                                        <a href="demo-fashion-store-single-product.html">
-                                            <img src="https://via.placeholder.com/600x765" alt=""> 
-                                            <div class="shop-overlay bg-gradient-gray-light-dark-transparent"></div>
-                                        </a>
-                                        <div class="shop-buttons-wrap">
-                                            <a href="demo-fashion-store-single-product.html" class="alt-font btn btn-small btn-box-shadow btn-white btn-round-edge left-icon add-to-cart">
-                                                <i class="feather icon-feather-shopping-bag"></i><span class="quick-view-text button-text">Add to cart</span>
-                                            </a>
-                                        </div>
-                                        <div class="shop-hover d-flex justify-content-center"> 
-                                            <ul>
-                                                <li>
-                                                    <a href="#" class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px" data-bs-toggle="tooltip" data-bs-placement="left" title="Add to wishlist"><i class="feather icon-feather-heart fs-16"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="#" class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px" data-bs-toggle="tooltip" data-bs-placement="left" title="Quick shop"><i class="feather icon-feather-eye fs-16"></i></a>
-                                                </li>
-                                            </ul> 
-                                        </div>
-                                    </div>
-                                    <div class="shop-footer text-center">
-                                        <a href="demo-fashion-store-single-product.html" class="alt-font text-dark-gray fs-19 fw-500">Cotton sweater</a>
-                                        <div class="price lh-22 fs-16"><del>$150.00</del>$129.00</div>
-                                    </div>
-                                </div>
-                            </li>
-                            <!-- end shop item -->
-                            <!-- start shop item -->
-                            <li class="grid-item">
-                                <div class="shop-box mb-10px">
-                                    <div class="shop-image mb-20px">
-                                        <a href="demo-fashion-store-single-product.html">
-                                            <img src="https://via.placeholder.com/600x765" alt=""> 
-                                            <div class="shop-overlay bg-gradient-gray-light-dark-transparent"></div>
-                                        </a>
-                                        <div class="shop-buttons-wrap">
-                                            <a href="demo-fashion-store-single-product.html" class="alt-font btn btn-small btn-box-shadow btn-white btn-round-edge left-icon add-to-cart">
-                                                <i class="feather icon-feather-shopping-bag"></i><span class="quick-view-text button-text">Add to cart</span>
-                                            </a>
-                                        </div>
-                                        <div class="shop-hover d-flex justify-content-center"> 
-                                            <ul>
-                                                <li>
-                                                    <a href="#" class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px" data-bs-toggle="tooltip" data-bs-placement="left" title="Add to wishlist"><i class="feather icon-feather-heart fs-16"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="#" class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px" data-bs-toggle="tooltip" data-bs-placement="left" title="Quick shop"><i class="feather icon-feather-eye fs-16"></i></a>
-                                                </li>
-                                            </ul> 
-                                        </div>
-                                    </div>
-                                    <div class="shop-footer text-center">
-                                        <a href="demo-fashion-store-single-product.html" class="alt-font text-dark-gray fs-19 fw-500">Texture regular</a>
-                                        <div class="price lh-22 fs-16"><del>$170.00</del>$120.00</div>
-                                    </div>
-                                </div>
-                            </li>
-                            <!-- end shop item -->
-                            <!-- start shop item -->
-                            <li class="grid-item">
-                                <div class="shop-box mb-10px">
-                                    <div class="shop-image mb-20px">
-                                        <a href="demo-fashion-store-single-product.html">
-                                            <img src="https://via.placeholder.com/600x765" alt=""> 
-                                            <div class="shop-overlay bg-gradient-gray-light-dark-transparent"></div>
-                                        </a>
-                                        <div class="shop-buttons-wrap">
-                                            <a href="demo-fashion-store-single-product.html" class="alt-font btn btn-small btn-box-shadow btn-white btn-round-edge left-icon add-to-cart">
-                                                <i class="feather icon-feather-shopping-bag"></i><span class="quick-view-text button-text">Add to cart</span>
-                                            </a>
-                                        </div>
-                                        <div class="shop-hover d-flex justify-content-center"> 
-                                            <ul>
-                                                <li>
-                                                    <a href="#" class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px" data-bs-toggle="tooltip" data-bs-placement="left" title="Add to wishlist"><i class="feather icon-feather-heart fs-16"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="#" class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px" data-bs-toggle="tooltip" data-bs-placement="left" title="Quick shop"><i class="feather icon-feather-eye fs-16"></i></a>
-                                                </li>
-                                            </ul> 
-                                        </div>
-                                    </div>
-                                    <div class="shop-footer text-center">
-                                        <a href="demo-fashion-store-single-product.html" class="alt-font text-dark-gray fs-19 fw-500">Sequined dress</a>
-                                        <div class="price lh-22 fs-16"><del>$190.00</del>$150.00</div>
-                                    </div>
-                                </div>
-                            </li>
-                            <!-- end shop item -->
-                            <!-- start shop item -->
-                            <li class="grid-item">
-                                <div class="shop-box mb-10px">
-                                    <div class="shop-image mb-20px">
-                                        <a href="demo-fashion-store-single-product.html">
-                                            <img src="https://via.placeholder.com/600x765" alt=""> 
-                                            <div class="shop-overlay bg-gradient-gray-light-dark-transparent"></div>
-                                        </a>
-                                        <div class="shop-buttons-wrap">
-                                            <a href="demo-fashion-store-single-product.html" class="alt-font btn btn-small btn-box-shadow btn-white btn-round-edge left-icon add-to-cart">
-                                                <i class="feather icon-feather-shopping-bag"></i><span class="quick-view-text button-text">Add to cart</span>
-                                            </a>
-                                        </div>
-                                        <div class="shop-hover d-flex justify-content-center"> 
-                                            <ul>
-                                                <li>
-                                                    <a href="#" class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px" data-bs-toggle="tooltip" data-bs-placement="left" title="Add to wishlist"><i class="feather icon-feather-heart fs-16"></i></a>
-                                                </li>
-                                                <li>
-                                                    <a href="#" class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px" data-bs-toggle="tooltip" data-bs-placement="left" title="Quick shop"><i class="feather icon-feather-eye fs-16"></i></a>
-                                                </li>
-                                            </ul> 
-                                        </div>
-                                    </div>
-                                    <div class="shop-footer text-center">
-                                        <a href="demo-fashion-store-single-product.html" class="alt-font text-dark-gray fs-19 fw-500">Bermuda shorts</a>
-                                        <div class="price lh-22 fs-16"><del>$120.00</del>$100.00</div>
-                                    </div>
-                                </div>
-                            </li>
-                            <!-- end shop item -->
-
                         </ul>
-                    </div>
+                    </div> 
                 </div>
             </div>
         </section>
@@ -1115,6 +834,7 @@
         </section>
         <!-- end section -->
         <div th:replace="Client/footer :: footer"></div>
+        <div th:replace="Client/cookie-banner :: cookie-banner"></div>
         <script th:src="@{/js/jquery.js}"></script>
         <script th:src="@{/js/vendors.min.js}"></script>
         <script th:src="@{/js/main.js}"></script>
