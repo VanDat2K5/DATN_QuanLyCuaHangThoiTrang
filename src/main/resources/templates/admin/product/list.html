@@ -1,60 +1,47 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8"/>
     <title>Danh sách sản phẩm</title>
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet"/>
 </head>
-<body>
-<div class="container mt-4">
-    <h1>Danh sách sản phẩm</h1>
+<body class="bg-light">
+<div class="container py-4">
+    <h1 class="mb-4">Danh sách sản phẩm</h1>
 
     <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
     <div th:if="${error}"   class="alert alert-danger"  th:text="${error}"></div>
 
-    <a th:href="@{/admin/product/create}" class="btn btn-primary mb-3">Thêm mới</a>
+    <a th:href="@{/admin/products/create}" class="btn btn-primary mb-3">Thêm sản phẩm mới</a>
 
     <table class="table table-striped">
         <thead>
         <tr>
             <th>Mã SP</th>
-            <th>Tên</th>
-            <th>Giá</th>
+            <th>Tên SP</th>
             <th>Danh mục</th>
-            <th>Size</th>
-            <th>Màu</th>
-            <th>Ảnh</th>
-            <th>Hành động</th>
+            <th>Thao tác</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="p : ${products}">
             <td th:text="${p.maSP}">SP001</td>
-            <td th:text="${p.tenSP}">Sản phẩm A</td>
-            <td th:text="${#numbers.formatDecimal(p.gia,0,'','.',',')}">100.000</td>
-            <td th:text="${p.loaiSanPham.loaiSP}">Áo thun</td>
-            <td th:text="${p.size.tenSize}">M</td>
-            <td th:text="${p.mau.tenMau}">Đỏ</td>
+            <td th:text="${p.tenSP}">Áo thun basic</td>
+            <td th:text="${p.loaiSP.loaiSP}">Áo thun</td>
             <td>
-                <img th:src="@{/images/{img}(img=${#lists.isEmpty(p.hinhAnh)?'default.png':p.hinhAnh[0].hinhAnh})}"
-                     style="height:40px" alt="Ảnh"/>
-            </td>
-            <td>
-                <a th:href="@{/admin/product/edit/{id}(id=${p.maSP})}"
+                <a th:href="@{|/admin/products/${p.maSP}/edit|}"
                    class="btn btn-sm btn-warning">Sửa</a>
-                <form th:action="@{/admin/product/delete/{id}(id=${p.maSP})}"
-                      method="post" style="display:inline">
-                    <button type="submit"
-                            class="btn btn-sm btn-danger"
-                            onclick="return confirm('Xác nhận xóa?');">
-                        Xóa
-                    </button>
-                </form>
+                <a th:href="@{|/admin/products/${p.maSP}/delete|}"
+                   class="btn btn-sm btn-danger"
+                   onclick="return confirm('Xác nhận xoá sản phẩm này?');">
+                    Xóa
+                </a>
             </td>
         </tr>
         </tbody>
     </table>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
