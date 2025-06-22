@@ -146,6 +146,13 @@
 			<version>9.1.0</version>
 		</dependency>
 
+		<!-- Bean Validation (Jakarta or javax, tùy version Spring Boot) -->
+		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+			<version>3.0.2</version> <!-- hoặc phù hợp với Spring Boot bạn dùng -->
+		</dependency>
+
 
 	</dependencies>
 

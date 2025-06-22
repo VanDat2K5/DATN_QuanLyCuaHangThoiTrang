@@ -2,69 +2,109 @@ package com.poly.controller.admin;
 
 import com.poly.entity.LoaiSanPham;
 import com.poly.service.LoaiSanPhamService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
 @Controller
-@RequestMapping("/category")
+@RequestMapping("/admin/categories")
+@RequiredArgsConstructor
 public class LoaiSPManagementController {
-    @Autowired
-    private LoaiSanPhamService loaiSanPhamService;
 
-    @GetMapping("/list")
-    public String listLoaiSP(Model model) {
-        List<LoaiSanPham> loaiSanPham = loaiSanPhamService.findAll();
-        model.addAttribute("loaiSanPham", loaiSanPham);
-        return "category/list";
-    }
+    private final LoaiSanPhamService loaiSanPhamService;
 
-    @GetMapping("/create")
-    public String showCreateForm(Model model) {
-        model.addAttribute("loaiSanPham", new LoaiSanPham());
-        return "category/create";
-    }
+    /* ─────────────────────── GET LIST + FORM ─────────────────────── */
+    @GetMapping
+    public String showCategoryPage(Model model,
+                                   @ModelAttribute("message") String msg,
+                                   @ModelAttribute("error") String err) {
 
-    @PostMapping("/save")
-    public String saveLoaiSP(@ModelAttribute LoaiSanPham loaiSanPham, RedirectAttributes redirectAttributes) {
-        loaiSanPhamService.save(loaiSanPham);
-        redirectAttributes.addFlashAttribute("message", "Them loai san pham thanh cong!");
-        return "redirect:/category/list";
-    }
+        List<LoaiSanPham> categories = loaiSanPhamService.findAll();
+        model.addAttribute("categories", categories);
 
-    @GetMapping("/edit{id}")
-    public String showEditForm(@PathVariable("id") String id, Model model) {
-        LoaiSanPham loaiSanPham = loaiSanPhamService.findById(id).orElse(null);
-        if (loaiSanPham != null) {
-            model.addAttribute("loaiSanPham", loaiSanPham);
-            return "category/edit";
-        } else {
-            return "redirect:/category/list";
+        if (!model.containsAttribute("categoryForm")) {
+            model.addAttribute("categoryForm", new LoaiSanPham());
         }
+
+        return "admin/category-management";
     }
 
-    @PostMapping("/update")
-    public String updateLoaiSP(@ModelAttribute LoaiSanPham loaiSanPham, RedirectAttributes redirectAttributes) {
-        loaiSanPhamService.save(loaiSanPham);
-        redirectAttributes.addFlashAttribute("message", "Cap nhat loai sp thanh cong!");
-        return "redirect:/category/list";
+    /* ─────────────────────── THÊM MỚI ─────────────────────── */
+    @PostMapping("/create")
+    public String create(@Valid @ModelAttribute("categoryForm") LoaiSanPham form,
+                         BindingResult result,
+                         RedirectAttributes ra) {
+
+        if (result.hasErrors()) {
+            ra.addFlashAttribute("org.springframework.validation.BindingResult.categoryForm", result);
+            ra.addFlashAttribute("categoryForm", form);
+            ra.addFlashAttribute("error", "Vui lòng kiểm tra lại dữ liệu!");
+            return "redirect:/admin/categories";
+        }
+
+        // Nếu không có mã → sinh mã mới
+        if (form.getMaLoaiSP() == null || form.getMaLoaiSP().isEmpty()) {
+            form.setMaLoaiSP("LSP" + System.currentTimeMillis());
+        }
+
+        loaiSanPhamService.save(form);
+        ra.addFlashAttribute("message", "Thêm danh mục thành công!");
+        return "redirect:/admin/categories";
     }
 
-    @GetMapping("/delete{id}")
-    public String deleteLoaiSP(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
-        LoaiSanPham loaiSanPham = loaiSanPhamService.findById(id).orElse(null);
-        if (loaiSanPham != null) {
-            if (loaiSanPham.getDsSanPham() != null && !loaiSanPham.getDsSanPham().isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "Danh muc nay co san pham, ko the xoa!");
+    /* ─────────────────────── MỞ FORM SỬA ─────────────────────── */
+    @GetMapping("/edit/{id}")
+    public String edit(@PathVariable("id") String id, Model model, RedirectAttributes ra) {
+        LoaiSanPham cat = loaiSanPhamService.findById(id).orElse(null);
+        if (cat == null) {
+            ra.addFlashAttribute("error", "Không tìm thấy danh mục!");
+            return "redirect:/admin/categories";
+        }
+
+        model.addAttribute("categoryForm", cat);
+        model.addAttribute("editing", true);
+        model.addAttribute("categories", loaiSanPhamService.findAll());
+        return "admin/category-management";
+    }
+
+    /* ─────────────────────── CẬP NHẬT ─────────────────────── */
+    @PostMapping("/edit/{id}")
+    public String update(@PathVariable("id") String id,
+                         @Valid @ModelAttribute("categoryForm") LoaiSanPham form,
+                         BindingResult result,
+                         RedirectAttributes ra) {
+
+        if (result.hasErrors()) {
+            ra.addFlashAttribute("org.springframework.validation.BindingResult.categoryForm", result);
+            ra.addFlashAttribute("categoryForm", form);
+            ra.addFlashAttribute("editing", true);
+            ra.addFlashAttribute("error", "Cập nhật thất bại, hãy kiểm tra dữ liệu!");
+            return "redirect:/admin/categories/edit/" + id;
+        }
+
+        loaiSanPhamService.save(form);
+        ra.addFlashAttribute("message", "Cập nhật danh mục thành công!");
+        return "redirect:/admin/categories";
+    }
+
+    /* ─────────────────────── XOÁ ĐƠN LẺ ─────────────────────── */
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable("id") String id, RedirectAttributes ra) {
+        loaiSanPhamService.findById(id).ifPresentOrElse(cat -> {
+            if (cat.getDsSanPham() != null && !cat.getDsSanPham().isEmpty()) {
+                ra.addFlashAttribute("error", "Danh mục đang có sản phẩm. Không thể xoá!");
             } else {
                 loaiSanPhamService.deleteById(id);
-                redirectAttributes.addFlashAttribute("message", "Xoa danh muc thanh cong!");
+                ra.addFlashAttribute("message", "Đã xoá thành công!");
             }
-        }
-        return "redirect:/category/list";
+        }, () -> ra.addFlashAttribute("error", "Không tìm thấy danh mục!"));
+
+        return "redirect:/admin/categories";
     }
 }
