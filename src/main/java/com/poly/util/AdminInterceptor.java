@@ -19,7 +19,7 @@ public class AdminInterceptor implements HandlerInterceptor {
             response.sendRedirect(request.getContextPath() + "/login");
             return false;
         }
-        if (!Security.hasAdminAccess(session)) {
+        if (!Security.hasStaffAccess(session)) {
             response.sendRedirect(request.getContextPath() + "/access-denied");
             return false;
         }
