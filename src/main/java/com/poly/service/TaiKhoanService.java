@@ -26,5 +26,8 @@ public interface TaiKhoanService {
 
     Optional<TaiKhoan> findByKhachHangAndMatKhau(KhachHang khachHang, String matKhau);
 
+    // Tìm tài khoản theo khách hàng
+    Optional<TaiKhoan> findByKhachHang(KhachHang khachHang);
+
     boolean existsById(Integer id);
 }

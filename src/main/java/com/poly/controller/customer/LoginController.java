@@ -4,6 +4,8 @@ import com.poly.entity.KhachHang;
 import com.poly.entity.TaiKhoan;
 import com.poly.service.KhachHangService;
 import com.poly.service.TaiKhoanService;
+import com.poly.util.EmailService;
+import com.poly.util.PasswordResetTokenUtil;
 import com.poly.util.Security;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,6 +30,9 @@ public class LoginController {
 
     @Autowired
     private KhachHangService khachHangService;
+
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping("/login")
     public String showLoginForm(HttpSession session) {
@@ -184,5 +189,118 @@ public class LoginController {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    // Trang quên mật khẩu
+    @GetMapping("/forgot-password")
+    public String showForgotPasswordForm(HttpSession session) {
+        if (Security.isAuthenticated(session)) {
+            return "redirect:/";
+        }
+        return "Client/demo-fashion-store-forgot-password";
+    }
+
+    // Xử lý gửi email reset password
+    @PostMapping("/forgot-password/send")
+    public String sendForgotPasswordEmail(@RequestParam("email") String email,
+                                        RedirectAttributes redirectAttributes) {
+        try {
+            // Kiểm tra email có tồn tại không
+            Optional<KhachHang> khachHangOpt = khachHangService.findByEmail(email);
+            if (khachHangOpt.isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Email không tồn tại trong hệ thống.");
+                return "redirect:/forgot-password";
+            }
+
+            KhachHang khachHang = khachHangOpt.get();
+            
+            // Tạo token và gửi email
+            String resetToken = PasswordResetTokenUtil.generateToken(email);
+            emailService.sendPasswordResetEmail(khachHang, resetToken);
+            
+            redirectAttributes.addFlashAttribute("success", 
+                "Email đã được gửi đến " + email + ". Vui lòng kiểm tra hộp thư.");
+            
+        } catch (Exception e) {
+            System.err.println("Lỗi gửi email: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra. Vui lòng thử lại.");
+        }
+        
+        return "redirect:/forgot-password";
+    }
+
+    // Trang đặt lại mật khẩu
+    @GetMapping("/reset-password")
+    public String showResetPasswordForm(@RequestParam("token") String token, 
+                                      Model model) {
+        if (!PasswordResetTokenUtil.validateToken(token)) {
+            model.addAttribute("error", "Link không hợp lệ hoặc đã hết hạn.");
+            return "Client/demo-fashion-store-reset-password";
+        }
+
+        model.addAttribute("token", token);
+        return "Client/demo-fashion-store-reset-password";
+    }
+
+    // Xử lý đặt lại mật khẩu
+    @PostMapping("/reset-password/update")
+    public String updatePassword(@RequestParam("token") String token,
+                               @RequestParam("newPassword") String newPassword,
+                               @RequestParam("confirmPassword") String confirmPassword,
+                               RedirectAttributes redirectAttributes) {
+        
+        // Kiểm tra token
+        if (!PasswordResetTokenUtil.validateToken(token)) {
+            redirectAttributes.addFlashAttribute("error", "Token không hợp lệ.");
+            return "redirect:/login";
+        }
+
+        // Kiểm tra mật khẩu
+        if (!newPassword.equals(confirmPassword)) {
+            redirectAttributes.addFlashAttribute("error", "Mật khẩu xác nhận không khớp.");
+            return "redirect:/reset-password?token=" + token;
+        }
+
+        if (newPassword.length() < 6) {
+            redirectAttributes.addFlashAttribute("error", "Mật khẩu phải có ít nhất 6 ký tự.");
+            return "redirect:/reset-password?token=" + token;
+        }
+
+        try {
+            // Lấy email từ token
+            String email = PasswordResetTokenUtil.getEmailFromToken(token);
+            if (email == null) {
+                redirectAttributes.addFlashAttribute("error", "Không thể xác định email.");
+                return "redirect:/login";
+            }
+
+            // Tìm khách hàng và tài khoản
+            Optional<KhachHang> khachHangOpt = khachHangService.findByEmail(email);
+            if (khachHangOpt.isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Không tìm thấy tài khoản.");
+                return "redirect:/login";
+            }
+
+            KhachHang khachHang = khachHangOpt.get();
+            Optional<TaiKhoan> taiKhoanOpt = taiKhoanService.findByKhachHang(khachHang);
+            if (taiKhoanOpt.isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Không tìm thấy tài khoản đăng nhập.");
+                return "redirect:/login";
+            }
+
+            // Cập nhật mật khẩu
+            TaiKhoan taiKhoan = taiKhoanOpt.get();
+            taiKhoan.setMatKhau(newPassword);
+            taiKhoanService.save(taiKhoan);
+
+            redirectAttributes.addFlashAttribute("success", "Đặt lại mật khẩu thành công!");
+            
+        } catch (Exception e) {
+            System.err.println("Lỗi cập nhật mật khẩu: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra. Vui lòng thử lại.");
+            return "redirect:/reset-password?token=" + token;
+        }
+
+        return "redirect:/login";
     }
 }

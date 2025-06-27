@@ -181,7 +181,7 @@ public class EmailService {
 	}
 
 	public void sendPasswordResetEmail(KhachHang user, String token) throws MessagingException {
-		String resetLink = "http://localhost:8080/account/reset-password?token=" + token;
+		String resetLink = "http://localhost:8081/reset-password?token=" + token;
 
 		MimeMessage message = mailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
