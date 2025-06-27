@@ -21,201 +21,12 @@
         <link rel="stylesheet" href="/css/style.css"/>
         <link rel="stylesheet" href="/css/responsive.css"/>
         <link rel="stylesheet" href="/demos/fashion-store/fashion-store.css" />
-        <style>
-            .profile-card {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                border-radius: 20px;
-                padding: 40px;
-                color: white;
-                position: relative;
-                overflow: hidden;
-            }
-            .profile-card::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(255,255,255,0.1);
-                backdrop-filter: blur(10px);
-            }
-            .profile-avatar {
-                width: 120px;
-                height: 120px;
-                border-radius: 50%;
-                background: rgba(255,255,255,0.2);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin: 0 auto 20px;
-                font-size: 48px;
-                border: 4px solid rgba(255,255,255,0.3);
-            }
-            .info-card {
-                background: white;
-                border-radius: 15px;
-                padding: 30px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-                margin-bottom: 30px;
-                transition: transform 0.3s ease;
-            }
-            .info-card:hover {
-                transform: translateY(-5px);
-            }
-            .info-item {
-                display: flex;
-                align-items: center;
-                margin-bottom: 20px;
-                padding: 15px;
-                background: #f8f9fa;
-                border-radius: 10px;
-            }
-            .info-icon {
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                margin-right: 15px;
-            }
-            .info-content h6 {
-                margin: 0;
-                color: #6c757d;
-                font-size: 12px;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-            }
-            .info-content p {
-                margin: 0;
-                font-weight: 600;
-                color: #333;
-            }
-            .edit-btn {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                border: none;
-                color: white;
-                padding: 10px 20px;
-                border-radius: 25px;
-                font-weight: 600;
-                transition: all 0.3s ease;
-            }
-            .edit-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-                color: white;
-            }
-            .form-control {
-                border-radius: 10px;
-                border: 2px solid #e9ecef;
-                padding: 12px 15px;
-                transition: all 0.3s ease;
-            }
-            .form-control:focus {
-                border-color: #667eea;
-                box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-            }
-            .alert {
-                border-radius: 10px;
-                border: none;
-            }
-            .alert-success {
-                background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-                color: white;
-            }
-            .alert-danger {
-                background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
-                color: white;
-            }
-            .tab-content {
-                background: white;
-                border-radius: 15px;
-                padding: 30px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            }
-            .nav-tabs {
-                border: none;
-                margin-bottom: 30px;
-            }
-            .nav-tabs .nav-link {
-                border: none;
-                border-radius: 25px;
-                margin-right: 10px;
-                padding: 12px 25px;
-                font-weight: 600;
-                color: #6c757d;
-                transition: all 0.3s ease;
-            }
-            .nav-tabs .nav-link.active {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-            }
-            .nav-tabs .nav-link:hover {
-                background: #f8f9fa;
-                color: #667eea;
-            }
-            .stats-card {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                border-radius: 15px;
-                padding: 25px;
-                text-align: center;
-                margin-bottom: 20px;
-                position: relative;
-                overflow: hidden;
-            }
-            .stats-card::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(255,255,255,0.1);
-            }
-            .stats-card .stats-icon {
-                font-size: 48px;
-                margin-bottom: 15px;
-                opacity: 0.8;
-            }
-            .stats-card .stats-number {
-                font-size: 36px;
-                font-weight: 700;
-                margin-bottom: 5px;
-            }
-            .stats-card .stats-label {
-                font-size: 14px;
-                opacity: 0.9;
-            }
-            .order-item {
-                background: #f8f9fa;
-                border-radius: 10px;
-                padding: 20px;
-                margin-bottom: 15px;
-                border-left: 4px solid #667eea;
-                transition: all 0.3s ease;
-            }
-            .order-item:hover {
-                transform: translateX(5px);
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            }
-            .status-badge {
-                padding: 5px 12px;
-                border-radius: 20px;
-                font-size: 12px;
-                font-weight: 600;
-                text-transform: uppercase;
-            }
-            .status-choXacNhan { background: #ffc107; color: #000; }
-            .status-DaThanhToan { background: #28a745; color: white; }
-            .status-DangVanChuyen { background: #17a2b8; color: white; }
-            .status-DaNhanHang { background: #6f42c1; color: white; }
-            .status-DaHuy { background: #dc3545; color: white; }
-            .status-Doi-Tra_Hang { background: #fd7e14; color: white; }
-        </style>
+        <!-- Bootstrap CSS fallback -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Feather Icons fallback -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/feather-icons@4.29.0/dist/feather.min.css">
+        <!-- Profile specific styles -->
+        <link rel="stylesheet" th:href="@{/css/profile.css}" />
     </head>
     <body data-mobile-nav-style="classic">
         <div th:replace="Client/header :: header"></div>
@@ -338,22 +149,52 @@
                                         Recent Orders
                                     </h5>
                                     <div th:if="${recentOrders != null and !recentOrders.empty}">
-                                        <div class="order-item" th:each="order : ${recentOrders}">
+                                        <div class="order-item" th:each="order : ${recentOrders}" th:with="isChoXacNhan=${order.trangThai == 'ChoXacNhan'}, isDaThanhToan=${order.trangThai == 'DaThanhToan'}">
                                             <div class="row align-items-center">
-                                                <div class="col-md-3">
+                                                <div class="col-md-2">
                                                     <strong th:text="${order.maHD}">Order ID</strong>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <span th:text="${#temporals.format(order.ngayLap, 'dd/MM/yyyy')}">Date</span>
                                                 </div>
                                                 <div class="col-md-2">
-                                                    <span th:text="${#numbers.formatDecimal(order.tongTien, 0, 'COMMA', 0, 'POINT')}">Amount</span>
+                                                    <span th:text="${#numbers.formatDecimal(order.tongTien, 0, 'COMMA', 0, 'POINT')}">money</span>
                                                 </div>
-                                                <div class="col-md-3">
+                                                <div class="col-md-2">
                                                     <span class="status-badge" th:class="'status-' + ${order.trangThai}" th:text="${order.trangThai}">Status</span>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <span th:text="${order.ptThanhToan}">Payment</span>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="d-flex gap-1">
+                                                        <!-- QR Code Button for unpaid orders -->
+                                                        <button th:if="${isChoXacNhan}" 
+                                                                class="btn btn-sm btn-outline-primary qr-btn" 
+                                                                th:data-order-id="${order.maHD}"
+                                                                th:data-order-money="${order.tongTien}"
+                                                                th:data-username="${username}"
+                                                                title="Xem mã QR thanh toán">
+                                                            <i class="feather icon-feather-qr-code"></i>
+                                                        </button>
+                                                        
+                                                        <!-- Cancel Button for specific statuses -->
+                                                        <form th:if="${isChoXacNhan or isDaThanhToan}" 
+                                                              th:action="@{/user/order/cancel}" 
+                                                              method="post" 
+                                                              style="display: inline;"
+                                                              onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?')">
+                                                            <input type="hidden" name="orderId" th:value="${order.maHD}">
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Hủy đơn hàng">
+                                                                <i class="feather icon-feather-x"></i>
+                                                            </button>
+                                                        </form>
+                                                        
+                                                        <!-- View Details Button -->
+                                                        <a href="#" class="btn btn-sm btn-outline-info" title="Xem chi tiết">
+                                                            <i class="feather icon-feather-eye"></i>
+                                                        </a>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -474,11 +315,106 @@
         </section>
         <!-- end section -->
 
+        <!-- QR Code Modal -->
+        <div class="modal fade qr-modal" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="qrModalLabel">
+                            <i class="feather icon-feather-qr-code me-2"></i>
+                            Mã QR Thanh Toán
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Order Details -->
+                        <div class="order-details">
+                            <div class="row text-center">
+                                <div class="col-md-4">
+                                    <h6>Mã đơn hàng</h6>
+                                    <p class="mb-0" id="modalOrderId">Order ID</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6>Tổng tiền</h6>
+                                    <p class="mb-0" id="modalOrdermoney">money</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6>Phương thức</h6>
+                                    <p class="mb-0" id="modalPaymentMethod">Payment Method</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- QR Code -->
+                        <div class="qr-code-container">
+                            <h5 class="mb-3">
+                                <i class="feather icon-feather-qr-code me-2"></i>
+                                Mã QR thanh toán
+                            </h5>
+                            <div id="qrcode" class="mb-3"></div>
+                            <p class="text-muted mb-0">
+                                <small>Quét mã QR bằng ứng dụng ngân hàng để thanh toán</small>
+                            </p>
+                        </div>
+
+                        <!-- Payment Instructions -->
+                        <div class="qr-instructions">
+                            <h6>
+                  <i class="feather icon-feather-info me-2"></i>
+                                Hướng dẫn thanh toán
+                            </h6>
+                            <ol>
+                                <li>Mở ứng dụng ngân hàng trên điện thoại</li>
+                                <li>Chọn tính năng "Quét mã QR" hoặc "Thanh toán QR"</li>
+                                <li>Quét mã QR bên trên</li>
+                                <li>Kiểm tra thông tin đơn hàng và số tiền</li>
+                                <li>Xác nhận thanh toán</li>
+                                <li>Lưu lại biên lai thanh toán</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div th:replace="Client/footer :: footer"></div>
         
         <!-- javascript libraries -->
-        <script type="text/javascript" src="/js/jquery.js"></script>
-        <script type="text/javascript" src="/js/vendors.min.js"></script>
-        <script type="text/javascript" src="/js/main.js"></script>
+        <script type="text/javascript" th:src="@{/js/jquery.js}"></script>
+        <script type="text/javascript" th:src="@{/js/vendors.min.js}"></script>
+        <script type="text/javascript" th:src="@{/js/main.js}"></script>
+        
+        
+        <script th:src="@{/js/qrcode.js}"></script>
+        <script>
+            // Add event listeners when document is ready
+            document.addEventListener('DOMContentLoaded', function() {
+                // Add click event listeners to QR buttons
+                document.querySelectorAll('.qr-btn').forEach(function(button) {
+                    button.addEventListener('click', function() {
+                        const orderId = this.getAttribute('data-order-id');
+                        const money = this.getAttribute('data-order-money');
+                        const username = this.getAttribute('data-username');
+                        
+                        // Update modal content
+                        document.getElementById('modalOrderId').textContent = orderId;
+                        document.getElementById('modalOrdermoney').textContent = formatCurrency(money) + ' VNĐ';
+                        document.getElementById('modalPaymentMethod').textContent = 'QR Code';
+                        
+                        // Generate QR code using the existing function
+                        generateQRCode(money, orderId + ' - ' + username);
+                        
+                        // Show modal
+                        const modal = new bootstrap.Modal(document.getElementById('qrModal'));
+                        modal.show();
+                    });
+                });
+            });
+            
+            // Function to format currency
+            function formatCurrency(money) {
+                return new Intl.NumberFormat('vi-VN').format(money);
+            }
+        </script>
     </body>
 </html> 

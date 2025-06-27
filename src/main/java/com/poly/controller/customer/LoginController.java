@@ -45,6 +45,7 @@ public class LoginController {
                 return "redirect:/";
             }
         }
+        System.out.println("==> Đã vào controller GET /login");
         return "Client/demo-fashion-store-login";
     }
 
@@ -54,6 +55,7 @@ public class LoginController {
             HttpSession session,
             RedirectAttributes redirectAttributes,
             Model model) {
+        System.out.println("==> Đã vào controller POST /login");
 
         // Kiểm tra xem input là username hay email
         boolean isEmail = usernameOrEmail.contains("@");

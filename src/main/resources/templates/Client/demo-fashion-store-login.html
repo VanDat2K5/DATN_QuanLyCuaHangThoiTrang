@@ -106,7 +106,7 @@
                             <span th:text="${success}"></span>
                         </div>
                         
-                        <form action="/login" method="post" id="loginForm">
+                        <form th:action="@{/login}" method="post" id="loginForm">
                             <label class="text-dark-gray mb-10px fw-500">Username or email address<span class="text-red">*</span></label> 
                             <input class="mb-20px bg-very-light-gray form-control" type="text" name="username" id="username" placeholder="Enter your username or email" required />
                             
@@ -123,6 +123,11 @@
                             
                             <button class="btn btn-medium btn-round-edge btn-dark-gray btn-box-shadow btn-submit w-100" type="submit">Login</button> 
                         </form>
+                        <div class="text-center my-4">
+                            <a href="/oauth2/authorization/google" class="btn btn-danger w-100 d-flex align-items-center justify-content-center gap-2" style="background: #e7bcb8; color: #fff; font-weight: 500; font-size: 1.08rem;">
+                                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google logo" style="width: 24px; height: 24px;"> Đăng nhập với Google
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -143,33 +148,5 @@
         <script type="text/javascript" src="/js/vendors.min.js"></script>
         <script type="text/javascript" src="/js/main.js"></script>
         
-        <!-- Custom validation script -->
-        <!-- <script>
-            $(document).ready(function() {
-                const loginForm = $('#loginForm');
-                const usernameInput = $('#username');
-                const passwordInput = $('#password');
-                
-                console.log('Login form initialized');
-                console.log('Login form found:', loginForm.length > 0);
-                console.log('Username input found:', usernameInput.length > 0);
-                console.log('Password input found:', passwordInput.length > 0);
-                
-                // Simple form submit handler for debugging
-                loginForm.on('submit', function(e) {
-                    console.log('Form submitted');
-                    console.log('Username:', usernameInput.val());
-                    console.log('Password length:', passwordInput.val().length);
-                    
-                    // Don't prevent default - let form submit normally
-                    console.log('Allowing form to submit...');
-                });
-                
-                // Auto-hide alerts after 5 seconds
-                setTimeout(function() {
-                    $('.alert').fadeOut('slow');
-                }, 5000);
-            });
-        </script> -->
     </body>
 </html> 
