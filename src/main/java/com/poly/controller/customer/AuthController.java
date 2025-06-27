@@ -1,186 +1,128 @@
 package com.poly.controller.customer;
 
 import com.poly.entity.KhachHang;
-import com.poly.entity.TaiKhoan;
+import com.poly.entity.NhanVien;
+import com.poly.service.HoaDonService;
 import com.poly.service.KhachHangService;
-import com.poly.service.TaiKhoanService;
+import com.poly.service.NhanVienService;
 import com.poly.util.Security;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
-import java.util.Optional;
-import java.util.UUID;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
+@RequestMapping("/user")
 public class AuthController {
-
-    @Autowired
-    private TaiKhoanService taiKhoanService;
 
     @Autowired
     private KhachHangService khachHangService;
 
-    @GetMapping("/login")
-    public String showLoginForm(HttpSession session) {
-        // Nếu đã đăng nhập, chuyển hướng về trang chủ
-        if (Security.isAuthenticated(session)) {
-            String userRole = Security.getUserRole(session);
-            if ("CUSTOMER".equals(userRole)) {
-                return "redirect:/";
-            } else if ("ADMIN".equals(userRole)) {
-                return "redirect:/";
-            }
-        }
-        return "Client/demo-fashion-store-login";
-    }
+    @Autowired
+    private NhanVienService nhanVienService;
 
-    @PostMapping("/login")
-    public String login(@RequestParam("username") String usernameOrEmail,
-            @RequestParam("password") String password,
-            HttpSession session,
-            RedirectAttributes redirectAttributes,
-            Model model) {
+    @Autowired
+    private HoaDonService hoaDonService;
 
-        // Kiểm tra xem input là username hay email
-        boolean isEmail = usernameOrEmail.contains("@");
+    @GetMapping("/profile")
+    public String profile(HttpSession session, Model model) {
+        String userRole = Security.getUserRole(session);
+        Object user = session.getAttribute("user");
 
-        Optional<TaiKhoan> taiKhoanOpt;
+        // Add common user data
+        model.addAttribute("user", user);
+        model.addAttribute("userRole", userRole);
+        model.addAttribute("username", session.getAttribute("username"));
 
-        if (isEmail) {
-            // Nếu là email, tìm theo email của khách hàng
-            Optional<KhachHang> khachHangOpt = khachHangService.findByEmail(usernameOrEmail);
-            if (khachHangOpt.isPresent()) {
-                // Tìm tài khoản liên kết với khách hàng này
-                taiKhoanOpt = taiKhoanService.findByKhachHangAndMatKhau(khachHangOpt.get(), password);
-            } else {
-                taiKhoanOpt = Optional.empty();
-            }
+        // Get order statistics based on user type
+        List<com.poly.entity.HoaDon> userOrders;
+        if ("CUSTOMER".equals(userRole)) {
+            KhachHang khachHang = (KhachHang) user;
+            userOrders = hoaDonService.findByKhachHang_MaKH(khachHang.getMaKH());
         } else {
-            // Nếu là username, tìm theo tên tài khoản
-            taiKhoanOpt = taiKhoanService.findByTenTKAndMatKhau(usernameOrEmail, password);
+            NhanVien nhanVien = (NhanVien) user;
+            userOrders = hoaDonService.findByNhanVien_MaNV(nhanVien.getMaNV());
         }
 
-        if (taiKhoanOpt.isPresent()) {
-            TaiKhoan taiKhoan = taiKhoanOpt.get();
+        // Common statistics calculation
+        model.addAttribute("totalOrders", userOrders.size());
 
-            if (taiKhoan.getKhachHang() != null) {
-                // Đăng nhập thành công cho khách hàng
-                session.setAttribute("user", taiKhoan.getKhachHang());
-                session.setAttribute("userRole", "CUSTOMER");
-                session.setAttribute("username", taiKhoan.getTenTK());
-                return "redirect:/";
-            } else if (taiKhoan.getNhanVien() != null) {
-                // Đăng nhập thành công cho nhân viên/admin
-                session.setAttribute("user", taiKhoan.getNhanVien());
-                if (taiKhoan.getNhanVien().getIsAdmin()) {
-                    session.setAttribute("userRole", "ADMIN");
-                } else {
-                    session.setAttribute("userRole", "EMPLOYEE");
-                }
-                session.setAttribute("username", taiKhoan.getTenTK());
-                return "redirect:/";
-            } else {
-                model.addAttribute("error", "Tài khoản không hợp lệ.");
-                return "Client/demo-fashion-store-login";
-            }
-        } else {
-            model.addAttribute("error", "Tên đăng nhập/Email hoặc mật khẩu không đúng.");
-            return "Client/demo-fashion-store-login";
-        }
+        BigDecimal totalAmount = userOrders.stream()
+                .map(com.poly.entity.HoaDon::getTongTien)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        model.addAttribute("totalSpent", totalAmount);
+
+        // Count orders by status
+        Map<String, Long> ordersByStatus = userOrders.stream()
+                .collect(Collectors.groupingBy(com.poly.entity.HoaDon::getTrangThai, Collectors.counting()));
+        model.addAttribute("ordersByStatus", ordersByStatus);
+
+        // Get recent orders (last 5)
+        List<com.poly.entity.HoaDon> recentOrders = userOrders.stream()
+                .sorted((o1, o2) -> o2.getNgayLap().compareTo(o1.getNgayLap()))
+                .limit(5)
+                .collect(Collectors.toList());
+        model.addAttribute("recentOrders", recentOrders);
+
+        return "Client/demo-fashion-store-profile";
     }
 
-    @GetMapping("/register")
-    public String showRegistrationForm(HttpSession session) {
-        // Nếu đã đăng nhập, chuyển hướng về trang chủ
-        if (Security.isAuthenticated(session)) {
-            return "redirect:/";
-        }
-        return "Client/demo-fashion-store-register";
-    }
-
-    @PostMapping("/register")
-    public String register(@RequestParam("username") String username,
-            @RequestParam("password") String password,
-            @RequestParam("confirmPassword") String confirmPassword,
-            @RequestParam("fullname") String fullname,
+    @PostMapping("/profile/update")
+    public String updateProfile(@RequestParam("fullName") String fullName,
             @RequestParam("email") String email,
             @RequestParam("phone") String phone,
+            HttpSession session,
             RedirectAttributes redirectAttributes) {
-
-        // Validation
-        if (!password.equals(confirmPassword)) {
-            redirectAttributes.addFlashAttribute("error", "Mật khẩu xác nhận không khớp.");
-            return "redirect:/register";
-        }
-
-        if (taiKhoanService.findByTenTK(username).isPresent()) {
-            redirectAttributes.addFlashAttribute("error", "Tên đăng nhập đã tồn tại.");
-            return "redirect:/register";
-        }
-
-        // Kiểm tra email đã tồn tại chưa
-        if (khachHangService.findByEmail(email).isPresent()) {
-            redirectAttributes.addFlashAttribute("error", "Email đã được sử dụng.");
-            return "redirect:/register";
-        }
-
         try {
-            // Tạo khách hàng mới
-            KhachHang khachHang = new KhachHang();
-            khachHang.setMaKH(UUID.randomUUID().toString().substring(0, 20));
-            khachHang.setTenKH(fullname);
-            khachHang.setEmail(email);
-            khachHang.setSoDT(phone);
+            String userRole = Security.getUserRole(session);
+            Object user = session.getAttribute("user");
 
-            khachHangService.save(khachHang);
+            if ("CUSTOMER".equals(userRole)) {
+                KhachHang khachHang = (KhachHang) user;
+                khachHang.setTenKH(fullName);
+                khachHang.setEmail(email);
+                khachHang.setSoDT(phone);
+                khachHangService.save(khachHang);
+                session.setAttribute("user", khachHang);
+            } else {
+                NhanVien nhanVien = (NhanVien) user;
+                nhanVien.setTenNV(fullName);
+                nhanVien.setEmail(email);
+                nhanVien.setSoDT(phone);
+                nhanVienService.save(nhanVien);
+                session.setAttribute("user", nhanVien);
+            }
 
-            // Tạo tài khoản mới
-            TaiKhoan taiKhoan = new TaiKhoan();
-            taiKhoan.setTenTK(username);
-            taiKhoan.setMatKhau(password);
-            taiKhoan.setKhachHang(khachHang);
-
-            taiKhoanService.save(taiKhoan);
-
-            redirectAttributes.addFlashAttribute("success", "Đăng ký thành công! Vui lòng đăng nhập.");
-            return "redirect:/login";
+            redirectAttributes.addFlashAttribute("success", "Cập nhật thông tin thành công!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra trong quá trình đăng ký.");
-            return "redirect:/register";
+            redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra khi cập nhật thông tin!");
         }
+
+        return "redirect:/user/profile";
     }
 
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        // Xóa tất cả thông tin session
-        session.removeAttribute("user");
-        session.removeAttribute("userRole");
-        session.removeAttribute("username");
-        session.invalidate();
-        return "redirect:/login";
-    }
-
-    @GetMapping("/access-denied")
-    public String accessDenied() {
-        return "Client/demo-fashion-store-access-denied";
-    }
-
-    // Phương thức kiểm tra quyền truy cập
-    public boolean checkAccess(HttpServletRequest request, HttpServletResponse response, String requiredRole) {
-        try {
-            Security.handleAccessControl(request, response, requiredRole);
-            return true;
-        } catch (IOException e) {
-            return false;
+    @PostMapping("/profile/change-password")
+    public String changePassword(@RequestParam("currentPassword") String currentPassword,
+            @RequestParam("newPassword") String newPassword,
+            @RequestParam("confirmPassword") String confirmPassword,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+        if (!newPassword.equals(confirmPassword)) {
+            redirectAttributes.addFlashAttribute("error", "Mật khẩu mới không khớp!");
+            return "redirect:/user/profile";
         }
+
+        redirectAttributes.addFlashAttribute("success", "Đổi mật khẩu thành công!");
+        return "redirect:/user/profile";
     }
 }
