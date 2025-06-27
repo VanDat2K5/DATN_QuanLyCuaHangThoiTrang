@@ -74,6 +74,12 @@ public class TaiKhoanServiceImpl implements TaiKhoanService {
 
     @Override
     @Transactional(readOnly = true)
+    public Optional<TaiKhoan> findByKhachHang(KhachHang khachHang) {
+        return taiKhoanRepository.findByKhachHang(khachHang);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public boolean existsById(Integer id) {
         return taiKhoanRepository.existsById(id);
     }
