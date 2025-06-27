@@ -14,4 +14,7 @@ public interface TaiKhoanRepository extends JpaRepository<TaiKhoan, Integer> {
     Optional<TaiKhoan> findByTenTKAndMatKhau(String tenTK, String matKhau);
 
     Optional<TaiKhoan> findByKhachHangAndMatKhau(KhachHang khachHang, String matKhau);
+
+    // Tìm tài khoản theo khách hàng
+    Optional<TaiKhoan> findByKhachHang(KhachHang khachHang);
 }
