@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Controller
 public class LoginController {
@@ -143,7 +143,13 @@ public class LoginController {
         try {
             // Tạo khách hàng mới
             KhachHang khachHang = new KhachHang();
-            khachHang.setMaKH(UUID.randomUUID().toString().substring(0, 20));
+            // khachHang.setMaKH(UUID.randomUUID().toString().substring(0, 20));
+            // Tạo mã khách hàng tự tăng: KH001, KH002,...
+            List<KhachHang> allKhachHang = khachHangService.findAll();
+            int nextNumber = allKhachHang.size() + 1;
+            String maKH = String.format("KH%03d", nextNumber); // KH001, KH002,...
+            khachHang.setMaKH(maKH);
+
             khachHang.setTenKH(fullname);
             khachHang.setEmail(email);
             khachHang.setSoDT(phone);
@@ -203,7 +209,7 @@ public class LoginController {
     // Xử lý gửi email reset password
     @PostMapping("/forgot-password/send")
     public String sendForgotPasswordEmail(@RequestParam("email") String email,
-                                        RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes) {
         try {
             // Kiểm tra email có tồn tại không
             Optional<KhachHang> khachHangOpt = khachHangService.findByEmail(email);
@@ -213,26 +219,26 @@ public class LoginController {
             }
 
             KhachHang khachHang = khachHangOpt.get();
-            
+
             // Tạo token và gửi email
             String resetToken = PasswordResetTokenUtil.generateToken(email);
             emailService.sendPasswordResetEmail(khachHang, resetToken);
-            
-            redirectAttributes.addFlashAttribute("success", 
-                "Email đã được gửi đến " + email + ". Vui lòng kiểm tra hộp thư.");
-            
+
+            redirectAttributes.addFlashAttribute("success",
+                    "Email đã được gửi đến " + email + ". Vui lòng kiểm tra hộp thư.");
+
         } catch (Exception e) {
             System.err.println("Lỗi gửi email: " + e.getMessage());
             redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra. Vui lòng thử lại.");
         }
-        
+
         return "redirect:/forgot-password";
     }
 
     // Trang đặt lại mật khẩu
     @GetMapping("/reset-password")
-    public String showResetPasswordForm(@RequestParam("token") String token, 
-                                      Model model) {
+    public String showResetPasswordForm(@RequestParam("token") String token,
+            Model model) {
         if (!PasswordResetTokenUtil.validateToken(token)) {
             model.addAttribute("error", "Link không hợp lệ hoặc đã hết hạn.");
             return "Client/demo-fashion-store-reset-password";
@@ -245,10 +251,10 @@ public class LoginController {
     // Xử lý đặt lại mật khẩu
     @PostMapping("/reset-password/update")
     public String updatePassword(@RequestParam("token") String token,
-                               @RequestParam("newPassword") String newPassword,
-                               @RequestParam("confirmPassword") String confirmPassword,
-                               RedirectAttributes redirectAttributes) {
-        
+            @RequestParam("newPassword") String newPassword,
+            @RequestParam("confirmPassword") String confirmPassword,
+            RedirectAttributes redirectAttributes) {
+
         // Kiểm tra token
         if (!PasswordResetTokenUtil.validateToken(token)) {
             redirectAttributes.addFlashAttribute("error", "Token không hợp lệ.");
@@ -294,7 +300,7 @@ public class LoginController {
             taiKhoanService.save(taiKhoan);
 
             redirectAttributes.addFlashAttribute("success", "Đặt lại mật khẩu thành công!");
-            
+
         } catch (Exception e) {
             System.err.println("Lỗi cập nhật mật khẩu: " + e.getMessage());
             redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra. Vui lòng thử lại.");

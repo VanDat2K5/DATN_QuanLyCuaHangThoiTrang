@@ -28,7 +28,7 @@ public class WebConfig implements WebMvcConfigurer {
                             "/fashion-store/**",
                             "/fonts/**",
                             "/static/**",
-                            "/**");
+                            "/");
         }
         if (userInterceptor != null) {
             registry.addInterceptor(userInterceptor)
@@ -43,7 +43,7 @@ public class WebConfig implements WebMvcConfigurer {
                             "/fashion-store/**",
                             "/fonts/**",
                             "/static/**",
-                            "/**");
+                            "/");
         }
     }
 }
