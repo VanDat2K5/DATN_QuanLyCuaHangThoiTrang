@@ -4,6 +4,7 @@ import com.poly.entity.KhachHang;
 import com.poly.entity.TaiKhoan;
 import com.poly.service.KhachHangService;
 import com.poly.service.TaiKhoanService;
+import com.poly.util.CodeGenerator;
 import com.poly.util.EmailService;
 import com.poly.util.PasswordResetTokenUtil;
 import com.poly.util.Security;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -33,6 +33,9 @@ public class LoginController {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private CodeGenerator codeGenerator;
 
     @GetMapping("/login")
     public String showLoginForm(HttpSession session) {
@@ -143,11 +146,8 @@ public class LoginController {
         try {
             // Tạo khách hàng mới
             KhachHang khachHang = new KhachHang();
-            // khachHang.setMaKH(UUID.randomUUID().toString().substring(0, 20));
-            // Tạo mã khách hàng tự tăng: KH001, KH002,...
-            List<KhachHang> allKhachHang = khachHangService.findAll();
-            int nextNumber = allKhachHang.size() + 1;
-            String maKH = String.format("KH%03d", nextNumber); // KH001, KH002,...
+            // Sử dụng CustomerCodeGenerator để tạo mã khách hàng
+            String maKH = codeGenerator.generateCustomerCode();
             khachHang.setMaKH(maKH);
 
             khachHang.setTenKH(fullname);
