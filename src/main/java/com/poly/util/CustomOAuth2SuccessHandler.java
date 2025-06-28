@@ -1,4 +1,4 @@
-package com.poly.config;
+package com.poly.util;
 
 import com.poly.entity.KhachHang;
 import com.poly.entity.TaiKhoan;
@@ -14,7 +14,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -22,10 +21,14 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
     private final TaiKhoanService taiKhoanService;
     private final KhachHangService khachHangService;
+    private final CodeGenerator codeGenerator;
 
-    public CustomOAuth2SuccessHandler(TaiKhoanService taiKhoanService, KhachHangService khachHangService) {
+    public CustomOAuth2SuccessHandler(TaiKhoanService taiKhoanService,
+            KhachHangService khachHangService,
+            CodeGenerator codeGenerator) {
         this.taiKhoanService = taiKhoanService;
         this.khachHangService = khachHangService;
+        this.codeGenerator = codeGenerator;
     }
 
     @Override
@@ -56,11 +59,11 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
         // Tạo khách hàng mới với mã tự tăng
         KhachHang kh = new KhachHang();
-        List<KhachHang> allKhachHang = khachHangService.findAll();
-        int nextNumber = allKhachHang.size() + 1;
-        String maKH = String.format("KH%03d", nextNumber); // KH001, KH002,...
+        String maKH = codeGenerator.generateCustomerCode();
+
         kh.setMaKH(maKH);
         kh.setTenKH(oAuth2User.getAttribute("name"));
+        kh.setSoDT(oAuth2User.getAttribute("phone"));
         kh.setEmail(email);
         khachHangService.save(kh);
 
