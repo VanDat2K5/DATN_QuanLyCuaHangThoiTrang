@@ -1,9 +1,7 @@
 package com.poly.util;
 
 import com.poly.entity.KhachHang;
-import com.poly.entity.TaiKhoan;
 import com.poly.service.KhachHangService;
-import com.poly.service.TaiKhoanService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,14 +17,11 @@ import java.util.Optional;
 @Component
 public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
-    private final TaiKhoanService taiKhoanService;
     private final KhachHangService khachHangService;
     private final CodeGenerator codeGenerator;
 
-    public CustomOAuth2SuccessHandler(TaiKhoanService taiKhoanService,
-            KhachHangService khachHangService,
+    public CustomOAuth2SuccessHandler(KhachHangService khachHangService,
             CodeGenerator codeGenerator) {
-        this.taiKhoanService = taiKhoanService;
         this.khachHangService = khachHangService;
         this.codeGenerator = codeGenerator;
     }
@@ -41,21 +36,20 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
         Optional<KhachHang> khOpt = khachHangService.findByEmail(email);
         if (khOpt.isPresent()) {
-            TaiKhoan tk = khOpt.get().getTaiKhoan();
-            if (tk != null) {
-                KhachHang kh = tk.getKhachHang();
-                HttpSession session = request.getSession();
-                session.setAttribute("user", kh);
-                session.setAttribute("userRole", "CUSTOMER");
-                session.setAttribute("username", email);
-                System.out.println("==> Đã set session cho user Google: " + email);
-                response.sendRedirect("/");
-                return;
-            }
+            // Khách hàng đã tồn tại
+            KhachHang kh = khOpt.get();
+            HttpSession session = request.getSession();
+            session.setAttribute("user", kh);
+            session.setAttribute("userRole", "CUSTOMER");
+            session.setAttribute("username", email);
+            session.setAttribute("oauthUser", true); // Đánh dấu là OAuth2 user
+            System.out.println("==> Đã set session cho user Google: " + email);
+            response.sendRedirect("/");
+            return;
         }
 
-        // Nếu chưa có tài khoản, tạo mới
-        System.out.println("==> Tạo tài khoản mới cho Google: " + email);
+        // Nếu chưa có khách hàng, tạo mới
+        System.out.println("==> Tạo khách hàng mới cho Google: " + email);
 
         // Tạo khách hàng mới với mã tự tăng
         KhachHang kh = new KhachHang();
@@ -67,18 +61,14 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         kh.setEmail(email);
         khachHangService.save(kh);
 
-        // Tạo tài khoản mới
-        TaiKhoan tk = new TaiKhoan();
-        tk.setTenTK(email);
-        tk.setKhachHang(kh);
-        taiKhoanService.save(tk); // Lưu tài khoản
-
-        // Set session và chuyển hướng
+        // Set session và chuyển hướng (không tạo tài khoản)
         HttpSession session = request.getSession();
         session.setAttribute("user", kh);
         session.setAttribute("userRole", "CUSTOMER");
         session.setAttribute("username", email);
-        System.out.println("==> Đã tạo và set session cho user Google: " + email);
+        session.setAttribute("oauthUser", true); // Đánh dấu là OAuth2 user
+        session.setAttribute("needsAccount", true); // Đánh dấu cần tạo tài khoản
+        System.out.println("==> Đã tạo khách hàng và set session cho user Google: " + email);
         response.sendRedirect("/");
     }
 }
