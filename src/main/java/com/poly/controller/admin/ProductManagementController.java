@@ -47,11 +47,11 @@ public class ProductManagementController {
         if (sanPham.getMaSP() == null || sanPham.getMaSP().isEmpty()) {
             sanPham.setMaSP("SP" + System.currentTimeMillis());
         }
-
         sanPhamService.save(sanPham);
-        ra.addFlashAttribute("message", "Thêm sản phẩm thành công!");
-        return "redirect:/admin/products";
+        // thay vì quay lại list products, thì chuyển thẳng sang trang add chi tiết
+        return "redirect:/admin/chitiet/add?productId=" + sanPham.getMaSP();
     }
+
 
     // Mở form sửa
     @GetMapping("/{id}/edit")
