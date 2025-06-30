@@ -18,6 +18,7 @@
     <table class="table table-striped align-middle">
         <thead>
         <tr>
+            <th>Ảnh</th>
             <th>Mã SP</th>
             <th>Tên SP</th>
             <th>Danh mục</th>
@@ -27,22 +28,30 @@
         </thead>
         <tbody>
         <tr th:each="p : ${products}">
+            <!-- Ảnh thumbnail -->
+            <td>
+                <div th:each="img : ${p.hinhAnh}" class="d-inline-block me-1">
+                    <img th:src="@{/uploads/{file}(file=${img.hinhAnh})}"
+                         class="img-thumbnail" style="max-width:60px; max-height:60px"/>
+                </div>
+                <div th:if="${#lists.isEmpty(p.hinhAnh)}" class="text-muted small">Chưa có ảnh</div>
+            </td>
+
             <!-- Mã và tên sản phẩm -->
             <td th:text="${p.maSP}">SP001</td>
             <td th:text="${p.tenSP}">Áo Thun</td>
 
-            <!-- Tên danh mục (sửa lại thành tenLoai) -->
+            <!-- Tên danh mục -->
             <td th:text="${p.loaiSP.loaiSP}">Thời trang</td>
 
             <!-- Collapse để xem chi tiết -->
             <td>
                 <button class="btn btn-sm btn-info" type="button"
                         data-bs-toggle="collapse"
-                        th:attr="data-bs-target='#details-' + ${p.maSP}">
+                        th:attr="data-bs-target='details-' + ${p.maSP}">
                     Xem chi tiết
                 </button>
-                <div class="collapse mt-2"
-                     th:id="'details-' + ${p.maSP}">
+                <div class="collapse mt-2" th:id="'details-' + ${p.maSP}">
                     <table class="table table-bordered table-sm mb-0">
                         <thead>
                         <tr>

@@ -12,7 +12,8 @@
 
     <form th:action="@{|/admin/products/${productForm.maSP}/edit|}"
           th:object="${productForm}"
-          method="post">
+          method="post"
+          enctype="multipart/form-data">
         <div class="mb-3">
             <label class="form-label">Mã SP</label>
             <input type="text" th:field="*{maSP}"
@@ -39,7 +40,10 @@
             <!-- Hiển thị lỗi ngay dưới select, chỉ trên trường maLoaiSP -->
             <div class="text-danger" th:errors="*{loaiSP.maLoaiSP}"></div>
         </div>
-
+        <div class="mb-3">
+            <label class="form-label">Hình ảnh</label>
+            <input type="file" name="images" multiple class="form-control"/>
+        </div>
         <button type="submit" class="btn btn-primary">Cập nhật</button>
         <a th:href="@{/admin/products}" class="btn btn-secondary ms-2">Hủy</a>
     </form>
