@@ -93,18 +93,16 @@
                             <span class="fs-26 xs-fs-24 alt-font fw-600 text-dark-gray mb-20px d-block">Member login</span>
                             <p class="text-dark-gray">Don't have an account? <a href="/register" class="text-dark-gray text-decoration-line-bottom fw-500">Register here</a></p>
                         </div>
-                        
-                        <!-- Error message -->
+<!--                         
                         <div th:if="${error}" class="alert alert-danger mb-30px" role="alert">
                             <i class="feather icon-alert-circle me-2"></i>
                             <span th:text="${error}"></span>
                         </div>
                         
-                        <!-- Success message -->
                         <div th:if="${success}" class="alert alert-success mb-30px" role="alert">
                             <i class="feather icon-check-circle me-2"></i>
                             <span th:text="${success}"></span>
-                        </div>
+                        </div> -->
                         
                         <form th:action="@{/login}" method="post" id="loginForm">
                             <label class="text-dark-gray mb-10px fw-500">Username or email address<span class="text-red">*</span></label> 
