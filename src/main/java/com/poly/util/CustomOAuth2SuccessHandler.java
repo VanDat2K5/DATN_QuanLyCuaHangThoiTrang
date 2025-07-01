@@ -42,7 +42,10 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
             session.setAttribute("user", kh);
             session.setAttribute("userRole", "CUSTOMER");
             session.setAttribute("username", email);
-            session.setAttribute("oauthUser", true); // Đánh dấu là OAuth2 user
+            session.setAttribute("oauthUser", true);
+            if (kh.getTaiKhoan() == null) {
+                session.setAttribute("needsAccount", true);
+            }
             System.out.println("==> Đã set session cho user Google: " + email);
             response.sendRedirect("/");
             return;

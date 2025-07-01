@@ -87,6 +87,7 @@ public class LoginController {
                 session.setAttribute("user", taiKhoan.getKhachHang());
                 session.setAttribute("userRole", "CUSTOMER");
                 session.setAttribute("username", taiKhoan.getTenTK());
+                redirectAttributes.addFlashAttribute("success", "Đăng nhập thành công!");
                 return "redirect:/";
             } else if (taiKhoan.getNhanVien() != null) {
                 // Đăng nhập thành công cho nhân viên/admin
