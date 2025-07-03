@@ -12,13 +12,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -77,38 +75,26 @@ public class HinhAnhServiceImpl implements HinhAnhService {
     }
 
     @Override
-    public List<HinhAnh> storeImages(String maSP, MultipartFile[] files) throws IOException {
-        // 1) Thư mục gốc uploads/{maSP}
-        Path uploadDir = Paths.get("uploads", maSP);
-        if (Files.notExists(uploadDir)) {
-            Files.createDirectories(uploadDir);
+    public void storeImages(SanPham sanPham, MultipartFile[] files) throws IOException {
+        if (sanPham == null || files == null || files.length == 0) {
+            return;
         }
 
-        // 2) Lấy entity SanPham
-        SanPham sp = sanPhamService.findById(maSP)
-                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy SP " + maSP));
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+                // Dùng tên gốc của file (không thêm UUID, không lưu file)
+                String filename = file.getOriginalFilename();
 
-        List<HinhAnh> result = new ArrayList<>();
-        for (MultipartFile f : files) {
-            if (f.isEmpty()) continue;
-
-            // 3) Đặt tên file cho unique
-            String filename = System.currentTimeMillis() + "_" + f.getOriginalFilename();
-            Path target = uploadDir.resolve(filename);
-
-            // 4) Ghi file ra disk
-            f.transferTo(target.toFile());
-
-            // 5) Chuẩn bị entity HinhAnh
-            HinhAnh ha = new HinhAnh();
-            ha.setSanPham(sp);
-
-            // Lưu đường dẫn public (sẽ map qua /uploads/** bằng WebMvcConfig)
-            ha.setHinhAnh("/uploads/" + maSP + "/" + filename);
-
-            result.add(hinhAnhRepository.save(ha));
+                // Kiểm tra nếu file tồn tại sẵn trong thư mục images
+                File imageFile = new File("src/main/resources/static/images", filename);
+                if (imageFile.exists()) {
+                    HinhAnh ha = new HinhAnh();
+                    ha.setSanPham(sanPham);
+                    ha.setHinhAnh("/images/" + filename); // Chỉ lưu đường dẫn
+                    hinhAnhRepository.save(ha);
+                }
+                // Nếu ảnh không tồn tại, bạn có thể bỏ qua hoặc throw lỗi tùy yêu cầu
+            }
         }
-        return result;
     }
-
 }

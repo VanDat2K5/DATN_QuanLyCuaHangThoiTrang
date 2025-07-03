@@ -1,6 +1,7 @@
 package com.poly.service;
 
 import com.poly.entity.HinhAnh;
+import com.poly.entity.SanPham;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,5 +27,5 @@ public interface HinhAnhService {
 
     boolean existsById(Integer id);
 
-    List<HinhAnh> storeImages(String maSP, MultipartFile[] files) throws IOException;
+    void storeImages(SanPham sanPham, MultipartFile[] files) throws IOException;
 }

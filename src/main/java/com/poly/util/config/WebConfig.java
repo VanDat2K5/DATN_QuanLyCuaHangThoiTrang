@@ -51,15 +51,4 @@ public class WebConfig implements WebMvcConfigurer {
                             "/");
         }
     }
-
-    @Value("${file.upload-dir}")
-    private String uploadDir;
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry
-                // phục vụ ảnh nằm trong uploads/ khi client gọi /uploads/**
-                .addResourceHandler("/uploads/**")
-                .addResourceLocations("file:" + uploadDir + "/");
-    }
 }
