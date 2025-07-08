@@ -20,7 +20,11 @@ public class WebConfig implements WebMvcConfigurer {
                     .addPathPatterns("/admin/**")
                     .excludePathPatterns(
                             "/css/**",
+                            "/images/**",
                             "/img/**",
+                            "/js/**",
+                            "/fonts/**",
+                            "/demos/**",
                             "/static/**");
         }
         if (userInterceptor != null) {
@@ -31,7 +35,11 @@ public class WebConfig implements WebMvcConfigurer {
                             "/register",
                             "/access-denied",
                             "/css/**",
+                            "/images/**",
                             "/img/**",
+                            "/js/**",
+                            "/fonts/**",
+                            "/demos/**",
                             "/static/**");
         }
     }
