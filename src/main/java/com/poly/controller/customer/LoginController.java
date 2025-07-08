@@ -4,6 +4,7 @@ import com.poly.entity.KhachHang;
 import com.poly.entity.TaiKhoan;
 import com.poly.service.KhachHangService;
 import com.poly.service.TaiKhoanService;
+import com.poly.util.CodeGenerator;
 import com.poly.util.EmailService;
 import com.poly.util.PasswordResetTokenUtil;
 import com.poly.util.Security;
@@ -20,7 +21,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.Optional;
-import java.util.UUID;
 
 @Controller
 public class LoginController {
@@ -34,6 +34,9 @@ public class LoginController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private CodeGenerator codeGenerator;
+
     @GetMapping("/login")
     public String showLoginForm(HttpSession session) {
         // Nếu đã đăng nhập, chuyển hướng về trang chủ
@@ -45,6 +48,7 @@ public class LoginController {
                 return "redirect:/";
             }
         }
+        System.out.println("==> Đã vào controller GET /login");
         return "Client/demo-fashion-store-login";
     }
 
@@ -54,6 +58,7 @@ public class LoginController {
             HttpSession session,
             RedirectAttributes redirectAttributes,
             Model model) {
+        System.out.println("==> Đã vào controller POST /login");
 
         // Kiểm tra xem input là username hay email
         boolean isEmail = usernameOrEmail.contains("@");
@@ -82,6 +87,7 @@ public class LoginController {
                 session.setAttribute("user", taiKhoan.getKhachHang());
                 session.setAttribute("userRole", "CUSTOMER");
                 session.setAttribute("username", taiKhoan.getTenTK());
+                redirectAttributes.addFlashAttribute("success", "Đăng nhập thành công!");
                 return "redirect:/";
             } else if (taiKhoan.getNhanVien() != null) {
                 // Đăng nhập thành công cho nhân viên/admin
@@ -141,7 +147,10 @@ public class LoginController {
         try {
             // Tạo khách hàng mới
             KhachHang khachHang = new KhachHang();
-            khachHang.setMaKH(UUID.randomUUID().toString().substring(0, 20));
+            // Sử dụng CustomerCodeGenerator để tạo mã khách hàng
+            String maKH = codeGenerator.generateCustomerCode();
+            khachHang.setMaKH(maKH);
+
             khachHang.setTenKH(fullname);
             khachHang.setEmail(email);
             khachHang.setSoDT(phone);
@@ -201,7 +210,7 @@ public class LoginController {
     // Xử lý gửi email reset password
     @PostMapping("/forgot-password/send")
     public String sendForgotPasswordEmail(@RequestParam("email") String email,
-                                        RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes) {
         try {
             // Kiểm tra email có tồn tại không
             Optional<KhachHang> khachHangOpt = khachHangService.findByEmail(email);
@@ -211,26 +220,26 @@ public class LoginController {
             }
 
             KhachHang khachHang = khachHangOpt.get();
-            
+
             // Tạo token và gửi email
             String resetToken = PasswordResetTokenUtil.generateToken(email);
             emailService.sendPasswordResetEmail(khachHang, resetToken);
-            
-            redirectAttributes.addFlashAttribute("success", 
-                "Email đã được gửi đến " + email + ". Vui lòng kiểm tra hộp thư.");
-            
+
+            redirectAttributes.addFlashAttribute("success",
+                    "Email đã được gửi đến " + email + ". Vui lòng kiểm tra hộp thư.");
+
         } catch (Exception e) {
             System.err.println("Lỗi gửi email: " + e.getMessage());
             redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra. Vui lòng thử lại.");
         }
-        
+
         return "redirect:/forgot-password";
     }
 
     // Trang đặt lại mật khẩu
     @GetMapping("/reset-password")
-    public String showResetPasswordForm(@RequestParam("token") String token, 
-                                      Model model) {
+    public String showResetPasswordForm(@RequestParam("token") String token,
+            Model model) {
         if (!PasswordResetTokenUtil.validateToken(token)) {
             model.addAttribute("error", "Link không hợp lệ hoặc đã hết hạn.");
             return "Client/demo-fashion-store-reset-password";
@@ -243,10 +252,10 @@ public class LoginController {
     // Xử lý đặt lại mật khẩu
     @PostMapping("/reset-password/update")
     public String updatePassword(@RequestParam("token") String token,
-                               @RequestParam("newPassword") String newPassword,
-                               @RequestParam("confirmPassword") String confirmPassword,
-                               RedirectAttributes redirectAttributes) {
-        
+            @RequestParam("newPassword") String newPassword,
+            @RequestParam("confirmPassword") String confirmPassword,
+            RedirectAttributes redirectAttributes) {
+
         // Kiểm tra token
         if (!PasswordResetTokenUtil.validateToken(token)) {
             redirectAttributes.addFlashAttribute("error", "Token không hợp lệ.");
@@ -292,7 +301,7 @@ public class LoginController {
             taiKhoanService.save(taiKhoan);
 
             redirectAttributes.addFlashAttribute("success", "Đặt lại mật khẩu thành công!");
-            
+
         } catch (Exception e) {
             System.err.println("Lỗi cập nhật mật khẩu: " + e.getMessage());
             redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra. Vui lòng thử lại.");

@@ -228,9 +228,12 @@
                                         <span class="d-none d-xxl-inline-block" th:text="${session.userRole == 'CUSTOMER' ? session.user.tenKH : session.user.tenNV}">User</span>
                                     </a>
                                     <ul class="dropdown-menu" style="transform: translateX(-20px); margin-top: 10px;">
+                                        <li style="padding: 9px;" th:if="${session.userRole == 'ADMIN'}"><a href="/admin" class="dropdown-item">Doanh thu</a></li>
+                                        <li style="padding: 9px;" th:if="${session.userRole == 'ADMIN' || session.userRole == 'EMPLOYEE'}"><a href="/admin" class="dropdown-item">Quản Lý</a></li>
+                                        <li style="padding: 9px;" th:if="${session.userRole == 'ADMIN' || session.userRole == 'EMPLOYEE'}"><hr class="dropdown-divider"></li>
                                         <li style="padding: 9px;"><a href="/user/profile" class="dropdown-item">My Profile</a></li>
-                                        <li style="padding: 9px;"><a href="/user/orders" class="dropdown-item">My Orders</a></li>
-                                        <li style="padding: 9px;"><a href="/user/wishlist" class="dropdown-item">Wishlist</a></li>
+                                        <!-- <li style="padding: 9px;"><a href="/user/orders" class="dropdown-item">My Orders</a></li>
+                                        <li style="padding: 9px;"><a href="/user/wishlist" class="dropdown-item">Wishlist</a></li> -->
                                         <li><hr class="dropdown-divider"></li>
                                         <li style="padding: 9px;"><a href="/logout" class="dropdown-item">Logout</a></li>
                                     </ul>
@@ -263,4 +266,16 @@
         <!-- end navigation -->
     </header>
     <!-- end header -->
+    <!-- Toast Notification (SweetAlert2) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/main.js"></script>
+    <script th:inline="javascript" th:if="${success != null}">
+        showToast('[[${success}]]', "success");
+    </script>
+    <script th:inline="javascript" th:if="${error != null}">
+        showToast('[[${error}]]', "error");
+    </script>
+    <script th:inline="javascript" th:if="${message != null}">
+        showToast('[[${message}]]', "info");
+    </script>
 </th:block> 

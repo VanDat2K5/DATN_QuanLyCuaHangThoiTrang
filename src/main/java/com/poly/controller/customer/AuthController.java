@@ -125,4 +125,47 @@ public class AuthController {
         redirectAttributes.addFlashAttribute("success", "Đổi mật khẩu thành công!");
         return "redirect:/user/profile";
     }
+
+    @PostMapping("/order/cancel")
+    public String cancelOrder(@RequestParam String orderId,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+        try {
+            String userRole = Security.getUserRole(session);
+            Object user = session.getAttribute("user");
+
+            // Find order by ID
+            com.poly.entity.HoaDon order = hoaDonService.findById(orderId).orElse(null);
+            if (order == null) {
+                redirectAttributes.addFlashAttribute("error", "Không tìm thấy đơn hàng");
+                return "redirect:/user/profile";
+            }
+
+            // Check if user owns this order (for customers) or has permission (for
+            // employees)
+            if ("CUSTOMER".equals(userRole)) {
+                KhachHang customer = (KhachHang) user;
+                if (!order.getKhachHang().getMaKH().equals(customer.getMaKH())) {
+                    redirectAttributes.addFlashAttribute("error", "Bạn không có quyền hủy đơn hàng này");
+                    return "redirect:/user/profile";
+                }
+            }
+
+            // Check if order can be cancelled
+            if (!order.getTrangThai().equals("ChoXacNhan") && !order.getTrangThai().equals("DaThanhToan")) {
+                redirectAttributes.addFlashAttribute("error", "Không thể hủy đơn hàng ở trạng thái này");
+                return "redirect:/user/profile";
+            }
+
+            // Update order status to cancelled
+            order.setTrangThai("DaHuy");
+            hoaDonService.save(order);
+
+            redirectAttributes.addFlashAttribute("success", "Đã hủy đơn hàng thành công");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra khi hủy đơn hàng");
+        }
+
+        return "redirect:/user/profile";
+    }
 }

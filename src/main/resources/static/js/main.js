@@ -3582,6 +3582,31 @@
         event.preventDefault();
     });
 
+    // =====================
+    // Toast Notification (SweetAlert2)
+    // =====================
+    function showToast(message, icon = "success", position = "top-end") {
+        if (typeof Swal === "undefined") {
+            console.error("SweetAlert2 chưa được import!");
+            return;
+        }
+        const Toast = Swal.mixin({
+            toast: true,
+            position: position,
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        Toast.fire({
+            icon: icon,
+            title: message
+        });
+    }
+
 })(jQuery);
 
 /* ===================================

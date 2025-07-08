@@ -29,7 +29,7 @@ public class Security {
     // Kiểm tra quyền truy cập cho nhân viên
     public static boolean hasStaffAccess(HttpSession session) {
         String role = getUserRole(session);
-        return "STAFF".equals(role) || "ADMIN".equals(role);
+        return "EMPLOYEE".equals(role) || "ADMIN".equals(role);
     }
 
     // Kiểm tra quyền truy cập cho admin
@@ -57,7 +57,7 @@ public class Security {
                     response.sendRedirect(request.getContextPath() + "/access-denied");
                 }
                 break;
-            case "STAFF":
+            case "EMPLOYEE":
                 if (!hasStaffAccess(session)) {
                     response.sendRedirect(request.getContextPath() + "/access-denied");
                 }

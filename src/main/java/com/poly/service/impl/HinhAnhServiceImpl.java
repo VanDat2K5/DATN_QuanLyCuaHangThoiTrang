@@ -1,16 +1,22 @@
 package com.poly.service.impl;
 
 import com.poly.entity.HinhAnh;
+import com.poly.entity.SanPham;
 import com.poly.repository.HinhAnhRepository;
 import com.poly.service.HinhAnhService;
+import com.poly.service.SanPhamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -18,6 +24,9 @@ public class HinhAnhServiceImpl implements HinhAnhService {
 
     @Autowired
     private HinhAnhRepository hinhAnhRepository;
+
+    @Autowired
+    private SanPhamService sanPhamService;
 
     @Override
     public HinhAnh save(HinhAnh hinhAnh) {
@@ -63,5 +72,29 @@ public class HinhAnhServiceImpl implements HinhAnhService {
     @Transactional(readOnly = true)
     public boolean existsById(Integer id) {
         return hinhAnhRepository.existsById(id);
+    }
+
+    @Override
+    public void storeImages(SanPham sanPham, MultipartFile[] files) throws IOException {
+        if (sanPham == null || files == null || files.length == 0) {
+            return;
+        }
+
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+                // Dùng tên gốc của file (không thêm UUID, không lưu file)
+                String filename = file.getOriginalFilename();
+
+                // Kiểm tra nếu file tồn tại sẵn trong thư mục images
+                File imageFile = new File("src/main/resources/static/images", filename);
+                if (imageFile.exists()) {
+                    HinhAnh ha = new HinhAnh();
+                    ha.setSanPham(sanPham);
+                    ha.setHinhAnh("/images/" + filename); // Chỉ lưu đường dẫn
+                    hinhAnhRepository.save(ha);
+                }
+                // Nếu ảnh không tồn tại, bạn có thể bỏ qua hoặc throw lỗi tùy yêu cầu
+            }
+        }
     }
 }

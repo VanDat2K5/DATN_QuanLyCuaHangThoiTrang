@@ -1,4 +1,4 @@
-package com.poly.config;
+package com.poly.util.config;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
