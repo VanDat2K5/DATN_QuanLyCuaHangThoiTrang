@@ -1,8 +1,6 @@
 package com.poly.controller.admin;
+
 import com.poly.entity.ChiTietSanPham;
-import com.poly.entity.Mau;
-import com.poly.entity.Size;
-import com.poly.entity.SanPham;
 import com.poly.service.ChiTietSanPhamService;
 import com.poly.service.MauService;
 import com.poly.service.SizeService;
@@ -15,10 +13,14 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/admin/chitiet")
 public class CTSPManagementController {
-    @Autowired private ChiTietSanPhamService chiTietService;
-    @Autowired private SanPhamService sanPhamService;
-    @Autowired private MauService mauService;
-    @Autowired private SizeService sizeService;
+    @Autowired
+    private ChiTietSanPhamService chiTietService;
+    @Autowired
+    private SanPhamService sanPhamService;
+    @Autowired
+    private MauService mauService;
+    @Autowired
+    private SizeService sizeService;
 
     // Hiển thị list
     @GetMapping
@@ -30,8 +32,8 @@ public class CTSPManagementController {
     // Form thêm mới
     // trong CTSPManagementController
     @GetMapping("/add")
-    public String addForm(@RequestParam(value="productId", required=false) String productId,
-                          Model model) {
+    public String addForm(@RequestParam(value = "productId", required = false) String productId,
+            Model model) {
         ChiTietSanPham ct = new ChiTietSanPham();
         if (productId != null) {
             sanPhamService.findById(productId)
@@ -42,9 +44,6 @@ public class CTSPManagementController {
         model.addAttribute("sizes", sizeService.findAll());
         return "admin/chitiet/form";
     }
-
-
-
 
     // Form sửa
     @GetMapping("/edit/{id}")
@@ -71,4 +70,3 @@ public class CTSPManagementController {
         return "redirect:/admin/chitiet";
     }
 }
-

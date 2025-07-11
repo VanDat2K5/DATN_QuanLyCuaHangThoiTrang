@@ -11,4 +11,9 @@ public class AdminController {
     public String dashboard() {
         return "/admin/dashboard";
     }
+
+    @GetMapping("/revenue")
+    public String revenue() {
+        return "/admin/revenue.html";
+    }
 }
