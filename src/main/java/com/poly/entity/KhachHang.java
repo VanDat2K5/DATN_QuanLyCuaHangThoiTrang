@@ -17,13 +17,13 @@ public class KhachHang {
     @Column(name = "MaKH", length = 20)
     private String maKH;
 
-    @Column(name = "TenKH", nullable = false)
+    @Column(name = "TenKH")
     private String tenKH;
 
     @Column(name = "Email", nullable = false, unique = true, length = 50)
     private String email;
 
-    @Column(name = "SoDT", nullable = false, length = 10)
+    @Column(name = "SoDT", length = 10)
     private String soDT;
 
     @OneToOne(mappedBy = "khachHang")

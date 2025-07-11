@@ -4,7 +4,6 @@ import com.poly.entity.HinhAnh;
 import com.poly.entity.SanPham;
 import com.poly.repository.HinhAnhRepository;
 import com.poly.service.HinhAnhService;
-import com.poly.service.SanPhamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @Transactional
@@ -24,9 +22,6 @@ public class HinhAnhServiceImpl implements HinhAnhService {
 
     @Autowired
     private HinhAnhRepository hinhAnhRepository;
-
-    @Autowired
-    private SanPhamService sanPhamService;
 
     @Override
     public HinhAnh save(HinhAnh hinhAnh) {
