@@ -25,7 +25,7 @@ public class HoaDon {
     private String maHD;
 
     @ManyToOne
-    @JoinColumn(name = "MaNV", nullable = false)
+    @JoinColumn(name = "MaNV")
     private NhanVien nhanVien;
 
     @ManyToOne
@@ -36,7 +36,7 @@ public class HoaDon {
     @JoinColumn(name = "MaKM")
     private KhuyenMai khuyenMai;
 
-    @Column(name = "TongTien", nullable = false)
+    @Column(name = "TongTien")
     private BigDecimal tongTien;
 
     @Column(name = "NgayLap", nullable = false)
