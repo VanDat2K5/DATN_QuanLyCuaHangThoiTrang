@@ -37,6 +37,9 @@ public class LoginController {
     @Autowired
     private CodeGenerator codeGenerator;
 
+    @Autowired
+    private ResetPasswordLimiter resetPasswordLimiter;
+
     @GetMapping("/login")
     public String showLoginForm(HttpSession session) {
         // Nếu đã đăng nhập, chuyển hướng về trang chủ
@@ -212,6 +215,11 @@ public class LoginController {
     public String sendForgotPasswordEmail(@RequestParam("email") String email,
             RedirectAttributes redirectAttributes) {
         try {
+            // Kiểm tra giới hạn gửi email reset password
+            if (!resetPasswordLimiter.canSend(email)) {
+                redirectAttributes.addFlashAttribute("error", "Bạn đã gửi quá số lần cho phép. Vui lòng thử lại sau 1 phút.");
+                return "redirect:/forgot-password";
+            }
             // Kiểm tra email có tồn tại không
             Optional<KhachHang> khachHangOpt = khachHangService.findByEmail(email);
             if (khachHangOpt.isEmpty()) {

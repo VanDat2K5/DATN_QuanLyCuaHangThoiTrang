@@ -30153,3 +30153,34 @@ footer .footer-navbar .nav-item:last-child a {
 .footer-demo img {
   max-height: 55px !important;
 }
+/* ------------------header.html----------------------------------- */
+.header-banner-zone .row,
+.header-banner-zone .header-banner-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;   /* Đảm bảo hai ảnh cùng chiều cao */
+
+}
+
+.header-banner-zone .col {
+    flex: 1 1 0;
+    padding: 5;             /* Loại bỏ padding mặc định */
+}
+
+.header-banner-zone .banner-custom {
+    width: 100%;
+    height: 200px;          /* Hoặc chiều cao bạn muốn, ví dụ 180px, 220px,... */
+    object-fit: cover;
+    display: block;
+    border-radius: 0;
+}
+@media (max-width: 900px) {
+    .header-banner-zone .row,
+    .header-banner-zone .header-banner-row {
+        flex-direction: column;
+    }
+    .header-banner-zone .banner-custom {
+        height: 120px;
+    }
+}
