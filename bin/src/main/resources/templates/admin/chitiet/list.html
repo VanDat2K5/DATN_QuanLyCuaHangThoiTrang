@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách Chi Tiết Sản Phẩm</title>
+</head>
+<body>
+
+<h1>Danh sách Chi Tiết Sản Phẩm</h1>
+
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+    <tr>
+        <th>Màu</th><th>Size</th><th>Số lượng</th>
+        <th>Giá nhập</th><th>Giá xuất</th><th>Lô hàng</th><th>Hành động</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="ct : ${list}">
+        <td th:text="${ct.mau.tenMau}">Màu</td>
+        <td th:text="${ct.size.tenSize}">Size</td>
+        <td th:text="${ct.soLuong}">0</td>
+        <td th:text="${#numbers.formatDecimal(ct.giaNhap,1,'POINT',2,'NONE')}">0</td>
+        <td th:text="${#numbers.formatDecimal(ct.giaXuat,1,'POINT',2,'NONE')}">0</td>
+        <td th:text="${ct.loHang}">LH01</td>
+        <td>
+            <a th:href="@{/admin/chitiet/edit/{id}(id=${ct.id})}">Sửa</a>
+            |
+            <a th:href="@{/admin/chitiet/delete/{id}(id=${ct.id})}"
+               th:attr="onclick=|return confirm('Xác nhận xóa chi tiết ${ct.id}?');|">
+                Xóa
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
