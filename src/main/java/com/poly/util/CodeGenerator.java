@@ -2,8 +2,10 @@ package com.poly.util;
 
 import com.poly.entity.KhachHang;
 import com.poly.entity.NhanVien;
+import com.poly.service.HoaDonService;
 import com.poly.service.KhachHangService;
 import com.poly.service.NhanVienService;
+import com.poly.entity.HoaDon;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,11 +17,13 @@ public class CodeGenerator {
 
     private final KhachHangService khachHangService;
     private final NhanVienService nhanVienService;
+    private final HoaDonService  hoaDonService;
 
     @Autowired
-    public CodeGenerator(KhachHangService khachHangService, NhanVienService nhanVienService) {
+    public CodeGenerator(KhachHangService khachHangService, NhanVienService nhanVienService,  HoaDonService  hoaDonService) {
         this.khachHangService = khachHangService;
         this.nhanVienService = nhanVienService;
+        this.hoaDonService =  hoaDonService;
     }
 
     public String generateCustomerCode() {
@@ -39,7 +43,11 @@ public class CodeGenerator {
         int nextNumber = allNhanVien.size() + 1;
         return String.format("NV%03d", nextNumber);
     }
-
+    public String generateOrderCode() {
+        List<HoaDon> allHoaDon =  hoaDonService.findAll();
+        int nextNumber = allHoaDon.size() + 1;
+        return String.format("HD%03d", nextNumber);
+    }
     // khachHang.setMaKH(UUID.randomUUID().toString().substring(0, 20));
     // public boolean isCustomerCodeExists(String maKH) {
     // List<KhachHang> allKhachHang = khachHangService.findAll();

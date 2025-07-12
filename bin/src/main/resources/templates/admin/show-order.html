@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{admin/admin-layout :: view(~{::title}, ~{::.content})}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> Danh sách hoá đơn</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+    <style>
+      .nav-link {
+        color: #fff;
+        font-weight: 500;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid mt-5">
+      <!-- <div class="row">
+
+        Main content
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-4 offset-md-3 offset-lg-2 overflow-auto">  -->
+      <div class="content">
+        <h1 class="my-4">Danh sách Đơn hàng</h1>
+
+        <!-- Pagination on top -->
+        <div class="d-flex justify-content-between mb-3">
+          <div class="d-flex">
+            <select class="form-select w-auto" id="action-select">
+              <option value="">Chọn hành động</option>
+              <option value="delete">Xóa</option>
+            </select>
+            <button class="btn btn-primary ms-2" id="apply-action-btn">Áp dụng</button>
+           <a class="btn btn-success ms-2" th:href="@{/admin/management/order/create}">Tạo đơn hàng</a>
+          </div>
+          <form class="w-25">
+            <input type="text" class="form-control" placeholder="Tìm kiếm..." />
+          </form>
+        </div>
+
+        <!-- Pagination -->
+        <nav>
+          <ul class="pagination justify-content-start">
+            <li class="page-item"><a class="page-link" href="#">Trước</a></li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">Sau</a></li>
+          </ul>
+        </nav>
+
+        <table class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">
+                <input type="checkbox" id="select-all" />
+                <!-- Checkbox "Chọn tất cả" -->
+              </th>
+              <th scope="col">Tiêu đề</th>
+              <th scope="col">Tác giả</th>
+              <th scope="col">Danh mục</th>
+              <th scope="col">Thời gian</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Product 1 -->
+            <tr>
+              <td>
+                <input type="checkbox" class="select-checkbox" />
+              </td>
+              <td>Các Công Dụng Của Nghệ</td>
+              <td>Tien</td>
+              <td>Bài thuốc</td>
+              <td>Đã xuất bản</td>
+            </tr>
+            <!-- Product 2 -->
+            <tr>
+              <td>
+                <input type="checkbox" class="select-checkbox" />
+              </td>
+              <td>Cách Làm Bông Cải Xào Cà Rốt Ngon</td>
+              <td>Tien</td>
+              <td>Công thức</td>
+              <td>Đã xuất bản</td>
+            </tr>
+            <!-- Product 3 -->
+            <tr>
+              <td>
+                <input type="checkbox" class="select-checkbox" />
+              </td>
+              <td>Cách Làm Gà Kho Sả Nghệ Ngon</td>
+              <td>Tuong</td>
+              <td>Công thức</td>
+              <td>Đã xuất bản</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Pagination at the bottom -->
+        <nav>
+          <ul class="pagination justify-content-start">
+            <li class="page-item"><a class="page-link" href="#">Trước</a></li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">Sau</a></li>
+          </ul>
+        </nav>
+      </div>
+      <!-- </main>
+      </div> -->
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

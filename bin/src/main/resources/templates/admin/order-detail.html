@@ -1,0 +1,40 @@
+a<!DOCTYPE html>
+<html lang="en" th:replace="~{admin/admin-layout :: view(~{::title}, ~{::.content})}">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết hóa đơn</title>
+</head>
+<body>
+<div class="content">
+    <h2>Chi tiết hóa đơn #<span th:text="${order.id}"></span></h2>
+
+    <p><strong>Khách hàng:</strong> <span th:text="${order.user.fullname}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${order.user.email}"></span></p>
+    <p><strong>Ngày đặt:</strong> <span th:text="${#dates.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></span></p>
+    <p><strong>Địa chỉ giao hàng:</strong> <span th:text="${order.shippingAddress}"></span></p>
+    <p><strong>Phương thức thanh toán:</strong> <span th:text="${order.paymentMethod}"></span></p>
+
+    <h3>Sản phẩm đã đặt</h3>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Tên sản phẩm</th>
+            <th>Số lượng</th>
+            <th>Giá</th>
+            <th>Tổng</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="detail : ${order.orderDetails}">
+            <td th:text="${detail.product.productName}"></td>
+            <td th:text="${detail.quantity}"></td>
+            <td th:text="${detail.price}"></td>
+            <td th:text="${detail.quantity * detail.price}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p><strong>Tổng tiền:</strong> <span th:text="${order.total}"></span></p>
+</div>
+</body>
+</html>
