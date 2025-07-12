@@ -11,7 +11,7 @@ public interface ChiTietHoaDonService {
 
     // List<ChiTietHoaDon> findByMaHD(String maHoaDon);
 
-    Optional<ChiTietHoaDon> findById(String id);
+    Optional<ChiTietHoaDon> findById(Integer id);
 
     List<ChiTietHoaDon> findAll();
 

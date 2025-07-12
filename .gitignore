@@ -43,7 +43,8 @@ src/main/resources/firebase-config.json
 src/main/resources/application.properties
 
 
-bin
+# Ignore bin directories (often created by macOS users)
+bin/
 
 # Ignore macOS system files
 .DS_Store
