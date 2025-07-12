@@ -42,6 +42,9 @@ src/main/resources/firebase-config.json
 ### Application Properties ###
 src/main/resources/application.properties
 
+
+bin
+
 # Ignore macOS system files
 .DS_Store
 
