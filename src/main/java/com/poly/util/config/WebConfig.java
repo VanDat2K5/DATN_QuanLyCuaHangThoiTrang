@@ -26,12 +26,17 @@ public class WebConfig implements WebMvcConfigurer {
                             "/register",
                             "/access-denied",
                             "/css/**",
-                            "/js/**", "/vendors/**",
-                            "/images/**", "/country-flag-16x16/**",
+                            "/images/**",
+                            "/img/**",
+                            "/js/**",
+                            "/vendors/**",
+                            "/country-flag-16x16/**",
                             "/fashion-store/**",
                             "/fonts/**",
+                            "/demos/**",
                             "/static/**",
-                            "/");
+                            "/"
+                    );
         }
         if (userInterceptor != null) {
             registry.addInterceptor(userInterceptor)
@@ -41,12 +46,17 @@ public class WebConfig implements WebMvcConfigurer {
                             "/register",
                             "/access-denied",
                             "/css/**",
-                            "/js/**", "/vendors/**",
-                            "/images/**", "/country-flag-16x16/**",
+                            "/images/**",
+                            "/img/**",
+                            "/js/**",
+                            "/vendors/**",
+                            "/country-flag-16x16/**",
                             "/fashion-store/**",
                             "/fonts/**",
+                            "/demos/**",
                             "/static/**",
-                            "/");
+                            "/"
+                    );
         }
     }
 }
