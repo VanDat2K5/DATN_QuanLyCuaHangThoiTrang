@@ -29,8 +29,8 @@
 						<option value="delete">Xóa</option>
 					</select>
 					<button class="btn btn-primary ms-2" id="apply-action-btn">Áp dụng</button>
-					<a class="btn btn-success ms-2"th:href="@{/admin/management/orders/create}">Tạo đơn hàng</a>
-				</div>
+<!-- 					<a class="btn btn-success ms-2"th:href="@{/admin/management/orders/create}">Tạo đơn hàng</a>
+ -->				</div>
 				<form class="w-25">
 					<input type="text" class="form-control" placeholder="Tìm kiếm..." />
 				</form>
@@ -56,11 +56,20 @@
 						<td th:text="${order.maHD}">mahd</td> 
 						<td th:text="${#temporals.format(order.ngayLap, 'dd/MM/yyyy')}"></td>
 						<td class="money" th:text="${order.tongTien}">tien</td> 
-						<td th:text="${order.trangThai}">Đã giao</td> 
+						<td>
+						    <select name="trangThai" th:name="'trangThai_' + ${order.maHD}">
+						        <option value="DaThanhToan" th:selected="${order.trangThai == 'DaThanhToan'}">Đã thanh toán</option>
+						        <option value="DangVanChuyen" th:selected="${order.trangThai == 'DangVanChuyen'}">Đang vận chuyển</option>
+						        <option value="DaNhanHang" th:selected="${order.trangThai == 'DaNhanHang'}">Đã nhận hàng</option>
+						        <option value="DaHuy" th:selected="${order.trangThai == 'DaHuy'}">Đã hủy</option>
+						        <option value="Doi-Tra_Hang" th:selected="${order.trangThai == 'Doi-Tra_Hang'}">Đổi/Trả hàng</option>
+						    </select>
+						</td>
+						
 						<td><a class="btn btn-sm btn-info"
 							th:href="@{'/admin/management/orders/view/' + ${order.maHD}}">Xem</a>
 							<a class="btn btn-sm btn-warning"
-							th:href="@{'/admin/management/orders/edit/' + ${order.maHD}}">Sửa</a>
+							th:href="@{'/admin/management/orders/edit/' + ${order.maHD}}"> Lưu </a>
 							<a class="btn btn-sm btn-danger"
 							th:href="@{'/admin/management/orders/delete/' + ${order.maHD}}"
 							onclick="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này?')">Xóa</a>
