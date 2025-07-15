@@ -59,16 +59,16 @@ public class PublicController {
         return "Client/demo-fashion-store-magazine";
     }
 
-    // Trang shop
-    @GetMapping("/shop")
-    public String publicShop(HttpSession session, Model model) {
-        if (session.getAttribute("user") != null) {
-            model.addAttribute("user", session.getAttribute("user"));
-            model.addAttribute("username", session.getAttribute("username"));
-            model.addAttribute("userRole", session.getAttribute("userRole"));
-        }
-        return "Client/demo-fashion-store-shop";
-    }
+//    // Trang shop
+//    @GetMapping("/shop")
+//    public String publicShop(HttpSession session, Model model) {
+//        if (session.getAttribute("user") != null) {
+//            model.addAttribute("user", session.getAttribute("user"));
+//            model.addAttribute("username", session.getAttribute("username"));
+//            model.addAttribute("userRole", session.getAttribute("userRole"));
+//        }
+//        return "Client/demo-fashion-store-shop";
+//    }
 
     // Trang collection
     @GetMapping("/collection")

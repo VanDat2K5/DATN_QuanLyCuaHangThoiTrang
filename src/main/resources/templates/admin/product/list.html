@@ -33,7 +33,7 @@
             <!-- Ảnh đại diện -->
             <td>
                 <img th:if="${productImages[p.maSP]} != null"
-                     th:src="@{${productImages[p.maSP]}}"
+                     th:src="@{'/images/' + ${productImages[p.maSP]}}"
                      alt="Ảnh đại diện"
                      class="img-thumbnail"
                      style="max-width:60px; max-height:60px"/>

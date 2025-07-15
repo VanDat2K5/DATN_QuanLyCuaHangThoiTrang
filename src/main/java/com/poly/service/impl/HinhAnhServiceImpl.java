@@ -75,26 +75,17 @@ public class HinhAnhServiceImpl implements HinhAnhService {
     }
 
     @Override
-    public void storeImages(SanPham sanPham, MultipartFile[] files) throws IOException {
-        if (sanPham == null || files == null || files.length == 0) {
-            return;
-        }
+    public void storeImages(SanPham sp, MultipartFile[] images) throws IOException {
+        for (MultipartFile file : images) {
+            String fileName = file.getOriginalFilename(); // ✅ lấy tên file gốc
 
-        for (MultipartFile file : files) {
-            if (!file.isEmpty()) {
-                // Dùng tên gốc của file (không thêm UUID, không lưu file)
-                String filename = file.getOriginalFilename();
+            if (fileName == null || fileName.isBlank()) continue;
 
-                // Kiểm tra nếu file tồn tại sẵn trong thư mục images
-                File imageFile = new File("src/main/resources/static/images", filename);
-                if (imageFile.exists()) {
-                    HinhAnh ha = new HinhAnh();
-                    ha.setSanPham(sanPham);
-                    ha.setHinhAnh("/images/" + filename); // Chỉ lưu đường dẫn
-                    hinhAnhRepository.save(ha);
-                }
-                // Nếu ảnh không tồn tại, bạn có thể bỏ qua hoặc throw lỗi tùy yêu cầu
-            }
+            HinhAnh img = new HinhAnh();
+            img.setSanPham(sp);
+            img.setHinhAnh(fileName); // ✅ chỉ lưu tên file vào DB
+            hinhAnhRepository.save(img); // ✅ đúng biến repo
         }
     }
+
 }

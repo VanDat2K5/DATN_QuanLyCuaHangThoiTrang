@@ -1,5 +1,6 @@
 package com.poly.service;
 
+import com.poly.dto.SanPhamViewDTO;
 import com.poly.entity.SanPham;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,4 +23,6 @@ public interface SanPhamService {
     List<SanPham> findByLoaiSanPham_MaLoaiSP(String maLoaiSP);
 
     boolean existsById(String id);
+
+    Page<SanPhamViewDTO> findAllSanPhamDTO(Pageable pageable);
 }

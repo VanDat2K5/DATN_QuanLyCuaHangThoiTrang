@@ -1,5 +1,6 @@
 package com.poly.service.impl;
 
+import com.poly.dto.SanPhamViewDTO;
 import com.poly.entity.SanPham;
 import com.poly.repository.SanPhamRepository;
 import com.poly.service.SanPhamService;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -63,5 +65,11 @@ public class SanPhamServiceImpl implements SanPhamService {
     @Transactional(readOnly = true)
     public boolean existsById(String id) {
         return sanPhamRepository.existsById(id);
+    }
+
+    @Override
+    public Page<SanPhamViewDTO> findAllSanPhamDTO(Pageable pageable) {
+        Page<SanPham> sanPhamPage = sanPhamRepository.findAll(pageable);
+        return sanPhamPage.map(SanPhamViewDTO::new); // convert sang DTO
     }
 }
