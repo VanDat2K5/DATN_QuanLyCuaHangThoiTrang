@@ -43,6 +43,7 @@ public class ProductManagementController {
 
         model.addAttribute("products", products);
         model.addAttribute("productImages", productImages);
+        model.addAttribute("genders", SanPham.Gender.values()); // Thêm enum giới tính
         return "admin/product/list";
     }
 
@@ -51,23 +52,30 @@ public class ProductManagementController {
     public String showCreateForm(Model model) {
         model.addAttribute("productForm", new SanPham());
         model.addAttribute("categories", loaiSanPhamService.findAll());
+        model.addAttribute("genders", SanPham.Gender.values()); // Thêm enum giới tính
         return "admin/product/create";
     }
 
     // ✅ Tạo sản phẩm + gán ảnh từ thư mục có sẵn
     @PostMapping("/create")
     public String createProduct(@ModelAttribute("productForm") @Valid SanPham sanPham,
-                                BindingResult br,
-                                @RequestParam("images") MultipartFile[] images,
-                                RedirectAttributes ra,
-                                Model model) throws IOException {
+            BindingResult br,
+            @RequestParam("images") MultipartFile[] images,
+            RedirectAttributes ra,
+            Model model) throws IOException {
         if (br.hasErrors()) {
             model.addAttribute("categories", loaiSanPhamService.findAll());
+            model.addAttribute("genders", SanPham.Gender.values()); // Thêm enum giới tính
             return "admin/product/create";
         }
 
         if (sanPham.getMaSP() == null || sanPham.getMaSP().isBlank()) {
             sanPham.setMaSP("SP" + System.currentTimeMillis());
+        }
+
+        // Đảm bảo có giá trị giới tính mặc định
+        if (sanPham.getGioiTinh() == null) {
+            sanPham.setGioiTinh(SanPham.Gender.UNISEX);
         }
 
         SanPham savedProduct = sanPhamService.save(sanPham);
@@ -91,19 +99,26 @@ public class ProductManagementController {
         model.addAttribute("productForm", sp);
         model.addAttribute("categories", loaiSanPhamService.findAll());
         model.addAttribute("images", images);
+        model.addAttribute("genders", SanPham.Gender.values()); // Thêm enum giới tính
         return "admin/product/edit";
     }
 
     // ✅ Cập nhật sản phẩm (không ảnh)
     @PostMapping("/{id}/edit")
     public String updateProduct(@PathVariable("id") String id,
-                                @Valid @ModelAttribute("productForm") SanPham sanPham,
-                                BindingResult result,
-                                RedirectAttributes ra,
-                                Model model) {
+            @Valid @ModelAttribute("productForm") SanPham sanPham,
+            BindingResult result,
+            RedirectAttributes ra,
+            Model model) {
         if (result.hasErrors()) {
             model.addAttribute("categories", loaiSanPhamService.findAll());
+            model.addAttribute("genders", SanPham.Gender.values()); // Thêm enum giới tính
             return "admin/product/edit";
+        }
+
+        // Đảm bảo có giá trị giới tính
+        if (sanPham.getGioiTinh() == null) {
+            sanPham.setGioiTinh(SanPham.Gender.UNISEX);
         }
 
         sanPhamService.save(sanPham);
@@ -114,8 +129,8 @@ public class ProductManagementController {
     // ✅ Thêm ảnh từ thư mục /images (không upload)
     @PostMapping("/{id}/edit/images")
     public String uploadMoreImages(@PathVariable("id") String id,
-                                   @RequestParam("images") MultipartFile[] images,
-                                   RedirectAttributes ra) throws IOException {
+            @RequestParam("images") MultipartFile[] images,
+            RedirectAttributes ra) throws IOException {
         SanPham sp = sanPhamService.findById(id).orElse(null);
         if (sp == null) {
             ra.addFlashAttribute("error", "Không tìm thấy sản phẩm để cập nhật ảnh!");
@@ -130,8 +145,8 @@ public class ProductManagementController {
     // ✅ Xoá ảnh theo ID
     @PostMapping("/images/{id}/delete")
     public String deleteImage(@PathVariable("id") Integer imageId,
-                              @RequestParam("productId") String productId,
-                              RedirectAttributes ra) {
+            @RequestParam("productId") String productId,
+            RedirectAttributes ra) {
         hinhAnhService.deleteById(imageId);
         ra.addFlashAttribute("message", "Xoá ảnh thành công!");
         return "redirect:/admin/products/" + productId + "/edit";
