@@ -1,0 +1,231 @@
+﻿<!doctype html>
+<html class="no-js" lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Crafto - The Multipurpose HTML5 Template</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta name="description" content="Elevate your online presence with Crafto - a modern, versatile, multipurpose Bootstrap 5 responsive HTML5, SCSS template.">
+
+    <!-- Custom CSS to fix layout + hover effects -->
+    <style>
+        ul.shop-wrapper.grid-loading {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            padding: 0;
+            list-style: none;
+        }
+
+        ul.shop-wrapper li.grid-item {
+            width: calc(25% - 30px);
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        @media (max-width: 1200px) {
+            ul.shop-wrapper li.grid-item {
+                width: calc(33.33% - 30px);
+            }
+        }
+
+        @media (max-width: 992px) {
+            ul.shop-wrapper li.grid-item {
+                width: calc(50% - 30px);
+            }
+        }
+
+        @media (max-width: 576px) {
+            ul.shop-wrapper li.grid-item {
+                width: 100%;
+            }
+        }
+
+        .shop-box {
+            border: 1px solid #e6e6e6;
+            padding: 10px;
+            position: relative;
+            overflow: hidden;
+            background: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .shop-box:hover {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .shop-image {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shop-image img {
+            width: 100%;
+            height: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .shop-box:hover .shop-image img {
+            transform: scale(1.05);
+        }
+
+        .shop-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .shop-box:hover .shop-overlay {
+            opacity: 1;
+        }
+
+        .shop-buttons-wrap {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .shop-box:hover .shop-buttons-wrap {
+            opacity: 1;
+            bottom: 30px;
+        }
+
+        .shop-buttons-wrap .btn {
+            background: white;
+            color: black;
+            padding: 5px 15px;
+            font-size: 14px;
+            border-radius: 30px;
+            border: 1px solid black;
+            transition: background 0.3s;
+            text-decoration: none;
+        }
+
+        .shop-buttons-wrap .btn:hover {
+            background: black;
+            color: white;
+        }
+
+        .shop-footer {
+            margin-top: 10px;
+        }
+
+        .shop-footer a {
+            display: block;
+            text-decoration: none;
+            color: #111;
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .shop-footer .price {
+            color: #666;
+            font-size: 15px;
+        }
+    </style>
+</head>
+
+<body data-mobile-nav-style="classic">
+<div th:replace="~{Client/header :: header}"></div>
+
+<!-- Page Title -->
+<section class="top-space-margin half-section bg-gradient-very-light-gray">
+    <!-- … -->
+</section>
+
+<!-- Shop Listing -->
+<section class="pt-0 ps-6 pe-6 lg-ps-2 lg-pe-2 sm-ps-0 sm-pe-0">
+    <div class="container-fluid">
+        <div class="row flex-row-reverse">
+            <!-- Products Grid -->
+            <div class="col-xxl-10 col-lg-9 ps-5 md-ps-15px md-mb-60px">
+                <ul class="shop-modern shop-wrapper grid-loading text-center">
+                    <li class="grid-item" th:each="sp : ${products}">
+                        <div class="shop-box mb-10px">
+                            <div class="shop-image mb-20px">
+                                <a th:href="@{/shop/{id}(id=${sp.maSP})}">
+                                    <img th:if="${sp.hinhAnhDauTien != null}"
+                                         th:src="${sp.hinhAnhDauTien}"
+                                         alt="Ảnh sản phẩm" />
+                                    <img th:if="${sp.hinhAnhDauTien == null}"
+                                         src="/images/default.png"
+                                         alt="Không có ảnh" />
+                                    <div class="shop-overlay"></div>
+                                </a>
+                                <div class="shop-buttons-wrap">
+                                    <a th:href="@{/shop/{id}(id=${sp.maSP})}"
+                                       class="btn add-to-cart">
+                                        <i class="feather icon-feather-shopping-bag"></i>
+                                        <span class="quick-view-text button-text">Add to cart</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="shop-footer text-center">
+                                <a th:href="@{/shop/{id}(id=${sp.maSP})}"
+                                   th:text="${sp.tenSP}">Product Name</a>
+                                <div class="price" th:text="${'$' + sp.giaXuat}">Price</div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+
+                <!-- Pagination -->
+                <div class="w-100 d-flex mt-4 justify-content-center md-mt-30px"
+                     th:if="${totalPages > 1}">
+                    <ul class="pagination pagination-style-01 fs-13 fw-500 mb-0">
+                        <li class="page-item" th:classappend="${currentPage == 1} ? ' disabled'">
+                            <a class="page-link"
+                               th:href="@{/shop(page=${currentPage - 1}, size=${pageSize})}">
+                                <i class="feather icon-feather-arrow-left fs-18 d-xs-none"></i>
+                            </a>
+                        </li>
+                        <li class="page-item"
+                            th:each="i : ${#numbers.sequence(1, totalPages)}"
+                            th:classappend="${i == currentPage} ? ' active'">
+                            <a class="page-link"
+                               th:href="@{/shop(page=${i}, size=${pageSize})}"
+                               th:text="${i}">1</a>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == totalPages} ? ' disabled'">
+                            <a class="page-link"
+                               th:href="@{/shop(page=${currentPage + 1}, size=${pageSize})}">
+                                <i class="feather icon-feather-arrow-right fs-18 d-xs-none"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <!-- <div class="col-xxl-2 col-lg-3 shop-sidebar">
+                <div th:replace="~{Client/shop-sidebar :: sidebar}"></div>
+            </div> -->
+        </div>
+    </div>
+</section>
+
+<div th:replace="Client/footer :: footer"></div>
+
+<!-- Scroll progress -->
+<div class="scroll-progress d-none d-xxl-block">
+    <a href="#" class="scroll-top" aria-label="scroll">
+        <span class="scroll-text">Scroll</span><span class="scroll-line"><span class="scroll-point"></span></span>
+    </a>
+</div>
+
+<!--&lt;!&ndash; JavaScript (chỉ dùng jQuery nếu cần tương tác) &ndash;&gt;-->
+<!--<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+<!--<script type="text/javascript" src="/js/vendors.min.js"></script>-->
+<!--<script type="text/javascript" src="/js/main.js"></script>-->
+</body>
+</html>
