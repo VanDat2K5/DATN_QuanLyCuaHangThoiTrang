@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt hàng thành công - Fashion Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        .success-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .success-card {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border-radius: 20px;
+            padding: 40px;
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .success-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        .order-details {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .btn-action {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+        }
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+            color: white;
+        }
+        .btn-secondary-action {
+            background: linear-gradient(45deg, #6c757d, #495057);
+        }
+        .btn-secondary-action:hover {
+            color: white;
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+        }
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ffd700;
+            animation: confetti-fall 3s linear infinite;
+        }
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div th:replace="Client/header :: header"></div>
+
+    <div class="container success-container">
+        <!-- Thông báo thành công -->
+        <div class="success-card">
+            <div class="success-icon">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <h2>Đặt hàng thành công!</h2>
+            <p class="mb-0">Cảm ơn bạn đã mua sắm tại Fashion Store</p>
+        </div>
+
+        <!-- Thông tin đơn hàng -->
+        <div class="order-details">
+            <h5><i class="bi bi-receipt"></i> Thông tin đơn hàng</h5>
+            <hr>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Mã đơn hàng:</strong></p>
+                    <p class="text-primary fw-bold" th:text="${order.maHD}">HD123456789</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Ngày đặt:</strong></p>
+                    <p th:text="${#temporals.format(order.ngayLap, 'dd/MM/yyyy')}">01/01/2024</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Tổng tiền:</strong></p>
+                    <p class="text-danger fw-bold fs-5" th:text="${#numbers.formatDecimal(order.tongTien, 0, 'COMMA', 0, 'POINT')} + ' VND'">500,000 VND</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Trạng thái:</strong></p>
+                    <span class="badge bg-success">Đã thanh toán</span>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-12">
+                    <p><strong>Người nhận:</strong> <span th:text="${order.tenNguoiNhan}">Nguyễn Văn A</span></p>
+                    <p><strong>Số điện thoại:</strong> <span th:text="${order.soDTNhanHang}">0123456789</span></p>
+                    <p><strong>Địa chỉ giao hàng:</strong></p>
+                    <p class="text-muted" th:text="${order.dcNhanHang}">123 Đường ABC, Quận 1, TP.HCM</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thông tin bổ sung -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-info-circle"></i> Thông tin bổ sung</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-truck"></i>
+                    <strong>Vận chuyển:</strong> Đơn hàng sẽ được giao trong 2-3 ngày làm việc
+                </div>
+                <div class="alert alert-warning">
+                    <i class="bi bi-phone"></i>
+                    <strong>Liên hệ:</strong> Chúng tôi sẽ gọi điện xác nhận đơn hàng trong vòng 30 phút
+                </div>
+                <div class="alert alert-success">
+                    <i class="bi bi-envelope"></i>
+                    <strong>Email:</strong> Thông tin chi tiết đã được gửi đến email của bạn
+                </div>
+            </div>
+        </div>
+
+        <!-- Các nút hành động -->
+        <div class="text-center mt-4">
+            <a href="/user/profile" class="btn-action">
+                <i class="bi bi-person"></i> Xem đơn hàng của tôi
+            </a>
+            <a href="/shop" class="btn-action btn-secondary-action">
+                <i class="bi bi-shop"></i> Tiếp tục mua sắm
+            </a>
+            <a href="/" class="btn-action btn-secondary-action">
+                <i class="bi bi-house"></i> Về trang chủ
+            </a>
+        </div>
+
+        <!-- Mã QR để theo dõi đơn hàng -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5><i class="bi bi-qr-code"></i> Theo dõi đơn hàng</h5>
+            </div>
+            <div class="card-body text-center">
+                <p class="text-muted">Quét mã QR bên dưới để theo dõi trạng thái đơn hàng</p>
+                <div id="trackingQR" class="d-inline-block p-3 bg-light rounded">
+                    <!-- QR code sẽ được tạo bằng JavaScript -->
+                </div>
+                <p class="mt-2 text-muted small">Hoặc truy cập: <span th:text="${'https://yourdomain.com/track/' + order.maHD}">https://yourdomain.com/track/HD123456789</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div th:replace="Client/footer :: footer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script th:inline="javascript">
+        // Lấy dữ liệu từ Thymeleaf
+        const orderId = /*[[${order.maHD}]]*/ 'HD123456789';
+        
+        // Tạo confetti effect
+        function createConfetti() {
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                confetti.style.backgroundColor = ['#ffd700', '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4'][Math.floor(Math.random() * 5)];
+                document.body.appendChild(confetti);
+                
+                // Xóa confetti sau khi animation kết thúc
+                setTimeout(() => {
+                    confetti.remove();
+                }, 3000);
+            }
+        }
+
+        // Tạo QR code theo dõi đơn hàng
+        function generateTrackingQR() {
+            const trackingUrl = `https://yourdomain.com/track/${orderId}`;
+            QRCode.toCanvas(document.getElementById('trackingQR'), trackingUrl, {
+                width: 150,
+                margin: 2,
+                color: {
+                    dark: '#000000',
+                    light: '#FFFFFF'
+                }
+            }, function (error) {
+                if (error) console.error(error);
+            });
+        }
+
+        // Khởi tạo trang
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tạo confetti
+            createConfetti();
+            
+            // Tạo QR code
+            generateTrackingQR();
+            
+            // Tự động scroll lên đầu trang
+            window.scrollTo(0, 0);
+        });
+
+        // Thêm hiệu ứng hover cho các nút
+        document.querySelectorAll('.btn-action').forEach(btn => {
+            btn.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+            
+            btn.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html> 

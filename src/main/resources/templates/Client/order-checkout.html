@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt hàng - Fashion Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        .checkout-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .order-summary {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        .btn-confirm {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+        .btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+            color: white;
+        }
+        .loading {
+            display: none;
+        }
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div th:replace="Client/header :: header"></div>
+
+    <div class="container checkout-container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="text-center mb-4">
+                    <i class="bi bi-cart-check"></i> Xác nhận đặt hàng
+                </h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Thông tin đơn hàng -->
+            <div class="col-md-6">
+                <div class="order-summary">
+                    <h5><i class="bi bi-receipt"></i> Thông tin đơn hàng</h5>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Sản phẩm:</span>
+                        <span th:text="${orderInfo.orderItems}">Áo thun nam, Quần jean nữ</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Tổng tiền:</span>
+                        <span class="fw-bold text-primary" th:text="${#numbers.formatDecimal(orderInfo.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'">500,000 VND</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Phí vận chuyển:</span>
+                        <span>Miễn phí</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <span class="fw-bold">Tổng thanh toán:</span>
+                        <span class="fw-bold text-danger fs-5" th:text="${#numbers.formatDecimal(orderInfo.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'">500,000 VND</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form thông tin giao hàng -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="bi bi-truck"></i> Thông tin giao hàng</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="checkoutForm">
+                            <div class="mb-3">
+                                <label for="fullName" class="form-label">Họ và tên người nhận</label>
+                                <input type="text" class="form-control" id="fullName" 
+                                       th:value="${user.tenKH}" readonly>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="phoneNumber" class="form-label">Số điện thoại</label>
+                                <input type="tel" class="form-control" id="phoneNumber" 
+                                       th:value="${orderInfo.phoneNumber}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="shippingAddress" class="form-label">Địa chỉ giao hàng</label>
+                                <textarea class="form-control" id="shippingAddress" rows="3" 
+                                          th:text="${orderInfo.shippingAddress}" required></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="paymentMethod" class="form-label">Phương thức thanh toán</label>
+                                <select class="form-select" id="paymentMethod" required>
+                                    <option value="QR">QR Code (Ngân hàng)</option>
+                                    <option value="COD">Thanh toán khi nhận hàng (COD)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="notes" class="form-label">Ghi chú (tùy chọn)</label>
+                                <textarea class="form-control" id="notes" rows="2" 
+                                          placeholder="Ghi chú về đơn hàng..."></textarea>
+                            </div>
+                            
+                            <input type="hidden" id="totalAmount" th:value="${orderInfo.totalAmount}">
+                            <input type="hidden" id="orderItems" th:value="${orderInfo.orderItems}">
+                            
+                            <button type="submit" class="btn btn-confirm w-100" id="confirmBtn">
+                                <span class="btn-text">
+                                    <i class="bi bi-check-circle"></i> Xác nhận đặt hàng
+                                </span>
+                                <span class="loading">
+                                    <span class="spinner-border spinner-border-sm" role="status"></span>
+                                    Đang xử lý...
+                                </span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal QR Code -->
+    <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="qrModalLabel">
+                        <i class="bi bi-qr-code"></i> Thanh toán bằng QR Code
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div id="qrCodeContainer">
+                        <!-- QR code sẽ được hiển thị ở đây -->
+                    </div>
+                    <div class="mt-3">
+                        <p class="text-muted">Quét mã QR bằng ứng dụng ngân hàng để thanh toán</p>
+                        <p class="fw-bold">Số tiền: <span id="modalAmount"></span></p>
+                        <p class="text-muted">Nội dung: <span id="modalContent"></span></p>
+                    </div>
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-primary" id="checkPaymentBtn">
+                            <i class="bi bi-arrow-clockwise"></i> Kiểm tra thanh toán
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div th:replace="Client/footer :: footer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentOrderId = null;
+        let checkPaymentInterval = null;
+
+        document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            
+            if (paymentMethod === 'QR') {
+                confirmOrderWithQR();
+            } else {
+                confirmOrderWithCOD();
+            }
+        });
+
+        function confirmOrderWithQR() {
+            const btn = document.getElementById('confirmBtn');
+            const btnText = btn.querySelector('.btn-text');
+            const loading = btn.querySelector('.loading');
+            
+            // Hiển thị loading
+            btnText.style.display = 'none';
+            loading.style.display = 'inline-block';
+            btn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('totalAmount', document.getElementById('totalAmount').value);
+            formData.append('shippingAddress', document.getElementById('shippingAddress').value);
+            formData.append('phoneNumber', document.getElementById('phoneNumber').value);
+            formData.append('orderItems', document.getElementById('orderItems').value);
+
+            fetch('/order/confirm', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    currentOrderId = data.orderId;
+                    showQRCode(data.qrCode, data.totalAmount, data.paymentContent);
+                } else {
+                    alert('Có lỗi xảy ra: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra khi xác nhận đơn hàng');
+            })
+            .finally(() => {
+                // Ẩn loading
+                btnText.style.display = 'inline-block';
+                loading.style.display = 'none';
+                btn.disabled = false;
+            });
+        }
+
+        function confirmOrderWithCOD() {
+            alert('Chức năng thanh toán COD sẽ được phát triển sau!');
+        }
+
+        function showQRCode(qrCodeBase64, amount, content) {
+            document.getElementById('qrCodeContainer').innerHTML = 
+                `<img src="${qrCodeBase64}" alt="QR Code" class="img-fluid" style="max-width: 300px;">`;
+            document.getElementById('modalAmount').textContent = formatCurrency(amount);
+            document.getElementById('modalContent').textContent = content;
+            
+            const modal = new bootstrap.Modal(document.getElementById('qrModal'));
+            modal.show();
+            
+            // Bắt đầu kiểm tra thanh toán
+            startPaymentCheck();
+        }
+
+        function startPaymentCheck() {
+            // Kiểm tra mỗi 5 giây
+            checkPaymentInterval = setInterval(() => {
+                checkPaymentStatus();
+            }, 5000);
+        }
+
+        function checkPaymentStatus() {
+            if (!currentOrderId) return;
+
+            fetch(`/order/check-payment/${currentOrderId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.isPaid) {
+                    clearInterval(checkPaymentInterval);
+                    alert('Thanh toán thành công!');
+                    window.location.href = `/order/success/${currentOrderId}`;
+                }
+            })
+            .catch(error => {
+                console.error('Error checking payment:', error);
+            });
+        }
+
+        document.getElementById('checkPaymentBtn').addEventListener('click', function() {
+            if (currentOrderId) {
+                checkPaymentStatus();
+            }
+        });
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(amount);
+        }
+
+        // Dừng kiểm tra khi đóng modal
+        document.getElementById('qrModal').addEventListener('hidden.bs.modal', function() {
+            if (checkPaymentInterval) {
+                clearInterval(checkPaymentInterval);
+            }
+        });
+    </script>
+</body>
+</html> 

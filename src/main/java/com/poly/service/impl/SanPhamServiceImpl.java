@@ -73,4 +73,20 @@ public class SanPhamServiceImpl implements SanPhamService {
         return sanPhamPage.map(SanPhamViewDTO::new); // convert sang DTO
     }
 
+    @Transactional(readOnly = true)
+    public List<SanPham> findByGioiTinh(SanPham.Gender gioiTinh) {
+        return sanPhamRepository.findByGioiTinh(gioiTinh);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SanPham> findByLoaiSanPham_MaLoaiSPAndGioiTinh(String maLoaiSP, SanPham.Gender gioiTinh) {
+        return sanPhamRepository.findByLoaiSP_MaLoaiSPAndGioiTinh(maLoaiSP, gioiTinh);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SanPham> findByTenSPContainingAndGioiTinh(String tenSP, SanPham.Gender gioiTinh) {
+        return sanPhamRepository.findByTenSPContainingAndGioiTinh(tenSP, gioiTinh);
+    }
 }
