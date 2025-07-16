@@ -23,9 +23,31 @@ public class SanPham {
     @Column(name = "TenSP", nullable = false, length = 255)
     private String tenSP;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "GioiTinh", nullable = false)
+    private Gender gioiTinh = Gender.UNISEX; // Mặc định unisex
+
     @OneToMany(mappedBy = "sanPham")
     private List<ChiTietSanPham> chiTietSanPham;
 
     @OneToMany(mappedBy = "sanPham")
     private List<HinhAnh> hinhAnh;
+
+    // Enum cho giới tính
+    public enum Gender {
+        NAM("Nam"),
+        NU("Nữ"),
+        TRE_EM("Trẻ em"),
+        UNISEX("Unisex");
+
+        private final String displayName;
+
+        Gender(String displayName) {
+            this.displayName = displayName;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
+    }
 }

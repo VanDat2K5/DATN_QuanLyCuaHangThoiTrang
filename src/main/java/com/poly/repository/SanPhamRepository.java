@@ -11,4 +11,11 @@ public interface SanPhamRepository extends JpaRepository<SanPham, String> {
     List<SanPham> findByTenSPContaining(String tenSP);
 
     List<SanPham> findByLoaiSP_MaLoaiSP(String maLoaiSP);
+
+    // Thêm các method tìm kiếm theo giới tính
+    List<SanPham> findByGioiTinh(SanPham.Gender gioiTinh);
+
+    List<SanPham> findByLoaiSP_MaLoaiSPAndGioiTinh(String maLoaiSP, SanPham.Gender gioiTinh);
+
+    List<SanPham> findByTenSPContainingAndGioiTinh(String tenSP, SanPham.Gender gioiTinh);
 }

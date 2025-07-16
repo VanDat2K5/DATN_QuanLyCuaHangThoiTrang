@@ -114,7 +114,6 @@ public class LoginController {
 
     @GetMapping("/register")
     public String showRegistrationForm(HttpSession session) {
-        // Nếu đã đăng nhập, chuyển hướng về trang chủ
         if (Security.isAuthenticated(session)) {
             return "redirect:/";
         }
@@ -148,7 +147,6 @@ public class LoginController {
         }
 
         try {
-            // Tạo khách hàng mới
             KhachHang khachHang = new KhachHang();
             // Sử dụng CustomerCodeGenerator để tạo mã khách hàng
             String maKH = codeGenerator.generateCustomerCode();
@@ -210,14 +208,14 @@ public class LoginController {
         return "Client/demo-fashion-store-forgot-password";
     }
 
-    // Xử lý gửi email reset password
     @PostMapping("/forgot-password/send")
     public String sendForgotPasswordEmail(@RequestParam("email") String email,
             RedirectAttributes redirectAttributes) {
         try {
             // Kiểm tra giới hạn gửi email reset password
             if (!resetPasswordLimiter.canSend(email)) {
-                redirectAttributes.addFlashAttribute("error", "Bạn đã gửi quá số lần cho phép. Vui lòng thử lại sau 1 phút.");
+                redirectAttributes.addFlashAttribute("error",
+                        "Bạn đã gửi quá số lần cho phép. Vui lòng thử lại sau 1 phút.");
                 return "redirect:/forgot-password";
             }
             // Kiểm tra email có tồn tại không

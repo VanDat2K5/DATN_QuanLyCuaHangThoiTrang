@@ -64,6 +64,24 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
 
+                <!-- OAuth Account Creation Notice -->
+                <div th:if="${oauthUser and needsAccount}" class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <div class="d-flex align-items-center" style="color: #000;">
+                        <i class="feather icon-feather-alert-triangle me-3 fs-24"></i>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">
+                                <i class="feather icon-feather-info me-2"></i>
+                                Tạo tài khoản đăng nhập
+                            </h6>
+                            <p class="mb-2">Bạn đang đăng nhập bằng Google. Để tiện lợi hơn, hãy tạo tên đăng nhập và mật khẩu cho tài khoản của bạn.</p>
+                            <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#createAccountModal">
+                                <i class="feather icon-feather-user-plus me-2"></i>
+                                Tạo tài khoản ngay
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row">
                     <!-- Profile Card -->
                     <div class="col-lg-4 mb-4">
@@ -73,9 +91,17 @@
                             </div>
                             <h3 class="mb-2" th:text="${userRole == 'CUSTOMER' ? user.tenKH : user.tenNV}">User Name</h3>
                             <p class="mb-3" th:text="${userRole == 'CUSTOMER' ? 'Customer' : (userRole == 'ADMIN' ? 'Administrator' : 'Employee')}">Role</p>
-                            <div class="d-flex justify-content-center gap-2">
-                                <span class="badge bg-light text-dark" th:text="${username}">Username</span>
-                                <span class="badge bg-light text-dark" th:text="${userRole}">Role</span>
+                            <div class="badge-row badge-row-1">
+                                <span class="badge" th:text="${user.email}">Email</span>
+                                <span class="badge" th:text="${userRole == 'CUSTOMER' ? 'CUSTOMER' : (userRole == 'ADMIN' ? 'ADMIN' : 'EMPLOYEE')}">Role</span>
+                            </div>
+                            <div class="badge-row badge-row-2">
+                                <span class="badge" th:if="${oauthUser}" style="background: #ffc107; color: #000;">
+                                    <i class="feather icon-feather-log-in me-1"></i>GOOGLE
+                                </span>
+                                <span class="badge" th:if="${needsAccount}" style="background: #dc3545; color: #fff;">
+                                    <i class="feather icon-feather-alert-triangle me-1"></i>CẦN TẠO TÀI KHOẢN
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -103,6 +129,11 @@
                                     <i class="feather icon-feather-lock me-2"></i>Change Password
                                 </button>
                             </li>
+                            <li class="nav-item" role="presentation" th:if="${oauthUser and needsAccount}">
+                                <button class="nav-link" id="account-tab" data-bs-toggle="tab" data-bs-target="#account" type="button" role="tab">
+                                    <i class="feather icon-feather-user-plus me-2"></i>Create Account
+                                </button>
+                            </li>
                         </ul>
 
                         <div class="tab-content" id="profileTabsContent">
@@ -110,69 +141,69 @@
                             <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <div class="stats-card">
+                                        <div class="stats-card" th:with="orderCount=${totalOrders != null ? totalOrders : 0}">
                                             <div class="stats-icon">
                                                 <i class="feather icon-feather-shopping-bag"></i>
                                             </div>
-                                            <div class="stats-number" th:text="${totalOrders}">0</div>
+                                            <div class="stats-number" th:text="${orderCount}">0</div>
                                             <div class="stats-label">
                                                 <span th:text="${userRole == 'CUSTOMER' ? 'Total Orders' : 'Orders Processed'}">Total Orders</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <div class="stats-card">
+                                        <div class="stats-card" th:with="formattedTotal=${totalSpent != null ? #numbers.formatDecimal(totalSpent, 0, 'COMMA', 0, 'POINT') : '0'}">
                                             <div class="stats-icon">
                                                 <i class="feather icon-feather-dollar-sign"></i>
                                             </div>
-                                            <div class="stats-number" th:text="${#numbers.formatDecimal(totalSpent, 0, 'COMMA', 0, 'POINT')}">0</div>
+                                            <div class="stats-number" th:text="${formattedTotal}">0</div>
                                             <div class="stats-label">
                                                 <span th:text="${userRole == 'CUSTOMER' ? 'Total Spent' : 'Total Processed'}">Total Spent</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <div class="stats-card">
+                                        <div class="stats-card" th:with="completedOrders=${ordersByStatus != null and ordersByStatus.containsKey('DaNhanHang') ? ordersByStatus.get('DaNhanHang') : 0}">
                                             <div class="stats-icon">
                                                 <i class="feather icon-feather-trending-up"></i>
                                             </div>
-                                            <div class="stats-number" th:text="${ordersByStatus != null ? ordersByStatus.get('DaNhanHang') : 0}">0</div>
+                                            <div class="stats-number" th:text="${completedOrders}">0</div>
                                             <div class="stats-label">Completed</div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Recent Orders -->
-                                <div class="mt-4">
+                                <div class="mt-4" th:with="hasOrders=${recentOrders != null and !recentOrders.empty}">
                                     <h5 class="mb-3">
                                         <i class="feather icon-feather-clock me-2"></i>
                                         Recent Orders
                                     </h5>
-                                    <div th:if="${recentOrders != null and !recentOrders.empty}">
-                                        <div class="order-item" th:each="order : ${recentOrders}" th:with="isChoXacNhan=${order.trangThai == 'ChoXacNhan'}, isDaThanhToan=${order.trangThai == 'DaThanhToan'}">
+                                    <div th:if="${hasOrders}">
+                                        <div class="order-item" th:each="order : ${recentOrders}" th:with="isChoXacNhan=${order != null and order.trangThai == 'ChoXacNhan'}, isDaThanhToan=${order != null and order.trangThai == 'DaThanhToan'}">
                                             <div class="row align-items-center">
                                                 <div class="col-md-2">
-                                                    <strong th:text="${order.maHD}">Order ID</strong>
+                                                    <strong th:text="${order != null ? order.maHD : 'N/A'}">Order ID</strong>
                                                 </div>
                                                 <div class="col-md-2">
-                                                    <span th:text="${#temporals.format(order.ngayLap, 'dd/MM/yyyy')}">Date</span>
+                                                    <span th:text="${order != null and order.ngayLap != null ? #temporals.format(order.ngayLap, 'dd/MM/yyyy') : 'N/A'}">Date</span>
                                                 </div>
                                                 <div class="col-md-2">
-                                                    <span th:text="${#numbers.formatDecimal(order.tongTien, 0, 'COMMA', 0, 'POINT')}">money</span>
+                                                    <span th:text="${order != null and order.tongTien != null ? #numbers.formatDecimal(order.tongTien, 0, 'COMMA', 0, 'POINT') : '0'}">money</span>
                                                 </div>
                                                 <div class="col-md-2">
-                                                    <span class="status-badge" th:class="'status-' + ${order.trangThai}" th:text="${order.trangThai}">Status</span>
+                                                    <span class="status-badge" th:class="'status-' + ${order != null ? order.trangThai : 'Unknown'}" th:text="${order != null ? order.trangThai : 'Unknown'}">Status</span>
                                                 </div>
                                                 <div class="col-md-2">
-                                                    <span th:text="${order.ptThanhToan}">Payment</span>
+                                                    <span th:text="${order != null ? order.ptThanhToan : 'N/A'}">Payment</span>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="d-flex gap-1">
                                                         <!-- QR Code Button for unpaid orders -->
                                                         <button th:if="${isChoXacNhan}" 
                                                                 class="btn btn-sm btn-outline-primary qr-btn" 
-                                                                th:data-order-id="${order.maHD}"
-                                                                th:data-order-money="${order.tongTien}"
+                                                                th:data-order-id="${order != null ? order.maHD : ''}"
+                                                                th:data-order-money="${order != null ? order.tongTien : 0}"
                                                                 th:data-username="${username}"
                                                                 title="Xem mã QR thanh toán">
                                                             <i class="feather icon-feather-qr-code"></i>
@@ -184,7 +215,7 @@
                                                               method="post" 
                                                               style="display: inline;"
                                                               onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?')">
-                                                            <input type="hidden" name="orderId" th:value="${order.maHD}">
+                                                            <input type="hidden" name="orderId" th:value="${order != null ? order.maHD : ''}">
                                                             <button type="submit" class="btn btn-sm btn-outline-danger" title="Hủy đơn hàng">
                                                                 <i class="feather icon-feather-x"></i>
                                                             </button>
@@ -199,7 +230,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div th:if="${recentOrders == null or recentOrders.empty}" class="text-center py-4">
+                                    <div th:if="${!hasOrders}" class="text-center py-4">
                                         <i class="feather icon-feather-inbox fs-48 text-muted mb-3"></i>
                                         <p class="text-muted">No orders found</p>
                                     </div>
@@ -308,6 +339,65 @@
                                     </div>
                                 </form>
                             </div>
+
+                            <!-- Create Account Tab -->
+                            <div class="tab-pane fade" id="account" role="tabpanel" th:if="${oauthUser and needsAccount}">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="alert alert-warning">
+                                            <div class="d-flex align-items-start">
+                                                <i class="feather icon-feather-alert-triangle me-3 fs-24 mt-1"></i>
+                                                <div>
+                                                    <h6 class="mb-2">
+                                                        <i class="feather icon-feather-info me-2"></i>
+                                                        Tạo tài khoản đăng nhập
+                                                    </h6>
+                                                    <p class="mb-3">Bạn đang đăng nhập bằng Google. Để tiện lợi hơn, hãy tạo tên đăng nhập và mật khẩu cho tài khoản của bạn.</p>
+                                                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#createAccountModal">
+                                                        <i class="feather icon-feather-user-plus me-2"></i>
+                                                        Tạo tài khoản ngay
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="card">
+                                            <div class="card-header bg-light">
+                                                <h6 class="mb-0">
+                                                    <i class="feather icon-feather-user me-2"></i>
+                                                    Thông tin tài khoản
+                                                </h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="info-item">
+                                                            <div class="info-icon">
+                                                                <i class="feather icon-feather-user"></i>
+                                                            </div>
+                                                            <div class="info-content">
+                                                                <h6>Phương thức đăng nhập</h6>
+                                                                <p>Google OAuth</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="info-item">
+                                                            <div class="info-icon">
+                                                                <i class="feather icon-feather-shield"></i>
+                                                            </div>
+                                                            <div class="info-content">
+                                                                <h6>Trạng thái</h6>
+                                                                <p class="text-warning">Chưa có tài khoản đăng nhập</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -377,6 +467,83 @@
             </div>
         </div>
 
+        <!-- Create Account Modal -->
+        <div class="modal fade" id="createAccountModal" tabindex="-1" aria-labelledby="createAccountModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning text-dark">
+                        <h5 class="modal-title" id="createAccountModalLabel">
+                            <i class="feather icon-feather-user-plus me-2"></i>
+                            Tạo Tài Khoản Đăng Nhập
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-info">
+                            <i class="feather icon-feather-info me-2"></i>
+                            <strong>Thông tin hiện tại:</strong>
+                            <div class="mt-2">
+                                <small>
+                                    <strong>Tên:</strong> <span th:text="${userRole == 'CUSTOMER' ? user.tenKH : user.tenNV}">Tên khách hàng</span><br>
+                                    <strong>Email:</strong> <span th:text="${user != null ? user.email : 'N/A'}">email@example.com</span><br>
+                                    <strong>Số điện thoại:</strong> <span th:text="${user != null ? user.soDT : 'N/A'}">Số điện thoại</span>
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <form th:action="@{/user/profile/create-account}" method="post" id="createAccountForm">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">
+                                    <i class="feather icon-feather-user me-2"></i>
+                                    Tên đăng nhập <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="username" name="username" 
+                                       placeholder="Nhập tên đăng nhập" required 
+                                       pattern="[a-zA-Z0-9_]{3,20}" 
+                                       title="Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới, từ 3-20 ký tự">
+                                <div class="form-text">Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới, từ 3-20 ký tự</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="password" class="form-label">
+                                    <i class="feather icon-feather-lock me-2"></i>
+                                    Mật khẩu <span class="text-danger">*</span>
+                                </label>
+                                <input type="password" class="form-control" id="password" name="password" 
+                                       placeholder="Nhập mật khẩu" required minlength="6">
+                                <div class="form-text">Mật khẩu phải có ít nhất 6 ký tự</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">
+                                    <i class="feather icon-feather-lock me-2"></i>
+                                    Xác nhận mật khẩu <span class="text-danger">*</span>
+                                </label>
+                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" 
+                                       placeholder="Nhập lại mật khẩu" required minlength="6">
+                                <div class="form-text">Nhập lại mật khẩu để xác nhận</div>
+                            </div>
+                            
+                            <div class="alert alert-warning">
+                                <i class="feather icon-feather-alert-triangle me-2"></i>
+                                <strong>Lưu ý:</strong> Tài khoản chỉ có thể tạo 1 lần duy nhất.
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="feather icon-feather-x me-2"></i>
+                            Hủy
+                        </button>
+                        <button type="submit" form="createAccountForm" class="btn btn-warning">
+                            <i class="feather icon-feather-save me-2"></i>
+                            Tạo Tài Khoản
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div th:replace="Client/footer :: footer"></div>
         
         <!-- javascript libraries -->
@@ -409,11 +576,82 @@
                         modal.show();
                     });
                 });
+
+                // Create Account Form Validation
+                const createAccountForm = document.getElementById('createAccountForm');
+                if (createAccountForm) {
+                    createAccountForm.addEventListener('submit', function(e) {
+                        const password = document.getElementById('password').value;
+                        const confirmPassword = document.getElementById('confirmPassword').value;
+                        const username = document.getElementById('username').value;
+
+                        // Clear previous error messages
+                        clearValidationMessages();
+
+                        let isValid = true;
+
+                        // Username validation
+                        if (!username.match(/^[a-zA-Z0-9_]{3,20}$/)) {
+                            showValidationError('username', 'Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới, từ 3-20 ký tự');
+                            isValid = false;
+                        }
+
+                        // Password validation
+                        if (password.length < 6) {
+                            showValidationError('password', 'Mật khẩu phải có ít nhất 6 ký tự');
+                            isValid = false;
+                        }
+
+                        // Confirm password validation
+                        if (password !== confirmPassword) {
+                            showValidationError('confirmPassword', 'Mật khẩu xác nhận không khớp');
+                            isValid = false;
+                        }
+
+                        if (!isValid) {
+                            e.preventDefault();
+                        }
+                    });
+
+                    // Real-time password confirmation check
+                    const password = document.getElementById('password');
+                    const confirmPassword = document.getElementById('confirmPassword');
+                    
+                    if (password && confirmPassword) {
+                        confirmPassword.addEventListener('input', function() {
+                            if (this.value !== password.value) {
+                                this.setCustomValidity('Mật khẩu xác nhận không khớp');
+                            } else {
+                                this.setCustomValidity('');
+                            }
+                        });
+                    }
+                }
             });
             
             // Function to format currency
             function formatCurrency(money) {
                 return new Intl.NumberFormat('vi-VN').format(money);
+            }
+
+            // Function to show validation error
+            function showValidationError(fieldId, message) {
+                const field = document.getElementById(fieldId);
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'invalid-feedback d-block';
+                errorDiv.textContent = message;
+                field.classList.add('is-invalid');
+                field.parentNode.appendChild(errorDiv);
+            }
+
+            // Function to clear validation messages
+            function clearValidationMessages() {
+                document.querySelectorAll('.invalid-feedback').forEach(function(element) {
+                    element.remove();
+                });
+                document.querySelectorAll('.is-invalid').forEach(function(element) {
+                    element.classList.remove('is-invalid');
+                });
             }
         </script>
     </body>
