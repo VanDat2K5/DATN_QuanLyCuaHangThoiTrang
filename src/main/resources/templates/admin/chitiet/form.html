@@ -12,6 +12,9 @@
     <h1 class="mb-4"
         th:text="${chiTiet.id} != null ? 'Sửa Chi tiết sản phẩm' : 'Thêm Chi tiết sản phẩm mới'"></h1>
 
+    <!-- Hiển thị thông báo lỗi nếu có -->
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
     <form th:action="@{/admin/chitiet/save}"
           th:object="${chiTiet}"
           method="post"
