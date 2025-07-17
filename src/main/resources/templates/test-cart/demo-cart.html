@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Giỏ hàng của bạn</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script>
+        // Cấu hình Firebase của bạn
+        const firebaseConfig = {
+            apiKey: "AIzaSyAiQr7IZK9i8x5V0BglQIRLfr0G1ByMkrU",
+            authDomain: "datn-d3877.firebaseapp.com",
+            databaseURL: "https://datn-d3877-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "datn-d3877",
+            storageBucket: "datn-d3877.appspot.com",
+            messagingSenderId: "888266957388",
+            appId: "1:888266957388:web:fe88a0b3c8e31b5b553af9"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+    </script>
+    <script src="democart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1em;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        img {
+            max-height: 60px;
+        }
+
+        input[type="text"] {
+            padding: 5px;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 6px 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        h2 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+<h2>Trang Giỏ Hàng</h2>
+
+<div>
+    <label for="maKH">Mã khách hàng:</label>
+    <input type="text" id="maKH" placeholder="Nhập mã KH" />
+    <button onclick="loadCart()">Tải giỏ hàng</button>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>Xóa</th>
+        <th>Ảnh</th>
+        <th>Tên SP</th>
+        <th>Size</th>
+        <th>Màu</th>
+        <th>Giá</th>
+        <th>Số lượng</th>
+        <th>Tổng</th>
+    </tr>
+    </thead>
+    <tbody id="cartList"></tbody>
+    <tfoot>
+    <tr>
+        <td colspan="7" style="text-align: right;"><strong>Tổng tiền:</strong></td>
+        <td id="cartTotal">₫0</td>
+    </tr>
+    </tfoot>
+</table>
+
+</body>
+</html>
