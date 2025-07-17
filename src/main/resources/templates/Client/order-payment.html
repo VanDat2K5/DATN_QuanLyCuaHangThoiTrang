@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán - Fashion Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        .payment-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .qr-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .qr-code-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            display: inline-block;
+            margin: 20px 0;
+        }
+        .payment-info {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-pending {
+            background-color: #ffc107;
+            animation: pulse 2s infinite;
+        }
+        .status-success {
+            background-color: #28a745;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .countdown {
+            font-size: 24px;
+            font-weight: bold;
+            color: #dc3545;
+        }
+        .btn-check {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-check:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+            color: white;
+        }
+        .loading-spinner {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div th:replace="Client/header :: header"></div>
+
+    <div class="container payment-container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="text-center mb-4">
+                    <i class="bi bi-qr-code"></i> Thanh toán đơn hàng
+                </h2>
+            </div>
+        </div>
+
+        <!-- Thông tin đơn hàng -->
+        <div class="payment-info">
+            <h5><i class="bi bi-receipt"></i> Thông tin đơn hàng</h5>
+            <hr>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Mã đơn hàng:</strong> <span th:text="${orderData.orderId}">HD123456789</span></p>
+                    <p><strong>Số tiền:</strong> <span class="text-danger fw-bold" th:text="${#numbers.formatDecimal(orderData.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'">500,000 VND</span></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Trạng thái:</strong> 
+                        <span class="status-indicator status-pending"></span>
+                        <span id="paymentStatus">Chờ thanh toán</span>
+                    </p>
+                    <p><strong>Thời gian còn lại:</strong> <span class="countdown" id="countdown">15:00</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- QR Code -->
+        <div class="qr-card">
+            <h4><i class="bi bi-credit-card"></i> Quét mã QR để thanh toán</h4>
+            <p class="mb-3">Sử dụng ứng dụng ngân hàng để quét mã QR bên dưới</p>
+            
+            <div class="qr-code-container">
+                <img id="qrCodeImage" src="" alt="QR Code" class="img-fluid" style="max-width: 250px;">
+            </div>
+            
+            <div class="mt-3">
+                <p class="mb-1"><strong>Số tiền:</strong> <span id="amountDisplay"></span></p>
+                <p class="mb-1"><strong>Nội dung:</strong> <span id="contentDisplay"></span></p>
+            </div>
+        </div>
+
+        <!-- Hướng dẫn thanh toán -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-info-circle"></i> Hướng dẫn thanh toán</h5>
+            </div>
+            <div class="card-body">
+                <ol>
+                    <li>Mở ứng dụng ngân hàng trên điện thoại</li>
+                    <li>Chọn tính năng "Quét mã QR" hoặc "Thanh toán QR"</li>
+                    <li>Quét mã QR hiển thị trên màn hình</li>
+                    <li>Kiểm tra thông tin thanh toán và xác nhận</li>
+                    <li>Nhập mật khẩu hoặc xác thực để hoàn tất</li>
+                </ol>
+                <div class="alert alert-info">
+                    <i class="bi bi-lightbulb"></i>
+                    <strong>Lưu ý:</strong> Hệ thống sẽ tự động kiểm tra trạng thái thanh toán. 
+                    Bạn cũng có thể nhấn nút "Kiểm tra thanh toán" bên dưới.
+                </div>
+            </div>
+        </div>
+
+        <!-- Nút kiểm tra -->
+        <div class="text-center mt-4">
+            <button type="button" class="btn btn-check" id="checkPaymentBtn">
+                <span class="btn-text">
+                    <i class="bi bi-arrow-clockwise"></i> Kiểm tra thanh toán
+                </span>
+                <span class="loading-spinner">
+                    <span class="spinner-border spinner-border-sm" role="status"></span>
+                    Đang kiểm tra...
+                </span>
+            </button>
+        </div>
+
+        <!-- Thông báo -->
+        <div id="notification" class="alert mt-3" style="display: none;"></div>
+    </div>
+
+    <!-- Footer -->
+    <div th:replace="Client/footer :: footer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        // Lấy dữ liệu từ Thymeleaf
+        const orderData = /*[[${orderData}]]*/ {};
+        const orderId = orderData.orderId;
+        
+        let checkPaymentInterval = null;
+        let countdownInterval = null;
+        let timeLeft = 15 * 60; // 15 phút
+
+        // Khởi tạo trang
+        document.addEventListener('DOMContentLoaded', function() {
+            if (orderData.qrCode) {
+                document.getElementById('qrCodeImage').src = orderData.qrCode;
+            }
+            document.getElementById('amountDisplay').textContent = formatCurrency(orderData.totalAmount);
+            document.getElementById('contentDisplay').textContent = orderData.paymentContent;
+            
+            // Bắt đầu đếm ngược
+            startCountdown();
+            
+            // Bắt đầu kiểm tra thanh toán tự động
+            startAutoCheck();
+        });
+
+        function startCountdown() {
+            countdownInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById('countdown').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    showNotification('Hết thời gian thanh toán!', 'danger');
+                    document.getElementById('paymentStatus').textContent = 'Hết hạn';
+                    document.querySelector('.status-pending').classList.remove('status-pending');
+                    document.querySelector('.status-pending').classList.add('status-expired');
+                }
+            }, 1000);
+        }
+
+        function startAutoCheck() {
+            // Kiểm tra mỗi 10 giây
+            checkPaymentInterval = setInterval(() => {
+                checkPaymentStatus();
+            }, 10000);
+        }
+
+        function checkPaymentStatus() {
+            const btn = document.getElementById('checkPaymentBtn');
+            const btnText = btn.querySelector('.btn-text');
+            const loading = btn.querySelector('.loading-spinner');
+            
+            // Hiển thị loading
+            btnText.style.display = 'none';
+            loading.style.display = 'inline-block';
+            btn.disabled = true;
+
+            fetch(`/order/check-payment/${orderId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.isPaid) {
+                    // Thanh toán thành công
+                    clearInterval(checkPaymentInterval);
+                    clearInterval(countdownInterval);
+                    
+                    // Cập nhật UI
+                    document.getElementById('paymentStatus').textContent = 'Thanh toán thành công';
+                    document.querySelector('.status-pending').classList.remove('status-pending');
+                    document.querySelector('.status-pending').classList.add('status-success');
+                    
+                    showNotification('Thanh toán thành công! Chuyển hướng...', 'success');
+                    
+                    // Chuyển hướng sau 2 giây
+                    setTimeout(() => {
+                        window.location.href = `/order/success/${orderId}`;
+                    }, 2000);
+                } else {
+                    showNotification(data.message || 'Chưa nhận được thanh toán', 'info');
+                }
+            })
+            .catch(error => {
+                console.error('Error checking payment:', error);
+                showNotification('Có lỗi xảy ra khi kiểm tra thanh toán', 'danger');
+            })
+            .finally(() => {
+                // Ẩn loading
+                btnText.style.display = 'inline-block';
+                loading.style.display = 'none';
+                btn.disabled = false;
+            });
+        }
+
+        // Sự kiện click nút kiểm tra
+        document.getElementById('checkPaymentBtn').addEventListener('click', function() {
+            checkPaymentStatus();
+        });
+
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.className = `alert alert-${type} mt-3`;
+            notification.textContent = message;
+            notification.style.display = 'block';
+            
+            // Tự động ẩn sau 5 giây
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(amount);
+        }
+
+        // Dọn dẹp khi rời trang
+        window.addEventListener('beforeunload', function() {
+            if (checkPaymentInterval) {
+                clearInterval(checkPaymentInterval);
+            }
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+        });
+    </script>
+</body>
+</html> 

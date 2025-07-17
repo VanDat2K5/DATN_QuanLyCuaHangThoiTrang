@@ -560,3 +560,274 @@
         max-width: 220px !important;
     }
 }
+
+/* OAuth Account Creation Styles */
+.alert-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+    color: #000;
+    border: none;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.2);
+}
+
+.alert-warning .feather {
+    color: #856404;
+}
+
+#createAccountModal .modal-content {
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+#createAccountModal .modal-header {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+    color: #000;
+    border: none;
+    padding: 20px 30px;
+}
+
+#createAccountModal .modal-body {
+    padding: 30px;
+}
+
+#createAccountModal .alert-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);
+    color: white;
+    border: none;
+    border-radius: 15px;
+    padding: 20px;
+}
+
+#createAccountModal .form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+}
+
+#createAccountModal .form-control {
+    border-radius: 10px;
+    border: 2px solid #e9ecef;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+}
+
+#createAccountModal .form-control:focus {
+    border-color: #ffc107;
+    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+}
+
+#createAccountModal .form-text {
+    font-size: 12px;
+    color: #6c757d;
+    margin-top: 5px;
+}
+
+#createAccountModal .alert-warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    color: #856404;
+    border: 1px solid #ffeaa7;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+#createAccountModal .btn-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+    border: none;
+    color: #000;
+    font-weight: 600;
+    padding: 12px 25px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+}
+
+#createAccountModal .btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+    color: #000;
+}
+
+#createAccountModal .btn-secondary {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 12px 25px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+}
+
+#createAccountModal .btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+    color: white;
+}
+
+/* Profile Card Badge Styles */
+.profile-card .badge {
+    font-size: 11px;
+    padding: 6px 10px;
+    border-radius: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.profile-card .badge.bg-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%) !important;
+    color: #000 !important;
+}
+
+.profile-card .badge.bg-danger {
+    background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%) !important;
+    color: white !important;
+}
+
+.profile-card .badge {
+    white-space: normal;      /* Cho phép xuống dòng trong badge nếu quá dài */
+    overflow: visible;        /* Không ẩn phần dư */
+    text-overflow: unset;     /* Không dùng dấu ... */
+    max-width: unset;         /* Không giới hạn chiều rộng */
+    display: inline-block;
+    margin: 2px 4px 2px 0;
+    vertical-align: middle;
+    font-size: 13px;
+    word-break: break-all;    /* Nếu email quá dài sẽ tự động xuống dòng trong badge */
+    padding: 6px 12px;
+}
+
+.profile-card .d-flex {
+    flex-wrap: wrap !important;
+    gap: 6px 8px;
+}
+
+#createAccountModal .form-control {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Card Styles for Account Info */
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: none;
+    padding: 20px 25px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.card-body {
+    padding: 25px;
+}
+
+/* Responsive adjustments for OAuth components */
+@media (max-width: 768px) {
+    #createAccountModal .modal-body {
+        padding: 20px;
+    }
+    
+    #createAccountModal .modal-header {
+        padding: 15px 20px;
+    }
+    
+    .alert-warning {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .card-header {
+        padding: 15px 20px;
+    }
+    
+    .card-body {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    #createAccountModal .modal-dialog {
+        margin: 1rem;
+        max-width: calc(100% - 2rem);
+    }
+    
+    #createAccountModal .modal-body {
+        padding: 15px;
+    }
+    
+    #createAccountModal .modal-header {
+        padding: 12px 15px;
+    }
+    
+    .alert-warning {
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+    
+    .card-header {
+        padding: 12px 15px;
+    }
+    
+    .card-body {
+        padding: 15px;
+    }
+    
+    .profile-card .badge {
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+}
+
+.profile-card .badge-list {
+    display: block;
+    margin-top: 10px;
+}
+.profile-card .badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 10px;
+    margin-top: 10px;
+    border-radius: 8px;
+    padding: 6px 0;
+}
+.profile-card .badge-row-1 {
+    background: rgba(255,255,255,0.18);
+}
+.profile-card .badge-row-2 {
+    background: rgba(102,126,234,0.18);
+    margin-top: 6px;
+}
+.profile-card .badge {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+    font-size: 13px;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(102,126,234,0.07);
+}
+.modal-backdrop.show {
+    z-index: 1040 !important;
+}
+.modal.show {
+    z-index: 1050 !important;
+}

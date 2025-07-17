@@ -227,7 +227,10 @@
                                 <div class="dropdown">
                                     <a href="javascript:void(0)" class="dropdown-toggle" data-bs-toggle="dropdown">
                                         <i class="feather icon-feather-user me-5px"></i>
-                                        <span class="d-none d-xxl-inline-block" th:text="${session.userRole == 'CUSTOMER' ? session.user.tenKH : session.user.tenNV}">User</span>
+                                        <span class="d-none d-xxl-inline-block">
+                                            <span th:if="${session.userRole == 'CUSTOMER'}" th:text="${session.user.tenKH}">Tên khách hàng</span>
+                                            <span th:if="${session.userRole != 'CUSTOMER'}" th:text="${session.user.tenNV}">Tên nhân viên</span>
+                                        </span>
                                     </a>
                                     <ul class="dropdown-menu" style="transform: translateX(-20px); margin-top: 10px;">
                                         <li style="padding: 9px;" th:if="${session.userRole == 'ADMIN'}"><a href="/admin" class="dropdown-item">Doanh thu</a></li>
