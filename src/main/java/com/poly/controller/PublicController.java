@@ -68,45 +68,44 @@ public class PublicController {
         return "Client/demo-fashion-store-magazine";
     }
 
-
-//    // Trang shop với lọc theo giới tính
-//    @GetMapping("/shop")
-//    public String publicShop(HttpSession session, Model model) {
-//        if (session.getAttribute("user") != null) {
-//            model.addAttribute("user", session.getAttribute("user"));
-//            model.addAttribute("username", session.getAttribute("username"));
-//            model.addAttribute("userRole", session.getAttribute("userRole"));
-//        }
-//        return "Client/demo-fashion-store-shop";
-//    }
+    // // Trang shop với lọc theo giới tính
+    // @GetMapping("/shop")
+    // public String publicShop(HttpSession session, Model model) {
+    // if (session.getAttribute("user") != null) {
+    // model.addAttribute("user", session.getAttribute("user"));
+    // model.addAttribute("username", session.getAttribute("username"));
+    // model.addAttribute("userRole", session.getAttribute("userRole"));
+    // }
+    // return "Client/demo-fashion-store-shop";
+    // }
 
     // Trang shop với lọc theo giới tính
-//    @GetMapping("/shop")
-//    public String publicShop(HttpSession session, Model model,
-//            @RequestParam(value = "gender", required = false) String gender) {
-//        if (session.getAttribute("user") != null) {
-//            model.addAttribute("user", session.getAttribute("user"));
-//            model.addAttribute("username", session.getAttribute("username"));
-//            model.addAttribute("userRole", session.getAttribute("userRole"));
-//        }
-//
-//        List<SanPham> products;
-//        if (gender != null && !gender.isEmpty()) {
-//            try {
-//                SanPham.Gender genderEnum = SanPham.Gender.valueOf(gender.toUpperCase());
-//                products = sanPhamService.findByGioiTinh(genderEnum);
-//                model.addAttribute("selectedGender", genderEnum);
-//            } catch (IllegalArgumentException e) {
-//                products = sanPhamService.findAll();
-//            }
-//        } else {
-//            products = sanPhamService.findAll();
-//        }
-//
-//        model.addAttribute("products", products);
-//        model.addAttribute("genders", SanPham.Gender.values());
-//        return "Client/demo-fashion-store-shop";
-//    }
+    // @GetMapping("/shop")
+    // public String publicShop(HttpSession session, Model model,
+    // @RequestParam(value = "gender", required = false) String gender) {
+    // if (session.getAttribute("user") != null) {
+    // model.addAttribute("user", session.getAttribute("user"));
+    // model.addAttribute("username", session.getAttribute("username"));
+    // model.addAttribute("userRole", session.getAttribute("userRole"));
+    // }
+    //
+    // List<SanPham> products;
+    // if (gender != null && !gender.isEmpty()) {
+    // try {
+    // SanPham.Gender genderEnum = SanPham.Gender.valueOf(gender.toUpperCase());
+    // products = sanPhamService.findByGioiTinh(genderEnum);
+    // model.addAttribute("selectedGender", genderEnum);
+    // } catch (IllegalArgumentException e) {
+    // products = sanPhamService.findAll();
+    // }
+    // } else {
+    // products = sanPhamService.findAll();
+    // }
+    //
+    // model.addAttribute("products", products);
+    // model.addAttribute("genders", SanPham.Gender.values());
+    // return "Client/demo-fashion-store-shop";
+    // }
 
     // Trang collection với lọc theo giới tính
     @GetMapping("/collection")
