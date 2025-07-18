@@ -7,13 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
+
     @GetMapping({ "/", "" })
     public String dashboard() {
         return "/admin/dashboard";
-    }
-
-    @GetMapping("/revenue")
-    public String revenue() {
-        return "/admin/revenue.html";
     }
 }
