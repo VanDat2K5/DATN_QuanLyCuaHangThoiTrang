@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -40,7 +41,7 @@ public class OrderManagementController {
 		this.chitietHoaDonService = chitietHoaDonService;
 	}
 
-	@GetMapping("/create")
+	@PostMapping("/create")
 	public String showCreateOrder(Model model, HttpSession session) {
 		NhanVien nhanVien = (NhanVien) session.getAttribute("user");
 		HoaDon hd = new HoaDon();
@@ -85,7 +86,7 @@ public class OrderManagementController {
 	public String saveOrder(@ModelAttribute("orders") HoaDon hoaDon, RedirectAttributes redirectAttributes) {
 		try {
 			hoaDonService.save(hoaDon);
-			redirectAttributes.addFlashAttribute("success", "Tạo hóa đơn thành công!");
+			//redirectAttributes.addFlashAttribute("success", "Tạo hóa đơn thành công!");
 			return "redirect:/";
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("error", "Đã xảy ra lỗi khi tạo hóa đơn.");
@@ -97,7 +98,8 @@ public class OrderManagementController {
 	public String editOrder(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
 		Optional<HoaDon> optionalOrder = hoaDonService.findById(id);
 		if (optionalOrder.isPresent()) {
-			model.addAttribute("Neworder", optionalOrder.get());
+			model.addAttribute("order", optionalOrder.get());
+			model.addAttribute("orderDetails", chitietHoaDonService.findByHoaDon_MaHD(id));
 			return "admin/edit-order";
 		} else {
 			redirectAttributes.addFlashAttribute("error", "Không tìm thấy hóa đơn để chỉnh sửa.");

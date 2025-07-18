@@ -1,40 +1,67 @@
-a<!DOCTYPE html>
-<html lang="en" th:replace="~{admin/admin-layout :: view(~{::title}, ~{::.content})}">
+<!DOCTYPE html>
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <title>Chi tiết hóa đơn</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<div class="content">
-    <h2>Chi tiết hóa đơn #<span th:text="${order.id}"></span></h2>
+<div class="container my-5">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4>Chi tiết hóa đơn <span th:text="'#' + ${order.maHD}"></span></h4>
+        </div>
+        <div class="card-body">
+            <div class="row mb-2">
+                <div class="col-md-6">
+                    <p><strong>Ngày đặt:</strong> <span th:text="${#temporals.format(order.ngayLap, 'dd/MM/yyyy')}"></span></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Trạng thái:</strong> <span th:text="${order.trangThai}"></span></p>
+                </div>
+               
+                <div class="col-md-6">
+                    <p><strong>Địa chỉ giao hàng:</strong> <span th:text="${order.dcNhanHang}"></span></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Phương thức thanh toán:</strong> <span th:text="${order.ptThanhToan}"></span></p>
+                </div>
+            </div>
 
-    <p><strong>Khách hàng:</strong> <span th:text="${order.user.fullname}"></span></p>
-    <p><strong>Email:</strong> <span th:text="${order.user.email}"></span></p>
-    <p><strong>Ngày đặt:</strong> <span th:text="${#dates.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></span></p>
-    <p><strong>Địa chỉ giao hàng:</strong> <span th:text="${order.shippingAddress}"></span></p>
-    <p><strong>Phương thức thanh toán:</strong> <span th:text="${order.paymentMethod}"></span></p>
+            <h5 class="mt-4">Sản phẩm đã đặt</h5>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered align-middle">
+                    <thead class="table-light">
+                    <tr class="text-center">
+                        <th>Mã sản phẩm</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Giá bán</th>
+                        <th>Số lượng</th>
+                        <th>Thành tiền</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="detail : ${orderDetails}">
+                        <td th:text="${detail.chiTietSanPham.sanPham.maSP}" class="text-center"></td>
+                        <td th:text="${detail.chiTietSanPham.sanPham.tenSP}"></td>
+                        <td th:text="${#numbers.formatDecimal(detail.giaXuat, 0, 'COMMA', 2, 'POINT') + ' ₫'}" class="text-end"></td>
+                        <td th:text="${detail.soLuongXuat}" class="text-center"></td>
+                        <td th:text="${#numbers.formatDecimal(detail.thanhTien, 0, 'COMMA', 2, 'POINT') + ' ₫'}" class="text-end"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
 
-    <h3>Sản phẩm đã đặt</h3>
-    <table class="table table-bordered">
-        <thead>
-        <tr>
-            <th>Tên sản phẩm</th>
-            <th>Số lượng</th>
-            <th>Giá</th>
-            <th>Tổng</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="detail : ${order.orderDetails}">
-            <td th:text="${detail.product.productName}"></td>
-            <td th:text="${detail.quantity}"></td>
-            <td th:text="${detail.price}"></td>
-            <td th:text="${detail.quantity * detail.price}"></td>
-        </tr>
-        </tbody>
-    </table>
-
-    <p><strong>Tổng tiền:</strong> <span th:text="${order.total}"></span></p>
+            <div class="mt-4">
+                <a th:href="@{/admin/management/orders}" class="btn btn-secondary">← Quay lại danh sách</a>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Bootstrap JS (tuỳ chọn nếu bạn cần dropdown/modal) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
