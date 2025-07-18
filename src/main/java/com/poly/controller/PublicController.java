@@ -68,6 +68,8 @@ public class PublicController {
         return "Client/demo-fashion-store-magazine";
     }
 
+
+//    // Trang shop với lọc theo giới tính
 //    @GetMapping("/shop")
 //    public String publicShop(HttpSession session, Model model) {
 //        if (session.getAttribute("user") != null) {
@@ -105,7 +107,6 @@ public class PublicController {
 //        model.addAttribute("genders", SanPham.Gender.values());
 //        return "Client/demo-fashion-store-shop";
 //    }
-
 
     // Trang collection với lọc theo giới tính
     @GetMapping("/collection")

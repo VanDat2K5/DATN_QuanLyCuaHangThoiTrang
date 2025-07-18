@@ -21,6 +21,16 @@ public class ChiTietSanPhamServiceImpl implements ChiTietSanPhamService {
 
     @Override
     public ChiTietSanPham save(ChiTietSanPham chiTietSanPham) {
+        if (chiTietSanPham.getId() == null || chiTietSanPham.getId().isEmpty()) {
+            String id = chiTietSanPham.getSanPham().getMaSP()
+                    + "_" + chiTietSanPham.getMau().getMaMau()
+                    + "_" + chiTietSanPham.getSize().getMaSize();
+            chiTietSanPham.setId(id);
+            if (chiTietSanPhamRepository.existsById(id)) {
+                throw new IllegalArgumentException("Chi tiết sản phẩm với ID này đã tồn tại!");
+            }
+            chiTietSanPham.setId(id);
+        }
         return chiTietSanPhamRepository.save(chiTietSanPham);
     }
 
