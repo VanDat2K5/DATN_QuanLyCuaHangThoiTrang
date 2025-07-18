@@ -229,7 +229,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-dark btn-lg w-100">Thêm vào giỏ hàng</button>
+                    <button type="submit" class="btn btn-dark btn-lg w-100" onclick="addStore()">Thêm vào giỏ hàng</button>
                 </form>
             </div>
         </div>
@@ -260,6 +260,17 @@
         value += delta;
         if (value < 1) value = 1;
         input.value = value;
+    }
+
+    function addStore() {
+        // Nếu chưa đăng nhâp, chuyển về trang đăng nhập /
+
+        // Nếu sản phẩm chu có trong giỏ hàng, thêm mới /
+
+        // Nếu sản phẩm đã có trong giỏ hàng, thêm số lượng /
+
+        // Chuyển sang trang giỏ hàng (nếu muốn) /
+
     }
 </script>
 </body>
