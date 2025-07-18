@@ -1,0 +1,278 @@
+
+
+/* --------- ADMIN HEADER MODERN --------- */
+
+
+.background{
+    background: #78a2d2;
+    height: 35px;
+    width: 100%;    
+}
+.admin-header-navbar {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    /* margin: 24px 0 16px 0; */
+    padding: 0 32px;
+    min-height: 72px;
+    display: flex;
+    align-items: center;
+}
+.admin-header-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.admin-header-logo {
+    display: flex;
+    align-items: center;
+}
+.logo-stylelife {
+    height: 40px;
+    width:40px;
+    object-fit: contain;
+    display: block;
+}
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+}
+.nav-menu-item {
+    display: flex;
+    align-items: center;
+}
+.nav-menu-link {
+    color: #bbb8b8;
+    font-size: 15px;
+    /* font-weight: 500; */
+    background: none;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    padding: 12px 18px 8px 18px;
+    transition: color 0.2s;
+    border-radius: 0 !important;
+    position: relative;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+/* hiển thị vị trí của trang đang chọn */
+.nav-menu-link.active {
+    color: #78a2d2;
+    font-weight: 700;
+}
+
+.nav-menu-link:hover {
+    color: #78a2d2;
+}
+.admin-header-right {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+.admin-header-bell {
+    color: #6b7280;
+    font-size: 1.35rem;
+    margin-right: 8px;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.admin-header-bell:hover {
+    color: #ffffff;
+}
+.admin-header-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e5e7eb;
+}
+.text{
+    margin-top: 5px;
+    font-size: 20px;
+    font-weight: 600;
+    color: black !important;
+}
+
+/* --------PROMO SECTION-------- */
+.promo-section {
+    position: relative;
+    height: 100vh;
+    color: white;
+    overflow: hidden;
+}
+
+.promo-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height:85%;
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.6);
+    z-index: -1;
+    transition: background-image 0.5s ease-in-out;
+}
+
+.promo-card img {
+    height: 300px;
+    object-fit: cover;
+}
+
+.promo-card {
+    backdrop-filter: blur(4px);
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+}
+
+.scrolling-wrapper {
+    overflow-x: auto;
+    white-space: nowrap;
+}
+.scrolling-wrapper .card {
+    display: inline-block;
+    margin-right: 1rem;
+    vertical-align: top;
+}
+/* -------------KEY FEATURES--------------- */
+.admin-wrapper{
+
+    font-family: 'Segoe UI', sans-serif;
+      background-color: #fff;
+      padding: 40px;
+}
+.feature-box {
+    border: 1px solid #eaeaea;
+    border-radius: 20px;
+    padding: 30px 20px;
+    text-align: center;
+    transition: 0.3s;
+    background-color: #fff;
+    height: 100%;
+  }
+
+  .feature-box:hover {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    transform: translateY(-5px);
+  }
+
+  .feature-icon {
+    font-size: 32px;
+    margin-bottom: 15px;
+  }
+
+  .subtitle {
+    text-transform: uppercase;
+    font-size: 12px;
+    color: #999;
+    letter-spacing: 1px;
+  }
+
+  .feature-text {
+    font-weight: 500;
+    color: #333;
+    font-size: 16px;
+  }
+
+  .btn-download {
+    border-radius: 30px;
+    font-size: 14px;
+  }
+ .sidebar {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 80px;
+      background-color: #000;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 1rem;
+      border-radius: 20px;
+      z-index: 1000;
+    }
+
+    .sidebar .logo {
+      font-weight: bold;
+      font-size: 20px;
+      margin-bottom: 2rem;
+    }
+
+    .sidebar .nav-icons {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .sidebar .nav-icons i {
+      font-size: 20px;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .sidebar .nav-icons i:hover {
+      transform: scale(1.2);
+      color: #ccc;
+    }
+
+    .sidebar .toggle-btn {
+      position: absolute;
+      right: -15px;
+      top: 60px;
+      background-color: white;
+      color: black;
+      border-radius: 50%;
+      padding: 2px 6px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .sidebar .bottom-icon {
+      margin-top: auto;
+      margin-bottom: 1rem;
+    }
+
+    .sidebar .bottom-icon i {
+      font-size: 20px;
+      color: white;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 900px) {
+    .admin-header-navbar {
+        padding: 0 8px;
+    }
+    .nav-menu {
+        gap: 16px;
+    }
+    .admin-header-avatar {
+        width: 32px;
+        height: 32px;
+    }
+}
