@@ -16,7 +16,7 @@ public class OrderController {
 	public String showCreateOrder(Model model, HttpSession session) {
 		NhanVien nhanVien = (NhanVien) session.getAttribute("user");
 		HoaDon hd = new HoaDon();
-		hd.setMaHD(codeGenerator.generateOrderCode());
+//		hd.setMaHD(codeGenerator.generateOrderCode());
 		hd.setNhanVien(nhanVien);
 		hd.setNgayLap(LocalDate.now());
 		model.addAttribute("orders", hd);
