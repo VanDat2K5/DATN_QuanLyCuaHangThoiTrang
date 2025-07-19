@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -72,20 +73,32 @@ public class SanPhamServiceImpl implements SanPhamService {
         return sanPhamPage.map(SanPhamViewDTO::new); // convert sang DTO
     }
 
+    @Override
     @Transactional(readOnly = true)
-    public List<SanPham> findByGioiTinh(SanPham.Gender gioiTinh) {
-        return sanPhamRepository.findByGioiTinh(gioiTinh);
+    public List<SanPhamViewDTO> findByGioiTinh(SanPham.Gender gioiTinh) {
+        return sanPhamRepository.findByGioiTinh(gioiTinh)
+                .stream()
+                .map(SanPhamViewDTO::new)
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<SanPham> findByLoaiSanPham_MaLoaiSPAndGioiTinh(String maLoaiSP, SanPham.Gender gioiTinh) {
-        return sanPhamRepository.findByLoaiSP_MaLoaiSPAndGioiTinh(maLoaiSP, gioiTinh);
+    public List<SanPhamViewDTO> findByLoaiSanPham_MaLoaiSPAndGioiTinh(String maLoaiSP, SanPham.Gender gioiTinh) {
+        return sanPhamRepository.findByLoaiSP_MaLoaiSPAndGioiTinh(maLoaiSP, gioiTinh)
+                .stream()
+                .map(SanPhamViewDTO::new)
+                .collect(Collectors.toList());
     }
+
 
     @Override
     @Transactional(readOnly = true)
-    public List<SanPham> findByTenSPContainingAndGioiTinh(String tenSP, SanPham.Gender gioiTinh) {
-        return sanPhamRepository.findByTenSPContainingAndGioiTinh(tenSP, gioiTinh);
+    public List<SanPhamViewDTO> findByTenSPContainingAndGioiTinh(String tenSP, SanPham.Gender gioiTinh) {
+        return sanPhamRepository.findByTenSPContainingAndGioiTinh(tenSP, gioiTinh)
+                .stream()
+                .map(SanPhamViewDTO::new)
+                .collect(Collectors.toList());
     }
+
 }
