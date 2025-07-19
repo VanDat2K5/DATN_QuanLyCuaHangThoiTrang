@@ -6,6 +6,7 @@
   <title>Quản Lý Đơn Hàng</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/admin-custom.css">
   <style>
     body {
       background-color: #f8f9fa;
@@ -26,56 +27,87 @@
   </style>
 </head>
 <body>
-  <div th:replace="admin/admin-header :: header-admin"></div>
-  <div class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="fw-bold">Quản Lý Đơn Hàng</h2>
-      <div>
-        <input type="search" class="form-control d-inline-block w-auto" placeholder="Tìm đơn hàng..." />
-      </div>
-    </div>
+  <!-- Sidebar -->
+  <div th:replace="~{admin/admin-header :: sidebar-admin}"></div>
+  
+  <!-- Header -->
+  <div th:replace="~{admin/admin-header :: header-admin}"></div>
 
-    <div class="table-responsive">
-      <table class="table table-bordered table-hover align-middle text-center">
-        <thead>
-          <tr>
-            <th>Mã Đơn</th>
-            <th>Khách Hàng</th>
-            <th>Ngày Đặt</th>
-            <th>Trạng Thái</th>
-            <th>Thanh Toán</th>
-            <th>Tổng Tiền</th>
-            <th>Hành Động</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>#DH001</td>
-            <td>Nguyễn Văn A</td>
-            <td>17/07/2025</td>
-            <td><span class="status-badge status-pending">Chờ xử lý</span></td>
-            <td><i class="bi bi-credit-card-2-front text-success"></i> Đã thanh toán</td>
-            <td>1.250.000₫</td>
-            <td>
-              <button class="btn btn-primary btn-sm"><i class="bi bi-eye"></i></button>
-              <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
-            </td>
-          </tr>
-          <tr>
-            <td>#DH002</td>
-            <td>Trần Thị B</td>
-            <td>16/07/2025</td>
-            <td><span class="status-badge status-shipped">Đang giao</span></td>
-            <td><i class="bi bi-cash text-warning"></i> COD</td>
-            <td>750.000₫</td>
-            <td>
-              <button class="btn btn-primary btn-sm"><i class="bi bi-eye"></i></button>
-              <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
-            </td>
-          </tr>
-          <!-- Thêm nhiều dòng tại đây -->
-        </tbody>
-      </table>
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="container-fluid">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Quản Lý Đơn Hàng</h2>
+        <div>
+          <input type="search" class="form-control d-inline-block w-auto" placeholder="Tìm đơn hàng..." />
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle text-center">
+          <thead>
+            <tr>
+              <th>Mã Đơn</th>
+              <th>Khách Hàng</th>
+              <th>Ngày Đặt</th>
+              <th>Trạng Thái</th>
+              <th>Thanh Toán</th>
+              <th>Tổng Tiền</th>
+              <th>Hành Động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>#DH001</td>
+              <td>Nguyễn Văn A</td>
+              <td>17/07/2025</td>
+              <td><span class="status-badge status-pending">Chờ xử lý</span></td>
+              <td><i class="bi bi-credit-card-2-front text-success"></i> Đã thanh toán</td>
+              <td>1.250.000₫</td>
+              <td>
+                <button class="btn btn-primary btn-sm"><i class="bi bi-eye"></i></button>
+                <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>#DH002</td>
+              <td>Trần Thị B</td>
+              <td>16/07/2025</td>
+              <td><span class="status-badge status-shipped">Đang giao</span></td>
+              <td><i class="bi bi-cash text-warning"></i> COD</td>
+              <td>750.000₫</td>
+              <td>
+                <button class="btn btn-primary btn-sm"><i class="bi bi-eye"></i></button>
+                <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>#DH003</td>
+              <td>Lê Văn C</td>
+              <td>15/07/2025</td>
+              <td><span class="status-badge status-completed">Hoàn thành</span></td>
+              <td><i class="bi bi-credit-card-2-front text-success"></i> Đã thanh toán</td>
+              <td>2.100.000₫</td>
+              <td>
+                <button class="btn btn-primary btn-sm"><i class="bi bi-eye"></i></button>
+                <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>#DH004</td>
+              <td>Phạm Thị D</td>
+              <td>14/07/2025</td>
+              <td><span class="status-badge status-cancelled">Đã hủy</span></td>
+              <td><i class="bi bi-x-circle text-danger"></i> Chưa thanh toán</td>
+              <td>890.000₫</td>
+              <td>
+                <button class="btn btn-primary btn-sm"><i class="bi bi-eye"></i></button>
+                <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 

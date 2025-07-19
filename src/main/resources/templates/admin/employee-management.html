@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản Lý Nhân Viên</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/admin-custom.css">
+</head>
+<body>
+  <!-- Sidebar -->
+  <div th:replace="~{admin/admin-header :: sidebar-admin}"></div>
+  
+  <!-- Header -->
+  <div th:replace="~{admin/admin-header :: header-admin}"></div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="container-fluid">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Quản Lý Nhân Viên</h2>
+        <a href="/admin/employee-management/add" class="btn btn-success">
+          <i class="bi bi-person-plus"></i> Thêm Nhân Viên
+        </a>
+      </div>
+
+      <!-- Test Message -->
+      <div th:if="${message}" class="alert alert-info alert-dismissible fade show" role="alert">
+        <i class="bi bi-info-circle me-2"></i>
+        <span th:text="${message}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+
+      <!-- Alert Messages -->
+      <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-2"></i>
+        <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+      
+      <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+
+      <!-- Search and Filter -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <div class="input-group">
+            <input type="text" class="form-control" id="searchInput" placeholder="Tìm kiếm nhân viên...">
+            <button class="btn btn-outline-secondary" type="button" onclick="searchEmployees()">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <select class="form-select" id="statusFilter" onchange="filterByStatus()">
+            <option value="">Tất cả trạng thái</option>
+            <option value="true">Đang hoạt động</option>
+            <option value="false">Đã khóa</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <select class="form-select" id="roleFilter" onchange="filterByRole()">
+            <option value="">Tất cả vai trò</option>
+            <option value="true">Admin</option>
+            <option value="false">Nhân viên</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Employees Table -->
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th>Mã NV</th>
+              <th>Tên Nhân Viên</th>
+              <th>Email</th>
+              <th>Số Điện Thoại</th>
+              <th>Vai Trò</th>
+              <th>Trạng Thái</th>
+              <th>Hành Động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="employee : ${employees}">
+              <td th:text="${employee.maNV}">NV001</td>
+              <td th:text="${employee.tenNV}">Nguyễn Văn A</td>
+              <td th:text="${employee.email}">nva@gmail.com</td>
+              <td th:text="${employee.soDT}">0909123456</td>
+              <td>
+                <span th:if="${employee.isAdmin}" class="badge bg-danger">Admin</span>
+                <span th:unless="${employee.isAdmin}" class="badge bg-info">Nhân viên</span>
+              </td>
+              <td>
+                <span th:if="${employee.isActivity}" class="badge bg-success">Đang hoạt động</span>
+                <span th:unless="${employee.isActivity}" class="badge bg-secondary">Đã khóa</span>
+              </td>
+              <td>
+                <div class="btn-group" role="group">
+                  <a th:href="@{/admin/employee-management/edit/{id}(id=${employee.maNV})}" 
+                     class="btn btn-warning btn-sm" title="Sửa">
+                    <i class="bi bi-pencil"></i>
+                  </a>
+                  <button type="button" class="btn btn-info btn-sm toggle-status-btn" 
+                          th:data-employee-id="${employee.maNV}"
+                          title="Toggle Status">
+                    <i class="bi bi-lock"></i>
+                  </button>
+                  <button type="button" class="btn btn-danger btn-sm delete-btn" 
+                          th:data-employee-id="${employee.maNV}"
+                          th:data-employee-name="${employee.tenNV}"
+                          title="Xóa">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(employees)}">
+              <td colspan="7" class="text-center text-muted py-4">
+                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                Không có nhân viên nào
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Xác nhận xóa</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>Bạn có chắc chắn muốn xóa nhân viên <strong id="employeeName"></strong>?</p>
+          <p class="text-danger"><small>Hành động này không thể hoàn tác!</small></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <form id="deleteForm" method="post" style="display: inline;">
+            <button type="submit" class="btn btn-danger">Xóa</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Search functionality
+    function searchEmployees() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const rows = document.querySelectorAll('tbody tr');
+      
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        if (text.includes(searchTerm)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    // Filter by status
+    function filterByStatus() {
+      const status = document.getElementById('statusFilter').value;
+      const rows = document.querySelectorAll('tbody tr');
+      
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        if (status === '' || 
+            (status === 'true' && text.includes('đang hoạt động')) ||
+            (status === 'false' && text.includes('đã khóa'))) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    // Filter by role
+    function filterByRole() {
+      const role = document.getElementById('roleFilter').value;
+      const rows = document.querySelectorAll('tbody tr');
+      
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        if (role === '' || 
+            (role === 'true' && text.includes('admin')) ||
+            (role === 'false' && text.includes('nhân viên'))) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    // Toggle status
+    function toggleStatus(employeeId) {
+      if (confirm('Bạn có chắc chắn muốn thay đổi trạng thái nhân viên này?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/admin/employee-management/toggle-status/${employeeId}`;
+        document.body.appendChild(form);
+        form.submit();
+      }
+    }
+
+    // Delete employee
+    function deleteEmployee(employeeId, employeeName) {
+      document.getElementById('employeeName').textContent = employeeName;
+      document.getElementById('deleteForm').action = `/admin/employee-management/delete/${employeeId}`;
+      new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      // Toggle status buttons
+      document.querySelectorAll('.toggle-status-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const employeeId = this.getAttribute('data-employee-id');
+          toggleStatus(employeeId);
+        });
+      });
+
+      // Delete buttons
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const employeeId = this.getAttribute('data-employee-id');
+          const employeeName = this.getAttribute('data-employee-name');
+          deleteEmployee(employeeId, employeeName);
+        });
+      });
+    });
+
+    // Auto-hide alerts after 5 seconds
+    setTimeout(function() {
+      const alerts = document.querySelectorAll('.alert');
+      alerts.forEach(alert => {
+        const bsAlert = new bootstrap.Alert(alert);
+        bsAlert.close();
+      });
+    }, 5000);
+  </script>
+</body>
+</html> 
