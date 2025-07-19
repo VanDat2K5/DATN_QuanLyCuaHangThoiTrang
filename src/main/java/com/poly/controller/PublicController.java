@@ -1,22 +1,12 @@
 package com.poly.controller;
 
-import com.poly.dto.SanPhamViewDTO;
-import com.poly.entity.SanPham;
-import com.poly.service.SanPhamService;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 @Controller
 public class PublicController {
-
-    @Autowired
-    private SanPhamService sanPhamService;
 
     @GetMapping("/")
     public String publicHome(HttpSession session, Model model) {
@@ -109,64 +99,66 @@ public class PublicController {
     // }
 
     // Trang collection với lọc theo giới tính
-//    // Trang collection với lọc theo giới tính
-//    // Trang collection với lọc theo giới tính
-//    @GetMapping("/collection")
-//    public String publicCollection(HttpSession session, Model model,
-//                                   @RequestParam(value = "gender", required = false) String gender) {
-//        // Gán thông tin user nếu đã đăng nhập
-//        if (session.getAttribute("user") != null) {
-//            model.addAttribute("user", session.getAttribute("user"));
-//            model.addAttribute("username", session.getAttribute("username"));
-//            model.addAttribute("userRole", session.getAttribute("userRole"));
-//        }
-//
-//        List<SanPham> sanPhams;
-//
-//        try {
-//            if (gender != null && !gender.isEmpty()) {
-//                SanPham.Gender genderEnum = SanPham.Gender.valueOf(gender.toUpperCase());
-//                sanPhams = sanPhamService.findByGioiTinh(genderEnum);
-//                model.addAttribute("selectedGender", genderEnum);
-//            } else {
-//                sanPhams = sanPhamService.findAll();
-//            }
-//        } catch (IllegalArgumentException e) {
-//            sanPhams = sanPhamService.findAll();
-//        }
-//
-//        List<SanPhamViewDTO> products = sanPhams.stream()
-//                .map(SanPhamViewDTO::new)
-//                .toList();
-//
-//        model.addAttribute("products", products);
-//        model.addAttribute("genders", SanPham.Gender.values());
-//        return "Client/demo-fashion-store-collection";
-//    }
-//
-//
-//    // API endpoint để lọc sản phẩm theo giới tính (cho AJAX)
-//    @GetMapping("/api/products/by-gender")
-//    public String getProductsByGender(@RequestParam("gender") String gender, Model model) {
-//        List<SanPhamViewDTO> products;
-//
-//        try {
-//            SanPham.Gender genderEnum = SanPham.Gender.valueOf(gender.toUpperCase());
-//            products = sanPhamService.findByGioiTinh(genderEnum)
-//                    .stream()
-//                    .map(SanPhamViewDTO::new)
-//                    .toList();
-//            model.addAttribute("selectedGender", genderEnum);
-//        } catch (IllegalArgumentException e) {
-//            products = sanPhamService.findAll()
-//                    .stream()
-//                    .map(SanPhamViewDTO::new)
-//                    .toList();
-//        }
-//
-//        model.addAttribute("products", products);
-//        model.addAttribute("genders", SanPham.Gender.values());
-//        return "Client/fragments/product-list"; // Fragment để render lại danh sách sản phẩm
-//    }
+    // // Trang collection với lọc theo giới tính
+    // // Trang collection với lọc theo giới tính
+    // @GetMapping("/collection")
+    // public String publicCollection(HttpSession session, Model model,
+    // @RequestParam(value = "gender", required = false) String gender) {
+    // // Gán thông tin user nếu đã đăng nhập
+    // if (session.getAttribute("user") != null) {
+    // model.addAttribute("user", session.getAttribute("user"));
+    // model.addAttribute("username", session.getAttribute("username"));
+    // model.addAttribute("userRole", session.getAttribute("userRole"));
+    // }
+    //
+    // List<SanPham> sanPhams;
+    //
+    // try {
+    // if (gender != null && !gender.isEmpty()) {
+    // SanPham.Gender genderEnum = SanPham.Gender.valueOf(gender.toUpperCase());
+    // sanPhams = sanPhamService.findByGioiTinh(genderEnum);
+    // model.addAttribute("selectedGender", genderEnum);
+    // } else {
+    // sanPhams = sanPhamService.findAll();
+    // }
+    // } catch (IllegalArgumentException e) {
+    // sanPhams = sanPhamService.findAll();
+    // }
+    //
+    // List<SanPhamViewDTO> products = sanPhams.stream()
+    // .map(SanPhamViewDTO::new)
+    // .toList();
+    //
+    // model.addAttribute("products", products);
+    // model.addAttribute("genders", SanPham.Gender.values());
+    // return "Client/demo-fashion-store-collection";
+    // }
+    //
+    //
+    // // API endpoint để lọc sản phẩm theo giới tính (cho AJAX)
+    // @GetMapping("/api/products/by-gender")
+    // public String getProductsByGender(@RequestParam("gender") String gender,
+    // Model model) {
+    // List<SanPhamViewDTO> products;
+    //
+    // try {
+    // SanPham.Gender genderEnum = SanPham.Gender.valueOf(gender.toUpperCase());
+    // products = sanPhamService.findByGioiTinh(genderEnum)
+    // .stream()
+    // .map(SanPhamViewDTO::new)
+    // .toList();
+    // model.addAttribute("selectedGender", genderEnum);
+    // } catch (IllegalArgumentException e) {
+    // products = sanPhamService.findAll()
+    // .stream()
+    // .map(SanPhamViewDTO::new)
+    // .toList();
+    // }
+    //
+    // model.addAttribute("products", products);
+    // model.addAttribute("genders", SanPham.Gender.values());
+    // return "Client/fragments/product-list"; // Fragment để render lại danh sách
+    // sản phẩm
+    // }
 
 }

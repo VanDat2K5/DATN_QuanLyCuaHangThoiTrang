@@ -16,7 +16,6 @@ public class SanPhamViewDTO {
 
         if (sp.getHinhAnh() != null && !sp.getHinhAnh().isEmpty()) {
             this.hinhAnhDauTien = "/images/" + sp.getHinhAnh().get(0).getHinhAnh();
-
         }
 
         if (sp.getChiTietSanPham() != null && !sp.getChiTietSanPham().isEmpty()) {

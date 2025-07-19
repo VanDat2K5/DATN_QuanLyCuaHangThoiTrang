@@ -100,46 +100,46 @@
     <div class="container-fluid mt-5">
       <div class="row">
         <!-- Sidebar -->
-        <!-- <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark position-fixed top-0 bottom-0 pt-5 pb-3 text-white">
+        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark position-fixed top-0 bottom-0 pt-5 pb-3 text-white" th:fragment="sidebar">
           <div class="sidebar-header d-flex justify-content-between align-items-center">
             <h2>Admin</h2>
           </div>
           <ul class="nav flex-column mt-4">
             <li class="nav-item mb-2">
-              <a class="nav-link active d-flex align-items-center" href="/admin/">
+              <a class="nav-link d-flex align-items-center" href="/admin/">
                 <i class="bi bi-house me-2"></i> <span>Dashboard</span>
               </a>
             </li>
             <li class="nav-item mb-2">
-              <a class="nav-link d-flex align-items-center" href="/admin/team">
-                <i class="bi bi-people me-2"></i> <span>Team</span>
+              <a class="nav-link d-flex align-items-center" href="/admin/products">
+                <i class="bi bi-box me-2"></i> <span>Quản lý sản phẩm</span>
               </a>
             </li>
             <li class="nav-item mb-2">
-              <a class="nav-link d-flex align-items-center" href="/admin/projects">
-                <i class="bi bi-folder me-2"></i> <span>Projects</span>
+              <a class="nav-link d-flex align-items-center" href="/admin/phieu-nhap">
+                <i class="bi bi-file-earmark-plus me-2"></i> <span>Phiếu nhập</span>
               </a>
             </li>
             <li class="nav-item mb-2">
-              <a class="nav-link d-flex align-items-center" href="/admin/calendar">
-                <i class="bi bi-calendar me-2"></i> <span>Calendar</span>
+              <a class="nav-link d-flex align-items-center" href="/admin/orders">
+                <i class="bi bi-cart me-2"></i> <span>Đơn hàng</span>
               </a>
             </li>
             <li class="nav-item mb-2">
-              <a class="nav-link d-flex align-items-center" href="/admin/documents">
-                <i class="bi bi-file-earmark-text me-2"></i> <span>Documents</span>
+              <a class="nav-link d-flex align-items-center" href="/admin/customers">
+                <i class="bi bi-people me-2"></i> <span>Khách hàng</span>
               </a>
             </li>
             <li class="nav-item mb-2">
-              <a class="nav-link d-flex align-items-center" href="/admin/reports">
-                <i class="bi bi-pie-chart me-2"></i> <span>Reports</span>
+              <a class="nav-link d-flex align-items-center" href="/admin/revenue">
+                <i class="bi bi-pie-chart me-2"></i> <span>Báo cáo doanh thu</span>
               </a>
             </li>
           </ul>
-        </nav> -->
+        </nav>
 
         <!-- Main content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-4 offset-md-3 offset-lg-2 overflow-auto">
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-4 overflow-auto">
           <!-- Chèn nội từ  dây -->
           <div class="content" th:replace="${content}"></div>
           <!-- Kết thúc chèn nội dung -->
