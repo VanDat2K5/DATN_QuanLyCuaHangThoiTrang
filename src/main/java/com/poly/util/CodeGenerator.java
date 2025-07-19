@@ -2,10 +2,14 @@ package com.poly.util;
 
 import com.poly.entity.KhachHang;
 import com.poly.entity.NhanVien;
+import com.poly.entity.PhieuNhap;
+import com.poly.entity.SanPham;
 import com.poly.service.HoaDonService;
 import com.poly.service.KhachHangService;
+import com.poly.service.PhieuNhapService;
 import com.poly.service.NhanVienService;
 import com.poly.entity.HoaDon;
+import com.poly.service.SanPhamService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,19 +21,30 @@ public class CodeGenerator {
 
     private final KhachHangService khachHangService;
     private final NhanVienService nhanVienService;
-    private final HoaDonService  hoaDonService;
+    private final HoaDonService hoaDonService;
+    private final PhieuNhapService phieuNhapService;
+    private final SanPhamService sanPhamService;
 
     @Autowired
-    public CodeGenerator(KhachHangService khachHangService, NhanVienService nhanVienService,  HoaDonService  hoaDonService) {
+    public CodeGenerator(KhachHangService khachHangService, NhanVienService nhanVienService,
+            HoaDonService hoaDonService, PhieuNhapService phieuNhapService, SanPhamService sanPhamService) {
         this.khachHangService = khachHangService;
         this.nhanVienService = nhanVienService;
-        this.hoaDonService =  hoaDonService;
+        this.hoaDonService = hoaDonService;
+        this.phieuNhapService = phieuNhapService;
+        this.sanPhamService = sanPhamService;
     }
 
     public String generateCustomerCode() {
         List<KhachHang> allKhachHang = khachHangService.findAll();
         int nextNumber = allKhachHang.size() + 1;
         return String.format("KH%03d", nextNumber);
+    }
+
+    public String generateProductCode() {
+        List<SanPham> allSanPham = sanPhamService.findAll();
+        int nextNumber = allSanPham.size() + 1;
+        return String.format("SP%03d", nextNumber);
     }
 
     public String generateCustomerCode(String prefix) {
@@ -43,11 +58,19 @@ public class CodeGenerator {
         int nextNumber = allNhanVien.size() + 1;
         return String.format("NV%03d", nextNumber);
     }
+
     public String generateOrderCode() {
-        List<HoaDon> allHoaDon =  hoaDonService.findAll();
+        List<HoaDon> allHoaDon = hoaDonService.findAll();
         int nextNumber = allHoaDon.size() + 1;
         return String.format("HD%03d", nextNumber);
     }
+
+    public String generateImportCode() {
+        List<PhieuNhap> allPhieuNhap = phieuNhapService.findAll();
+        int nextNumber = allPhieuNhap.size() + 1;
+        return String.format("PN%03d", nextNumber);
+    }
+
     // khachHang.setMaKH(UUID.randomUUID().toString().substring(0, 20));
     // public boolean isCustomerCodeExists(String maKH) {
     // List<KhachHang> allKhachHang = khachHangService.findAll();
