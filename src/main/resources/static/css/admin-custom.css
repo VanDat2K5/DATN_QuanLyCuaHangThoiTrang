@@ -172,7 +172,7 @@ body{
 
 /* Admin Header Dropdown */
 .admin-header-avatar-container {
-    display: flex;
+display: flex;
     align-items: center;
     text-decoration: none;
     color: #333;
@@ -336,7 +336,7 @@ body{
 }
 
 .btn-download:hover {
-    background: #555;
+	background: #555;
     color: white;
 }
 
@@ -366,4 +366,35 @@ body{
         font-size: 1rem;
     }
 }
-  
+
+
+
+/*  * show-order-custom */
+.status-badge {
+    padding: 0.35em 0.7em;
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    text-transform: capitalize;
+    font-weight: 500;
+}
+
+.status-DaThanhToan {
+    background-color: #28a745;
+    color: #fff;
+}
+.status-DangVanChuyen {
+    background-color: #0dcaf0;
+    color: #fff;
+}
+.status-DaNhanHang {
+    background-color: #0d6efd;
+    color: #fff;
+}
+.status-DaHuy {
+    background-color: #dc3545;
+    color: #fff;
+}
+.status-Doi-Tra_Hang {
+    background-color: #ffc107;
+    color: #000;
+} 
