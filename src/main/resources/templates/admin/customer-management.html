@@ -5,45 +5,103 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Quản Lý Khách Hàng</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/admin-custom.css">
 </head>
 <body>
-  <div th:replace="admin/admin-header :: header-admin"></div>
-  <div class="container py-4">
-    <h2 class="mb-4 text-primary">Quản Lý Khách Hàng</h2>
+  <!-- Sidebar -->
+  <div th:replace="~{admin/admin-header :: sidebar-admin}"></div>
+  
+  <!-- Header -->
+  <div th:replace="~{admin/admin-header :: header-admin}"></div>
 
-    <div class="mb-3 d-flex justify-content-between">
-      <input type="text" class="form-control w-50" placeholder="Tìm kiếm khách hàng..." />
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="container-fluid">
+      <h2 class="mb-4 text-primary">Quản Lý Khách Hàng</h2>
+
+      <div class="mb-3 d-flex justify-content-between">
+        <input type="text" class="form-control w-50" placeholder="Tìm kiếm khách hàng..." />
+        <button class="btn btn-success"><i class="bi bi-person-plus"></i> Thêm Khách Hàng</button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle text-center">
+          <thead class="table-dark">
+            <tr>
+              <th>Mã KH</th>
+              <th>Hình Ảnh</th>
+              <th>Tên</th>
+              <th>Email</th>
+              <th>SĐT</th>
+              <th>Địa chỉ</th>
+              <th>Trạng thái</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>KH001</td>
+              <td><img src="https://via.placeholder.com/40" class="rounded-circle" /></td>
+              <td>Nguyễn Văn A</td>
+              <td>vana@gmail.com</td>
+              <td>0909123456</td>
+              <td>Hà Nội</td>
+              <td><span class="badge bg-success">Hoạt động</span></td>
+              <td>
+                <button class="btn btn-info btn-sm"><i class="bi bi-eye"></i></button>
+                <button class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i></button>
+                <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>KH002</td>
+              <td><img src="https://via.placeholder.com/40" class="rounded-circle" /></td>
+              <td>Trần Thị B</td>
+              <td>thib@gmail.com</td>
+              <td>0912345678</td>
+              <td>TP.HCM</td>
+              <td><span class="badge bg-success">Hoạt động</span></td>
+              <td>
+                <button class="btn btn-info btn-sm"><i class="bi bi-eye"></i></button>
+                <button class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i></button>
+                <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>KH003</td>
+              <td><img src="https://via.placeholder.com/40" class="rounded-circle" /></td>
+              <td>Lê Văn C</td>
+              <td>vanc@gmail.com</td>
+              <td>0923456789</td>
+              <td>Đà Nẵng</td>
+              <td><span class="badge bg-warning">Tạm khóa</span></td>
+              <td>
+                <button class="btn btn-info btn-sm"><i class="bi bi-eye"></i></button>
+                <button class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i></button>
+                <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>KH004</td>
+              <td><img src="https://via.placeholder.com/40" class="rounded-circle" /></td>
+              <td>Phạm Thị D</td>
+              <td>thid@gmail.com</td>
+              <td>0934567890</td>
+              <td>Hải Phòng</td>
+              <td><span class="badge bg-danger">Đã xóa</span></td>
+              <td>
+                <button class="btn btn-info btn-sm"><i class="bi bi-eye"></i></button>
+                <button class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i></button>
+                <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-
-    <table class="table table-bordered table-hover align-middle text-center">
-      <thead class="table-dark">
-        <tr>
-          <th>ID</th>
-          <th>Tên</th>
-          <th>Email</th>
-          <th>SĐT</th>
-          <th>Địa chỉ</th>
-          <th>Trạng thái</th>
-          <th>Hành động</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Dữ liệu khách hàng -->
-        <tr>
-          <td>KH001</td>
-          <td>Nguyễn Văn A</td>
-          <td>vana@gmail.com</td>
-          <td>0909123456</td>
-          <td>Hà Nội</td>
-          <td><span class="badge bg-success">Hoạt động</span></td>
-          <td>
-            <button class="btn btn-info btn-sm">Chi tiết</button>
-            <button class="btn btn-danger btn-sm">Xóa</button>
-          </td>
-        </tr>
-        <!-- Thêm khách hàng khác -->
-      </tbody>
-    </table>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

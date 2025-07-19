@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title th:text="${employee.maNV != null ? 'Sửa Nhân Viên' : 'Thêm Nhân Viên'}">Quản Lý Nhân Viên</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/admin-custom.css">
+</head>
+<body>
+  <!-- Sidebar -->
+  <div th:replace="~{admin/admin-header :: sidebar-admin}"></div>
+  
+  <!-- Header -->
+  <div th:replace="~{admin/admin-header :: header-admin}"></div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="container-fluid">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card">
+            <div class="card-header">
+              <h4 class="mb-0">
+                <i class="bi bi-person-plus me-2"></i>
+                <span th:text="${employee.maNV != null ? 'Sửa Nhân Viên' : 'Thêm Nhân Viên'}">Form Nhân Viên</span>
+              </h4>
+            </div>
+            <div class="card-body">
+              <!-- Alert Messages -->
+              <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+
+              <form th:action="${employee.maNV != null ? '/admin/employee-management/edit' : '/admin/employee-management/add'}" 
+                    th:object="${employee}" method="post" id="employeeForm">
+                
+                <!-- Hidden field for edit mode -->
+                <input type="hidden" th:field="*{maNV}" th:if="${employee.maNV != null}">
+                
+                <div class="row">
+                  <!-- Mã Nhân Viên -->
+                  <div class="col-md-6 mb-3" th:if="${employee.maNV == null}">
+                    <label for="maNV" class="form-label">Mã Nhân Viên <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="maNV" th:field="*{maNV}" 
+                           placeholder="VD: NV001" required>
+                    <div class="form-text">Mã nhân viên phải là duy nhất</div>
+                  </div>
+
+                  <!-- Tên Nhân Viên -->
+                  <div class="col-md-6 mb-3">
+                    <label for="tenNV" class="form-label">Tên Nhân Viên <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="tenNV" th:field="*{tenNV}" 
+                           placeholder="Nhập tên nhân viên" required>
+                  </div>
+
+                  <!-- Email -->
+                  <div class="col-md-6 mb-3">
+                    <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" id="email" th:field="*{email}" 
+                           placeholder="example@email.com" required>
+                    <div class="form-text">Email phải là duy nhất</div>
+                  </div>
+
+                  <!-- Số Điện Thoại -->
+                  <div class="col-md-6 mb-3">
+                    <label for="soDT" class="form-label">Số Điện Thoại <span class="text-danger">*</span></label>
+                    <input type="tel" class="form-control" id="soDT" th:field="*{soDT}" 
+                           placeholder="0909123456" pattern="[0-9]{10}" required>
+                    <div class="form-text">Số điện thoại phải có 10 chữ số</div>
+                  </div>
+
+                  <!-- Vai Trò -->
+                  <div class="col-md-6 mb-3">
+                    <label for="isAdmin" class="form-label">Vai Trò</label>
+                    <select class="form-select" id="isAdmin" th:field="*{isAdmin}">
+                      <option value="false">Nhân viên</option>
+                      <option value="true">Admin</option>
+                    </select>
+                  </div>
+
+                  <!-- Trạng Thái -->
+                  <div class="col-md-6 mb-3">
+                    <label for="isActivity" class="form-label">Trạng Thái</label>
+                    <select class="form-select" id="isActivity" th:field="*{isActivity}">
+                      <option value="true">Đang hoạt động</option>
+                      <option value="false">Đã khóa</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex justify-content-between mt-4">
+                  <a href="/admin/employee-management" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Quay lại
+                  </a>
+                  <div>
+                    <button type="reset" class="btn btn-warning me-2">
+                      <i class="bi bi-arrow-clockwise me-2"></i>Làm mới
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                      <i class="bi bi-check-circle me-2"></i>
+                      <span th:text="${employee.maNV != null ? 'Cập nhật' : 'Thêm'}">Lưu</span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Form validation
+    document.getElementById('employeeForm').addEventListener('submit', function(e) {
+      const maNV = document.getElementById('maNV');
+      const tenNV = document.getElementById('tenNV');
+      const email = document.getElementById('email');
+      const soDT = document.getElementById('soDT');
+      
+      let isValid = true;
+      
+      // Clear previous error states
+      [maNV, tenNV, email, soDT].forEach(field => {
+        field.classList.remove('is-invalid');
+      });
+      
+      // Validate Mã NV (only for new employees)
+      if (maNV && maNV.value.trim() === '') {
+        maNV.classList.add('is-invalid');
+        isValid = false;
+      }
+      
+      // Validate Tên NV
+      if (tenNV.value.trim() === '') {
+        tenNV.classList.add('is-invalid');
+        isValid = false;
+      }
+      
+      // Validate Email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email.value)) {
+        email.classList.add('is-invalid');
+        isValid = false;
+      }
+      
+      // Validate Số ĐT
+      const phoneRegex = /^[0-9]{10}$/;
+      if (!phoneRegex.test(soDT.value)) {
+        soDT.classList.add('is-invalid');
+        isValid = false;
+      }
+      
+      if (!isValid) {
+        e.preventDefault();
+        alert('Vui lòng kiểm tra lại thông tin!');
+      }
+    });
+
+    // Auto-hide alerts after 5 seconds
+    setTimeout(function() {
+      const alerts = document.querySelectorAll('.alert');
+      alerts.forEach(alert => {
+        const bsAlert = new bootstrap.Alert(alert);
+        bsAlert.close();
+      });
+    }, 5000);
+  </script>
+</body>
+</html> 
