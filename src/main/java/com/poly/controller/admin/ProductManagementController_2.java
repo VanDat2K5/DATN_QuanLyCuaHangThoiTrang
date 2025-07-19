@@ -13,14 +13,14 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
-public class ProductManagementController {
-    
+public class ProductManagementController_2 {
+
     @Autowired
     private SanPhamService sanPhamService;
-    
+
     @Autowired
     private LoaiSanPhamService loaiSanPhamService;
-    
+
     // Hiển thị danh sách sản phẩm
     @GetMapping("/product-management")
     public String productManagement(Model model) {
@@ -29,7 +29,7 @@ public class ProductManagementController {
         model.addAttribute("categories", loaiSanPhamService.findAll());
         return "admin/product-management";
     }
-    
+
     // Hiển thị form thêm sản phẩm
     @GetMapping("/product-management/add")
     public String showAddForm(Model model) {
@@ -37,7 +37,7 @@ public class ProductManagementController {
         model.addAttribute("categories", loaiSanPhamService.findAll());
         return "admin/product-form";
     }
-    
+
     // Thêm sản phẩm mới
     @PostMapping("/product-management/add")
     public String addProduct(@ModelAttribute SanPham product, RedirectAttributes redirectAttributes) {
@@ -49,7 +49,7 @@ public class ProductManagementController {
         }
         return "redirect:/admin/product-management";
     }
-    
+
     // Hiển thị form sửa sản phẩm
     @GetMapping("/product-management/edit/{id}")
     public String showEditForm(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
@@ -62,10 +62,11 @@ public class ProductManagementController {
         model.addAttribute("categories", loaiSanPhamService.findAll());
         return "admin/product-form";
     }
-    
+
     // Cập nhật sản phẩm
     @PostMapping("/product-management/edit/{id}")
-    public String updateProduct(@PathVariable String id, @ModelAttribute SanPham product, RedirectAttributes redirectAttributes) {
+    public String updateProduct(@PathVariable String id, @ModelAttribute SanPham product,
+            RedirectAttributes redirectAttributes) {
         try {
             product.setMaSP(id);
             sanPhamService.save(product);
@@ -75,7 +76,7 @@ public class ProductManagementController {
         }
         return "redirect:/admin/product-management";
     }
-    
+
     // Xóa sản phẩm
     @GetMapping("/product-management/delete/{id}")
     public String deleteProduct(@PathVariable String id, RedirectAttributes redirectAttributes) {
@@ -87,7 +88,7 @@ public class ProductManagementController {
         }
         return "redirect:/admin/product-management";
     }
-    
+
     // Tìm kiếm sản phẩm
     @GetMapping("/product-management/search")
     public String searchProducts(@RequestParam String keyword, Model model) {
