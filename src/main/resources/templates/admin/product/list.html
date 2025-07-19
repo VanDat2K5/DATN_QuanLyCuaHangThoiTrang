@@ -37,7 +37,6 @@
                      alt="Ảnh đại diện"
                      class="img-thumbnail"
                      style="max-width:60px; max-height:60px"/>
-
                 <div th:if="${productImages[p.maSP]} == null"
                      class="text-muted small">
                     Chưa có ảnh
@@ -51,38 +50,10 @@
             <!-- Danh mục -->
             <td th:text="${p.loaiSP.loaiSP}">Thời trang</td>
 
-            <!-- Chi tiết sản phẩm -->
+            <!-- Xem chi tiết -->
             <td>
-                <button class="btn btn-sm btn-info" type="button"
-                        data-bs-toggle="collapse"
-                        th:attr="data-bs-target='#details-' + ${p.maSP}">
-                    Xem chi tiết
-                </button>
-                <div class="collapse mt-2" th:id="'details-' + ${p.maSP}">
-                    <table class="table table-bordered table-sm mb-0">
-                        <thead class="table-light">
-                        <tr>
-                            <th>Màu</th>
-                            <th>Size</th>
-                            <th>SL</th>
-                            <th>Giá nhập</th>
-                            <th>Giá xuất</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="ct : ${p.chiTietSanPham}">
-                            <td th:text="${ct.mau.tenMau}">Đỏ</td>
-                            <td th:text="${ct.size.tenSize}">L</td>
-                            <td th:text="${ct.soLuong}">10</td>
-                            <td th:text="${#numbers.formatDecimal(ct.giaNhap, 1, 'POINT', 2, 'NONE')}">100.00</td>
-                            <td th:text="${#numbers.formatDecimal(ct.giaXuat, 1, 'POINT', 2, 'NONE')}">120.00</td>
-                        </tr>
-                        <tr th:if="${#lists.isEmpty(p.chiTietSanPham)}">
-                            <td colspan="5" class="text-center text-muted">Chưa có chi tiết</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <a th:href="@{/admin/chitiet/detail-management(productId=${p.maSP})}" class="btn btn-sm btn-info">Xem chi tiết</a>
+
             </td>
 
             <!-- Thao tác -->
@@ -90,7 +61,6 @@
                 <a th:href="@{/admin/products/{id}/edit(id=${p.maSP})}" class="btn btn-sm btn-warning">Sửa</a>
                 <a th:href="@{/admin/products/{id}/delete(id=${p.maSP})}" class="btn btn-sm btn-danger ms-1"
                    onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">Xóa</a>
-                <a th:href="@{/admin/chitiet/add(productId=${p.maSP})}" class="btn btn-sm btn-success ms-1">Thêm chi tiết</a>
             </td>
         </tr>
         </tbody>

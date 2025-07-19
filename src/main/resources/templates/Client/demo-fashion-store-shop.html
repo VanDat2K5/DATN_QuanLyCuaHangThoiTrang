@@ -1,0 +1,183 @@
+﻿<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Custom Shop Page</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" th:href="@{/images/logoST.png}">
+    <link rel="stylesheet" th:href="@{/css/vendors.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/icon.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" th:href="@{/css/responsive.css}"/>
+    <link rel="stylesheet" th:href="@{/demos/fashion-store/fashion-store.css}" />
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding-top: 60px;
+        }
+
+        .custom-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 15px;
+        }
+
+        .custom-product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+        }
+
+        .custom-product-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .custom-product-card:hover {
+            transform: translateY(-6px);
+        }
+
+        .custom-product-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .custom-product-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .custom-product-card:hover .custom-product-overlay {
+            opacity: 1;
+        }
+
+        .custom-product-actions {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .custom-product-card:hover .custom-product-actions {
+            opacity: 1;
+        }
+
+        .custom-add-btn {
+            background-color: #000;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .custom-product-info {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .custom-product-info a {
+            display: block;
+            font-weight: 600;
+            font-size: 16px;
+            color: #222;
+            text-decoration: none;
+            margin-bottom: 8px;
+        }
+
+        .custom-product-price {
+            color: #ff3e3e;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .custom-pagination {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .custom-pagination .custom-page-item {
+            margin: 0 6px;
+        }
+
+        .custom-pagination .custom-page-link {
+            padding: 8px 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .custom-pagination .custom-active .custom-page-link {
+            background-color: #000;
+            color: #fff;
+            border-color: #000;
+        }
+
+        .custom-pagination .custom-disabled .custom-page-link {
+            color: #aaa;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="Client/header :: header"></div>
+
+<div class="custom-container">
+    <div class="custom-product-grid">
+        <div class="custom-product-card" th:each="sp : ${products}">
+            <div class="custom-product-image">
+                <img th:if="${sp.hinhAnhDauTien != null}" th:src="@{${sp.hinhAnhDauTien}}" alt="Ảnh sản phẩm">
+                <div class="custom-product-overlay"></div>
+                <div class="custom-product-actions">
+                    <a th:href="@{/shop/{id}(id=${sp.maSP})}" class="custom-add-btn">Add to Cart</a>
+                </div>
+            </div>
+            <div class="custom-product-info">
+                <a th:href="@{/shop/{id}(id=${sp.maSP})}" th:text="${sp.tenSP}">Tên sản phẩm</a>
+                <div class="custom-product-price" th:text="'$' + ${sp.giaXuat}">Giá</div>
+            </div>
+        </div>
+    </div>
+
+    <ul class="custom-pagination" th:if="${totalPages > 1}">
+        <li class="custom-page-item" th:classappend="${currentPage == 1} ? ' custom-disabled'">
+            <a class="custom-page-link" th:href="@{/shop(page=${currentPage - 1}, size=${pageSize})}">&laquo;</a>
+        </li>
+        <li class="custom-page-item"
+            th:each="i : ${#numbers.sequence(1, totalPages)}"
+            th:classappend="${i == currentPage} ? ' custom-active'">
+            <a class="custom-page-link" th:href="@{/shop(page=${i}, size=${pageSize})}" th:text="${i}">1</a>
+        </li>
+        <li class="custom-page-item" th:classappend="${currentPage == totalPages} ? ' custom-disabled'">
+            <a class="custom-page-link" th:href="@{/shop(page=${currentPage + 1}, size=${pageSize})}">&raquo;</a>
+        </li>
+    </ul>
+</div>
+
+<div th:replace="Client/footer :: footer"></div>
+<script th:src="@{/js/jquery.js}"></script>
+<script th:src="@{/js/vendors.min.js}"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>
