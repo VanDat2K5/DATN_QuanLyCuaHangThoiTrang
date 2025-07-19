@@ -29,6 +29,7 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 @RequestMapping("/admin/management/orders")
 public class OrderManagementController {
+
 	private final HoaDonService hoaDonService;
 	private final ChiTietHoaDonService chitietHoaDonService;
 
@@ -58,7 +59,6 @@ public class OrderManagementController {
 			@RequestParam(defaultValue = "5") int size) {
 
 		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "NgayLap"));
-		// Pageable pageable = PageRequest.of(page, size);
 		Page<HoaDon> orders = hoaDonService.findAll(pageable);
 
 		model.addAttribute("orders", orders.getContent());
@@ -86,7 +86,6 @@ public class OrderManagementController {
 	public String saveOrder(@ModelAttribute("orders") HoaDon hoaDon, RedirectAttributes redirectAttributes) {
 		try {
 			hoaDonService.save(hoaDon);
-			//redirectAttributes.addFlashAttribute("success", "Tạo hóa đơn thành công!");
 			return "redirect:/";
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("error", "Đã xảy ra lỗi khi tạo hóa đơn.");
@@ -117,5 +116,4 @@ public class OrderManagementController {
 		}
 		return "admin/show-order";
 	}
-
 }

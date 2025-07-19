@@ -31,7 +31,4 @@ public class KhachHang {
 
     @OneToMany(mappedBy = "khachHang")
     private List<HoaDon> hoaDon;
-
-    @OneToMany(mappedBy = "khachHang")
-    private List<DiaChiNhanHang> diaChiNhanHang;
 }
