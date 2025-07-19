@@ -101,7 +101,7 @@ public class LoginController {
                     session.setAttribute("userRole", "EMPLOYEE");
                 }
                 session.setAttribute("username", taiKhoan.getTenTK());
-                return "redirect:/";
+                return "redirect:/admin/";
             } else {
                 model.addAttribute("error", "Tài khoản không hợp lệ.");
                 return "Client/demo-fashion-store-login";
