@@ -13,8 +13,6 @@ body{
     width: 95%;
 }
 
-/* Xóa .sidebar-modern cũ vì không dùng nữa */
-
 .sidebar-header {
     position: fixed;
     top: 10px;
@@ -98,6 +96,16 @@ body{
     background-color: #34495e;
     color: #fff;
     transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(52, 73, 94, 0.3);
+}
+
+.sidebar-menu a:hover i {
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+}
+
+.sidebar-menu a i {
+    transition: all 0.3s ease;
 }
 
 /* Header style */
