@@ -119,6 +119,7 @@ CREATE TABLE PhieuNhap (
     MaNV VARCHAR(20) NOT NULL,
     TenNhaCungCap NVARCHAR(255) NOT NULL,
     NgayNhap DATE NOT NULL,
+	tongTien DECIMAL(18,2) NULL,
     FOREIGN KEY (MaNV) REFERENCES NhanVien(MaNV)
 );
 
