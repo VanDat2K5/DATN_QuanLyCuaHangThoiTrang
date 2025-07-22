@@ -1,6 +1,7 @@
 package com.poly.controller.admin;
 
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ import com.poly.entity.NhanVien;
 import com.poly.service.ChiTietHoaDonService;
 import com.poly.service.HoaDonService;
 import com.poly.util.CodeGenerator;
+
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -54,19 +57,29 @@ public class OrderManagementController {
 
 	@GetMapping
 	public String listOrders(Model model,
-			@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "5") int size) {
+	                         @RequestParam(defaultValue = "0") int page,
+	                         @RequestParam(defaultValue = "5") int size,
+	                         @RequestParam(required = false) String keyword) {
 
-		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "NgayLap"));
-		Page<HoaDon> orders = hoaDonService.findAll(pageable);
+	    Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "NgayLap"));
+	    Page<HoaDon> orders;
 
-		model.addAttribute("orders", orders.getContent());
-		model.addAttribute("currentPage", page);
-		model.addAttribute("totalPages", orders.getTotalPages());
-		model.addAttribute("totalItems", orders.getTotalElements());
+	    if (keyword != null && !keyword.trim().isEmpty()) {
+//	        orders = hoaDonService.searchHoaDon(keyword, pageable);
+	    	orders = hoaDonService.findAll(pageable);
+	        model.addAttribute("keyword", keyword); // giữ lại từ khoá khi quay lại form
+	    } else {
+	        orders = hoaDonService.findAll(pageable);
+	    }
 
-		return "admin/order-management";
+	    model.addAttribute("orders", orders.getContent());
+	    model.addAttribute("currentPage", page);
+	    model.addAttribute("totalPages", orders.getTotalPages());
+	    model.addAttribute("totalItems", orders.getTotalElements());
+
+	    return "admin/order-management";
 	}
+
 
 	@GetMapping("/view/{id}")
 	public String viewOrder(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
@@ -115,4 +128,25 @@ public class OrderManagementController {
 		}
 		return "admin/show-order";
 	}
+	
+	@PostMapping("/update")
+	public String updateOrderStatus(HttpServletRequest request) {
+	    Map<String, String[]> params = request.getParameterMap();
+
+	    for (String key : params.keySet()) {
+	        if (key.startsWith("save_")) {
+	            String maHD = key.substring(5);
+	            String trangThai = request.getParameter("trangThai_" + maHD);
+
+	            // Gọi service cập nhật trạng thái
+	            hoaDonService.updateTrangThaiByMaHD(maHD, trangThai);
+	            break;
+	        }
+	    }
+
+	    return "redirect:/admin/management/orders";
+	}
+	
+	
+
 }
