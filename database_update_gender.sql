@@ -5,6 +5,10 @@
 ALTER TABLE SanPham 
 ADD GioiTinh NVARCHAR(20) NOT NULL DEFAULT 'UNISEX';
 
+-- Thêm cột tongTien vào bảng PhieuNhap
+ALTER TABLE PhieuNhap 
+ADD tongTien DECIMAL(18,2) NULL;
+
 -- Cập nhật dữ liệu mẫu cho các sản phẩm hiện có (tùy chọn)
 -- Bạn có thể cập nhật theo logic nghiệp vụ của mình
 

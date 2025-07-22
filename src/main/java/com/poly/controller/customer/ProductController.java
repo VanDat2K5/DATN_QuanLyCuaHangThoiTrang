@@ -1,4 +1,4 @@
-package com.poly.controller.guest;
+package com.poly.controller.customer;
 
 import com.poly.dto.SanPhamViewDTO;
 import com.poly.entity.SanPham;
@@ -38,7 +38,7 @@ public class ProductController {
 
     @GetMapping("/filter")
     public String publicShop(HttpSession session, Model model,
-                             @RequestParam(value = "gender", required = false) String gender) {
+            @RequestParam(value = "gender", required = false) String gender) {
         if (session.getAttribute("user") != null) {
             model.addAttribute("user", session.getAttribute("user"));
             model.addAttribute("username", session.getAttribute("username"));

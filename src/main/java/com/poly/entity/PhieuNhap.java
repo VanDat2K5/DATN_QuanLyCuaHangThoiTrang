@@ -1,6 +1,7 @@
 package com.poly.entity;
 
 import java.time.LocalDate;
+import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,4 +33,7 @@ public class PhieuNhap {
 
     @Column(name = "NgayNhap", nullable = false)
     private LocalDate ngayNhap;
+
+    @Column(name = "tongTien")
+    private BigDecimal tongTien;
 }

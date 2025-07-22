@@ -11,7 +11,6 @@
   <body>
     <!-- Sidebar Fragment -->
     <div th:fragment="sidebar-admin">
-      
       <!-- Sidebar Menu -->
       <nav class="sidebar-menu">
         <a href="/admin" class="active">
@@ -22,10 +21,13 @@
           <i class="bi bi-box"></i>
           <span>Sản phẩm</span>
         </a>
-      
-        <a href="/admin/invoice-management">
+        <a href="/admin/management/orders">
           <i class="bi bi-receipt"></i>
           <span>Hóa đơn</span>
+        </a>
+        <a href="/admin/management/input">
+          <i class="bi bi-cart-check"></i>
+          <span>Phiếu nhập</span>
         </a>
         <a href="/admin/customer-management">
           <i class="bi bi-people"></i>
@@ -35,7 +37,6 @@
           <i class="bi bi-person-gear"></i>
           <span>Nhân viên</span>
         </a>
-      
       </nav>
     </div>
 
@@ -47,12 +48,11 @@
           <div class="admin-header-logo">
             <a href="/" style="text-decoration: none;">
               <img src="/images/icon.png" alt="StyleTech" class="logo-stylelife" />
-              <span class="brand-text" >StyleTech</span>
+              <span class="brand-text">StyleTech</span>
             </a>
           </div>
           <div class="admin-header-right">
             <a class="admin-header-bell" href="#"><i class="bi bi-bell"></i></a>
-            
             <!-- User Dropdown -->
             <div class="dropdown">
               <a href="javascript:void(0)" class="dropdown-toggle admin-header-avatar-container" data-bs-toggle="dropdown">
@@ -70,7 +70,7 @@
                 <li style="padding: 9px;"><a href="/user/profile" class="dropdown-item">My Profile</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li style="padding: 9px;"><a href="/logout" class="dropdown-item">Logout</a></li>
-            </ul>
+              </ul>
             </div>
           </div>
         </div>
