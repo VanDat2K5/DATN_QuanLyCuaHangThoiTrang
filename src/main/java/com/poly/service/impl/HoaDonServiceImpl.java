@@ -89,4 +89,9 @@ public class HoaDonServiceImpl implements HoaDonService {
     public boolean existsById(String id) {
         return hoaDonRepository.existsById(id);
     }
+
+    @Override
+    public int updateTrangThaiByMaHD(String maHD, String trangThai) {
+        return hoaDonRepository.updateTrangThaiByMaHD(maHD, trangThai);
+    }
 }

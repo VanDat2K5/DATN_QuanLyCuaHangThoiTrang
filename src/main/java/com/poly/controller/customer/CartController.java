@@ -11,7 +11,6 @@ public class CartController {
     @GetMapping("/cart")
     public String cartPage(@RequestParam(name = "maKH", required = false) String maKH, Model model) {
         model.addAttribute("maKH", maKH); // có thể là null
-        return "test-cart/demo-cart";
+        return "Client/demo-fashion-store-cart";
     }
 }
-
