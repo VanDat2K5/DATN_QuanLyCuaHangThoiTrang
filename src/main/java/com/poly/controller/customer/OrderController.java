@@ -27,5 +27,11 @@ public class OrderController {
 		model.addAttribute("orders", hd);
 		return "/";
 	}
-
+	
+	@GetMapping("/1")
+	public String show(Model model, HttpSession session) {
+		
+		return "/admin/show-customer";
+	}
+	
 }

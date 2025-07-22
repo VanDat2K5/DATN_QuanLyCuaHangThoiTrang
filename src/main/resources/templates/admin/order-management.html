@@ -66,12 +66,17 @@ body {
             <!-- Tiêu đề + Tìm kiếm -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="fw-bold text-primary">Quản Lý Hoá Đơn</h2>
-                <input type="search" class="form-control w-25" placeholder="Tìm đơn hàng..." />
+               <!-- Form tìm kiếm -->
+				<form class="d-flex mb-4" th:action="@{/admin/management/orders}" method="get">
+				    <input type="search" name="keyword" class="form-control w-25 me-2" placeholder="Tìm đơn hàng..." />
+				    <button class="btn btn-primary" type="submit">Tìm</button>
+				</form>
+
             </div>
 
             <!-- Bảng hoá đơn -->
             <div class="card shadow-sm rounded-4 p-4">
-                <form th:action="@{/admin/management/orders}" method="post">
+                <form th:action="@{/admin/management/orders/update}" method="post">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle text-center">
                             <thead class="table-dark">
@@ -90,20 +95,40 @@ body {
                                     <td class="text-end"
                                         th:text="${#numbers.formatDecimal(order.tongTien, 0, 'COMMA', 0, 'POINT') + ' ₫'}">
                                     </td>
-                                    <td>
-                                        <span th:class="'status-badge status-' + ${order.trangThai}"
-                                              th:text="${order.trangThai}">Trạng thái</span>
-                                    </td>
-                                    <td>
-                                        <a class="btn btn-sm btn-outline-info"
-                                           th:href="@{'/admin/management/orders/view/' + ${order.maHD}}">
-                                            <i class="bi bi-eye"></i> Xem
-                                        </a>
-                                        <a class="btn btn-sm btn-outline-warning"
-                                           th:href="@{'/admin/management/orders/edit/' + ${order.maHD}}">
-                                            <i class="bi bi-pencil-square"></i> Sửa
-                                        </a>
-                                    </td>
+                                   <td>
+										<span class="status-badge"
+											  th:class="'status-badge status-' + ${order.trangThai}"
+											  th:text="${order.trangThai}"></span>
+									
+										<select class="form-select form-select-sm d-none"
+												th:name="'trangThai_' + ${order.maHD}">
+											<option value="DaThanhToan">Đã Thanh Toán</option>
+											<option value="DangVanChuyen">Đang Vận Chuyển</option>
+											<option value="DaNhanHang">Đã Nhận Hàng</option>
+											<option value="DaHuy">Đã Huỷ</option>
+											<option value="Doi-Tra_Hang">Đổi/Trả Hàng</option>
+										</select>
+									</td>
+									
+									<td>
+										<!-- Nút xem giữ nguyên -->
+										<a class="btn btn-sm btn-outline-info"
+										   th:href="@{'/admin/management/orders/view/' + ${order.maHD}}">
+											<i class="bi bi-eye"></i> Xem
+										</a>
+									
+										<!-- Nút sửa chuyển sang chế độ chỉnh sửa -->
+										<button type="button" class="btn btn-sm btn-outline-warning btn-edit"
+										        th:data-id="${order.maHD}">
+											<i class="bi bi-pencil-square"></i> Sửa
+										</button>
+									
+										<!-- Nút lưu ẩn -->
+										<button type="submit" class="btn btn-sm btn-outline-success d-none btn-save"
+										        th:name="'save_' + ${order.maHD}">
+											<i class="bi bi-save"></i> Lưu
+										</button>
+									</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -124,6 +149,26 @@ body {
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"> </script>
+     <script>
+		document.addEventListener("DOMContentLoaded", function () {
+			const rows = document.querySelectorAll("tbody tr");
+		
+			rows.forEach((row) => {
+				const btnEdit = row.querySelector(".btn-edit");
+				const btnSave = row.querySelector(".btn-save");
+				const badge = row.querySelector(".status-badge");
+				const select = row.querySelector("select");
+		
+				btnEdit.addEventListener("click", function () {
+					badge.classList.add("d-none");
+					select.classList.remove("d-none");
+					btnEdit.classList.add("d-none");
+					btnSave.classList.remove("d-none");
+				});
+			});
+		});
+		</script>
+     
 </body>
 </html>

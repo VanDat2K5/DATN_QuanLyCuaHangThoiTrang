@@ -1,6 +1,9 @@
 package com.poly.repository;
 
 import com.poly.entity.HoaDon;
+
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -25,4 +28,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, String> {
     @Transactional
     @Query("UPDATE HoaDon h SET h.trangThai = :trangThai WHERE h.maHD = :maHD")
     int updateTrangThaiByMaHD(String maHD, String trangThai);
+    
+    Page<HoaDon> findByMaHDContainingIgnoreCase(String keyword, Pageable pageable);
+
 }
