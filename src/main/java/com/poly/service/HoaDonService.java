@@ -31,4 +31,6 @@ public interface HoaDonService {
     List<HoaDon> findByTrangThaiAndPtThanhToan(String trangThai, String ptThanhToan);
 
     boolean existsById(String id);
+
+    int updateTrangThaiByMaHD(String maHD, String trangThai);
 }
