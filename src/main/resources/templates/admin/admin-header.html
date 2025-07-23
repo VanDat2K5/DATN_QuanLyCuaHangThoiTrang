@@ -11,31 +11,25 @@
   <body>
     <!-- Sidebar Fragment -->
     <div th:fragment="sidebar-admin">
-      <!-- Sidebar Menu -->
-      <nav class="sidebar-menu">
-        <a href="/admin" class="active">
+      <!-- Sidebar Menu (icon only) -->
+      <nav class="sidebar-menu-admin">
+        <a href="/admin" class="sidebar-icon-link">
           <i class="bi bi-house"></i>
-          <span>Dashboard</span>
         </a>
-        <a href="/admin/product-management">
+        <a href="/admin/product-management" class="sidebar-icon-link">
           <i class="bi bi-box"></i>
-          <span>Sản phẩm</span>
         </a>
-        <a href="/admin/management/orders">
+        <a href="/admin/management/orders" class="sidebar-icon-link">
           <i class="bi bi-receipt"></i>
-          <span>Hóa đơn</span>
         </a>
-        <a href="/admin/management/input">
+        <a href="/admin/management/input" class="sidebar-icon-link">
           <i class="bi bi-cart-check"></i>
-          <span>Phiếu nhập</span>
         </a>
-        <a href="/admin/customer-management">
+        <a href="/admin/customer-management" class="sidebar-icon-link">
           <i class="bi bi-people"></i>
-          <span>Khách hàng</span>
         </a>
-        <a href="/admin/employee-management">
+        <a href="/admin/employee-management" class="sidebar-icon-link">
           <i class="bi bi-person-gear"></i>
-          <span>Nhân viên</span>
         </a>
       </nav>
     </div>
