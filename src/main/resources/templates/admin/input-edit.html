@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chỉnh Sửa Phiếu Nhập</title>
+    <title>Tạo Phiếu Nhập</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
     <link rel="stylesheet" href="/css/admin-custom.css">
@@ -22,103 +22,86 @@
                 <a th:href="@{/admin/management/input}" class="btn btn-outline-secondary mb-2">
                     <i class="bi bi-arrow-left"></i> Quay lại danh sách
                 </a>
-                <h2 class="fw-bold text-primary">Chỉnh Sửa Phiếu Nhập</h2>
+                <h2 class="fw-bold text-primary">Tạo Phiếu Nhập</h2>
             </div>
-            <form th:action="@{/admin/management/input/edit}" method="post">
-                <input type="hidden" name="maPN" th:value="${phieuNhap.maPN}" />
-                <div class="row mb-3">
+            <form th:action="@{/admin/management/input/create}" method="post" th:object="${phieuNhap}">
+                <div class="row mb-4">
+                    <div class="col-md-4 mb-2">
+                        <label class="form-label">Mã Phiếu Nhập</label>
+                        <input type="text" th:field="*{maPN}" class="form-control" readonly />
+                    </div>
                     <div class="col-md-4 mb-2">
                         <label class="form-label">Nhà cung cấp</label>
-                        <input type="text" name="tenNhaCungCap" class="form-control" th:value="${phieuNhap.tenNhaCungCap}" required />
+                        <input type="text" th:field="*{tenNhaCungCap}" class="form-control" required />
                     </div>
                     <div class="col-md-4 mb-2">
                         <label class="form-label">Ngày nhập</label>
-                        <input type="date" name="ngayNhap" class="form-control" th:value="${phieuNhap.ngayNhap}" required />
+                        <input type="date" th:value="${phieuNhap.ngayNhap}" class="form-control" readonly />
                     </div>
                     <div class="col-md-4 mb-2">
                         <label class="form-label">Nhân viên nhập</label>
-                        <select name="maNV" class="form-select" required>
-                            <option th:each="nv : ${nhanViens}" th:value="${nv.maNV}" th:text="${nv.tenNV}" th:selected="${nv.maNV == phieuNhap.nhanVien?.maNV}">Nguyễn Văn A</option>
-                        </select>
+                        <input type="text" th:field="*{nhanVien.tenNV}" class="form-control" readonly />
                     </div>
                 </div>
                 <div class="card shadow-sm rounded-4 p-4 mb-4">
-                    <h5 class="fw-bold mb-3">Chỉnh sửa sản phẩm nhập</h5>
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover align-middle text-center">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>Tên sản phẩm</th>
+                                    <th>Mã SP</th>
+                                    <th>Tên SP</th>
                                     <th>Màu</th>
                                     <th>Size</th>
-                                    <th>Số lượng nhập</th>
+                                    <th>Số lượng</th>
                                     <th>Giá nhập</th>
+                                    <th>Lô hàng</th>
                                     <th>Hành động</th>
                                 </tr>
                             </thead>
-                            <tbody id="productRows">
-                                <tr th:each="ct, iter : ${chiTietPhieuNhaps}">
+                            <tbody>
+                                <tr th:each="ct, idx : ${productList}">
+                                    <td th:text="${ct.chiTietSanPham.sanPham.maSP}"></td>
+                                    <td th:text="${ct.chiTietSanPham.sanPham.tenSP}"></td>
+                                    <td th:text="${ct.chiTietSanPham.mau.tenMau}"></td>
+                                    <td th:text="${ct.chiTietSanPham.size.tenSize}"></td>
+                                    <td th:text="${ct.soLuongNhap}"></td>
+                                    <td th:text="${ct.giaNhap}"></td>
+                                    <td th:text="${ct.loHang}"></td>
                                     <td>
-                                        <select name="sanPhamIds" class="form-select" required>
-                                            <option th:each="sp : ${sanPhams}" th:value="${sp.maSP}" th:text="${sp.tenSP}" th:selected="${sp.maSP == ct.chiTietSanPham.sanPham.maSP}">SP001</option>
-                                        </select>
+                                        <a th:href="@{'/admin/management/input/create/remove-product/' + ${idx.index}}" class="btn btn-danger btn-sm">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
                                     </td>
-                                    <td>
-                                        <select name="mauSacs" class="form-select" required>
-                                            <option th:each="m : ${mauSacs}" th:value="${m.maMau}" th:text="${m.tenMau}" th:selected="${m.maMau == ct.chiTietSanPham.mau.maMau}">Đỏ</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select name="sizes" class="form-select" required>
-                                            <option th:each="s : ${sizes}" th:value="${s.maSize}" th:text="${s.tenSize}" th:selected="${s.maSize == ct.chiTietSanPham.size.maSize}">M</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="number" name="soLuongNhaps" class="form-control" th:value="${ct.soLuongNhap}" min="1" required /></td>
-                                    <td><input type="number" name="giaNhaps" class="form-control" th:value="${ct.giaNhap}" min="0" required /></td>
-                                    <td><button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()"><i class="bi bi-trash"></i></button></td>
                                 </tr>
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="6" class="text-end fw-bold">Tổng tiền:</td>
+                                    <td th:text="${#numbers.formatDecimal(phieuNhap.tongTien, 0, 'COMMA', 0, 'POINT') + ' ₫'}"></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
                         </table>
-                        <button type="button" class="btn btn-outline-primary" onclick="addProductRow()">
-                            <i class="bi bi-plus-circle"></i> Thêm sản phẩm
-                        </button>
                     </div>
                 </div>
                 <div class="d-flex justify-content-end gap-2">
                     <button type="submit" class="btn btn-success">
-                        <i class="bi bi-save"></i> Lưu thay đổi
+                        <i class="bi bi-save"></i> Lưu phiếu nhập
                     </button>
-                    <a th:href="@{/admin/management/input}" class="btn btn-secondary">Hủy</a>
+                    <!-- <a th:href="@{/admin/management/input}" class="btn btn-secondary">Hủy</a> -->
                 </div>
             </form>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- <script>
-        function addProductRow() {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>
-                    <select name="sanPhamIds" class="form-select" required>
-                        <option th:each="sp :  {sanPhams}" th:value="${sp.maSP}" th:text="${sp.tenSP}">SP001</option>
-                    </select>
-                </td>
-                <td>
-                    <select name="mauSacs" class="form-select" required>
-                        <option th:each="m :  {mauSacs}" th:value="${m.maMau}" th:text="${m.tenMau}">Đỏ</option>
-                    </select>
-                </td>
-                <td>
-                    <select name="sizes" class="form-select" required>
-                        <option th:each="s :  {sizes}" th:value="${s.maSize}" th:text="${s.tenSize}">M</option>
-                    </select>
-                </td>
-                <td><input type="number" name="soLuongNhaps" class="form-control" min="1" required /></td>
-                <td><input type="number" name="giaNhaps" class="form-control" min="0" required /></td>
-                <td><button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()"><i class="bi bi-trash"></i></button></td>
-            `;
-            document.getElementById('productRows').appendChild(row);
+    <script>
+        function onLoaiThemChange() {
+            var loai = document.getElementById('loaiThem').value;
+            document.getElementById('chonSanPhamCu').style.display = (loai === 'cu') ? '' : 'none';
+            document.getElementById('tenSpMoi').style.display = (loai === 'moi') ? '' : 'none';
+            document.getElementById('loHang').value = (loai === 'moi') ? '001' : '002';
         }
-    </script> -->
+        window.onload = onLoaiThemChange;
+    </script>
 </body>
 </html> 

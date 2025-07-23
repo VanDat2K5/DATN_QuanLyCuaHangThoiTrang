@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.poly.entity.ChiTietPhieuNhap;
 import com.poly.entity.Mau;
@@ -82,17 +83,20 @@ public class InputManagementController {
         return "admin/input-detail.html";
     }
 
-    @GetMapping("/edit/{maPN}")
-    public String editInput(@PathVariable("maPN") String maPN, Model model) {
-        Optional<PhieuNhap> phieuNhapOpt = phieuNhapService.findById(maPN);
-        if (phieuNhapOpt.isPresent()) {
-            PhieuNhap phieuNhap = phieuNhapOpt.get();
-            model.addAttribute("phieuNhap", phieuNhap);
-        } else {
-            return "redirect:/admin/management/input";
-        }
-        return "admin/input-edit.html";
-    }
+    // @GetMapping("/edit/{maPN}")
+    // public String editInput(@PathVariable("maPN") String maPN, Model model) {
+    // Optional<PhieuNhap> phieuNhapOpt = phieuNhapService.findById(maPN);
+    // if (phieuNhapOpt.isPresent()) {
+    // PhieuNhap phieuNhap = phieuNhapOpt.get();
+    // List<ChiTietPhieuNhap> chiTietPhieuNhap =
+    // chiTietPhieuNhapService.findByPhieuNhap_MaPN(phieuNhap.getMaPN());
+    // model.addAttribute("chiTietPhieuNhaps", chiTietPhieuNhap);
+    // model.addAttribute("phieuNhap", phieuNhap);
+    // } else {
+    // return "redirect:/admin/management/input";
+    // }
+    // return "admin/input-edit.html";
+    // }
 
     @GetMapping("/create")
     public String createInput(Model model, HttpSession session) {
@@ -101,49 +105,105 @@ public class InputManagementController {
         phieuNhap.setTongTien(BigDecimal.ZERO);
         phieuNhap.setNgayNhap(LocalDate.now());
         phieuNhap.setNhanVien((NhanVien) session.getAttribute("user"));
-        /*------------------------------------------------------------------------------------------------*/
-        List<SanPham> sanPhams = sanPhamService.findAll();
-        model.addAttribute("sanPhams", sanPhams);
-        List<Mau> mauSacs = mauService.findAll();
-        model.addAttribute("mauSacs", mauSacs);
-        List<Size> sizes = sizeService.findAll();
-        model.addAttribute("sizes", sizes);
-        /*------------------------------------------------------------------------------------------------*/
+        phieuNhap.setTenNhaCungCap("Tên Nhà Cung Cấp");
+        phieuNhapService.save(phieuNhap);
+
         model.addAttribute("phieuNhap", phieuNhap);
+
+        model.addAttribute("sanPhams", sanPhamService.findAll());
+        model.addAttribute("mauSacs", mauService.findAll());
+        model.addAttribute("sizes", sizeService.findAll());
+
+        return "admin/input-create.html";
+    }
+
+    @PostMapping("/create/add-product")
+    public String addProductToList(
+            @RequestParam String loaiThem,
+            @RequestParam(required = false) String maSP,
+            @RequestParam(required = false) String tenSpMoi,
+            @RequestParam String mauSac,
+            @RequestParam String size,
+            @RequestParam int soLuongNhap,
+            @RequestParam double giaNhap,
+            @RequestParam String loHang,
+            HttpSession session,
+            Model model) {
+        List<ChiTietPhieuNhap> productList = (List<ChiTietPhieuNhap>) session.getAttribute("productList");
+        if (productList == null)
+            productList = new ArrayList<>();
+        ChiTietPhieuNhap chiTiet = new ChiTietPhieuNhap();
+        SanPham sp = new SanPham();
+        if ("cu".equals(loaiThem)) {
+            sp.setMaSP(maSP);
+            SanPham spDB = sanPhamService.findById(maSP).orElse(null);
+            if (spDB != null)
+                sp.setTenSP(spDB.getTenSP());
+        } else {
+            sp.setMaSP(tenSpMoi != null ? tenSpMoi.replaceAll("\\s+", "_").toUpperCase() : "MOI");
+            sp.setTenSP(tenSpMoi);
+        }
+        Mau m = new Mau();
+        m.setMaMau(mauSac);
+        Size s = new Size();
+        s.setMaSize(size);
+        chiTiet.setChiTietSanPham(new com.poly.entity.ChiTietSanPham());
+        chiTiet.getChiTietSanPham().setSanPham(sp);
+        chiTiet.getChiTietSanPham().setMau(m);
+        chiTiet.getChiTietSanPham().setSize(s);
+        chiTiet.setSoLuongNhap(soLuongNhap);
+        chiTiet.setGiaNhap(BigDecimal.valueOf(giaNhap));
+        chiTiet.setLoHang(loHang);
+        productList.add(chiTiet);
+        session.setAttribute("productList", productList);
+
+        // Render lại view
+        model.addAttribute("phieuNhap", new PhieuNhap());
+        model.addAttribute("productList", productList);
+        model.addAttribute("sanPhams", sanPhamService.findAll());
+        model.addAttribute("mauSacs", mauService.findAll());
+        model.addAttribute("sizes", sizeService.findAll());
+        return "admin/input-create.html";
+    }
+
+    @GetMapping("/create/remove-product/{index}")
+    public String removeProductFromList(@PathVariable int index, HttpSession session, Model model) {
+        List<ChiTietPhieuNhap> productList = (List<ChiTietPhieuNhap>) session.getAttribute("productList");
+        if (productList != null && index >= 0 && index < productList.size()) {
+            productList.remove(index);
+        }
+        session.setAttribute("productList", productList);
+        model.addAttribute("phieuNhap", new PhieuNhap());
+        model.addAttribute("productList", productList);
+        model.addAttribute("sanPhams", sanPhamService.findAll());
+        model.addAttribute("mauSacs", mauService.findAll());
+        model.addAttribute("sizes", sizeService.findAll());
         return "admin/input-create.html";
     }
 
     @PostMapping("/create")
-    public String createInput(@ModelAttribute("phieuNhap") PhieuNhap phieuNhap,
-            Model model, HttpSession session) {
-        phieuNhap.setNhanVien((NhanVien) session.getAttribute("user"));
-        phieuNhap.setNgayNhap(LocalDate.now());
-        phieuNhap.setTenNhaCungCap(phieuNhap.getTenNhaCungCap());
+    public String saveInput(@ModelAttribute PhieuNhap phieuNhap, HttpSession session) {
+        List<ChiTietPhieuNhap> productList = (List<ChiTietPhieuNhap>) session.getAttribute("productList");
+        if (productList != null && !productList.isEmpty()) {
+            // Lưu phiếu nhập trước (nếu chưa có)
+            if (phieuNhap.getMaPN() == null || phieuNhap.getMaPN().isEmpty()) {
+                phieuNhap.setMaPN(codeGenerator.generateImportCode());
+            }
+            // Tính tổng tiền
+            BigDecimal tongTien = BigDecimal.ZERO;
+            for (ChiTietPhieuNhap ct : productList) {
+                tongTien = tongTien.add(ct.getGiaNhap().multiply(BigDecimal.valueOf(ct.getSoLuongNhap())));
+            }
+            phieuNhap.setTongTien(tongTien);
+            phieuNhapService.save(phieuNhap);
 
-        List<ChiTietPhieuNhap> chiTietPhieuNhapList = new ArrayList<>();
-        for (ChiTietPhieuNhap chiTietPhieuNhap : chiTietPhieuNhapList) {
-            chiTietPhieuNhap.setPhieuNhap(phieuNhap);
-            chiTietPhieuNhap.setChiTietSanPham(
-                    chiTietSanPhamService.findById(chiTietPhieuNhap.getChiTietSanPham().getId()).get());
-            chiTietPhieuNhap.setGiaNhap(chiTietPhieuNhap.getChiTietSanPham().getGiaNhap());
-            chiTietPhieuNhap.setSoLuongNhap(chiTietPhieuNhap.getSoLuongNhap());
-            chiTietPhieuNhap.setLoHang(chiTietPhieuNhap.getLoHang());
-            phieuNhap.setTongTien(phieuNhap.getTongTien().add(
-                    chiTietPhieuNhap.getGiaNhap().multiply(BigDecimal.valueOf(chiTietPhieuNhap.getSoLuongNhap()))));
+            // Lưu chi tiết phiếu nhập
+            for (ChiTietPhieuNhap ct : productList) {
+                ct.setPhieuNhap(phieuNhap);
+                chiTietPhieuNhapService.save(ct);
+            }
         }
-        System.out.println(
-                "Ma PN: " + phieuNhap.getMaPN() + " " + "Nhan Vien: " + phieuNhap.getNhanVien().getTenNV() + " "
-                        + "Ngay Nhap: " + phieuNhap.getNgayNhap() + " " + "Ten Nha Cung Cap: "
-                        + phieuNhap.getTenNhaCungCap() + " " + "Tong Tien: " + phieuNhap.getTongTien());
-        // phieuNhapService.save(phieuNhap);
-        // chiTietPhieuNhapService.saveAll(chiTietPhieuNhapList);
-
+        session.removeAttribute("productList");
         return "redirect:/admin/management/input";
-    }
-
-    @GetMapping("/create/add-product")
-    public String addProduct(Model model) {
-
-        return "admin/input-create.html";
     }
 }
