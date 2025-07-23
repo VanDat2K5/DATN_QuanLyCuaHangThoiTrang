@@ -1,208 +1,161 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="[http://www.thymeleaf.org](http://www.thymeleaf.org)">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Giỏ hàng của bạn</title>
-
+    <title>Shopping Cart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- favicon icon -->
     <link rel="shortcut icon" th:href="@{/images/logoST.png}">
-
-    <!-- Google Fonts - Inter (hoặc font mặc định nếu Inter không có) -->
-    <link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
-    <link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
-    <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap)" rel="stylesheet">
-
+    <!-- google fonts preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- style sheets and font icons  -->
     <link rel="stylesheet" th:href="@{/css/vendors.min.css}">
     <link rel="stylesheet" th:href="@{/css/icon.min.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/responsive.css}">
     <link rel="stylesheet" th:href="@{/demos/fashion-store/fashion-store.css}" />
-
-    <link href="[https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css](https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css)" rel="stylesheet"
-          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-          crossorigin="anonymous">
-
     <style>
         body {
-            background-color: #f9f9f9;
             font-family: 'Inter', sans-serif;
-            padding-top: 100px; /* Tạo khoảng cách với header */
+            background-color: #f9f9f9;
         }
-
+        .cart-wrapper {
+            padding: 120px 0;
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            gap: 30px;
+            flex-direction: column;
+        }
+        .cart-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .cart-body {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
         .cart-container {
-            max-width: 1140px;
-            margin: 0 auto;
-            padding: 30px 15px 60px;
-            background-color: #fff;
+            background: #fff;
             border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            padding: 30px;
+            flex: 2;
         }
-
-        h2 {
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 40px;
-            color: #333;
+        .summary-container {
+            background: #f0f0f0;
+            border-radius: 12px;
+            padding: 30px;
+            flex: 1;
+            height: fit-content;
         }
-
-        .btn-load-cart {
-            background-color: #000;
-            color: #fff;
-            border-radius: 8px;
-            padding: 10px 30px;
-            font-weight: 500;
-            transition: all 0.3s ease;
+        .cart-header {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
         }
-
-        .btn-load-cart:hover {
-            background-color: #333;
-            transform: scale(1.02);
-        }
-
-        .table {
-            border-collapse: separate;
-            border-spacing: 0;
-            overflow: hidden;
-            border-radius: 10px;
-        }
-
-        .table thead th {
-            background-color: #212529;
-            color: #fff;
-            text-align: center;
-            vertical-align: middle;
-        }
-
-        .table tbody td {
-            vertical-align: middle;
-            text-align: center;
-        }
-
-        .table img {
-            max-width: 70px;
-            height: auto;
-            border-radius: 6px;
-            border: 1px solid #ddd;
-            object-fit: cover;
-        }
-
-        .table input[type="number"] {
+        .cart-table img {
             width: 60px;
-            text-align: center;
+            height: auto;
+        }
+        .cart-table th, .cart-table td {
+            vertical-align: middle;
+        }
+        .qty-controls button {
+            border: none;
+            background: #000;
+            color: #fff;
+            padding: 5px 10px;
             border-radius: 6px;
-            border: 1px solid #ccc;
-            padding: 6px 10px;
+            font-size: 16px;
         }
-
-        .text-danger {
-            font-size: 1.6rem;
-            color: #dc3545;
-            transition: 0.2s;
-            text-decoration: none;
+        .total-price {
+            font-size: 2.4rem;
+            font-weight: 700;
         }
-
-        .text-danger:hover {
-            color: #bd2130;
-            transform: scale(1.1);
+        .cart-actions {
+            margin-top: 30px;
+            text-align: center;
         }
-
-        .table tfoot td {
-            font-weight: 600;
-            font-size: 1.1rem;
-            background-color: #f8f9fa;
+        .cart-actions button {
+            border: 1px solid #000;
+            background: #fff;
+            color: #000;
+            margin: 0 5px;
+            padding: 10px 20px;
+            font-weight: 500;
         }
-
-        .table tfoot #cartTotal {
-            color: #e74c3c; /* Màu đỏ cho tổng tiền */
-            font-size: 1.2rem;
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
         }
-
-        /* Nút điều chỉnh số lượng */
-        .input-group .btn-outline-dark {
-            border-radius: 8px;
-            border-color: #ccc;
-            color: #555;
-            transition: all 0.2s ease;
-            padding: 8px 12px;
-            font-weight: 600;
+        @keyframes fadeIn {
+            from {opacity: 0; transform: translateY(10px);}
+            to {opacity: 1; transform: translateY(0);}
         }
-        .input-group .btn-outline-dark:hover {
-            background-color: #000 !important;
-            color: #fff !important;
-            border-color: #000;
-        }
-        .input-group .form-control {
-            border-left: none;
-            border-right: none;
-            border-radius: 0;
-        }
-        .input-group .form-control:focus {
-            box-shadow: none;
+        @media (max-width: 768px) {
+            .cart-body {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-
 <div th:replace="Client/header :: header"></div>
-
-<div class="container cart-container shadow-sm">
-    <div class="row">
-        <div class="col-12">
-            <h2>Giỏ hàng của bạn</h2>
-        </div>
-
-        <div class="col-12 text-center mb-4">
-            <button id="loadCartButton" class="btn btn-load-cart">
-                <i class="bi bi-arrow-repeat me-1"></i> Tải lại giỏ hàng
-            </button>
-        </div>
-
-        <div class="col-12">
+<div class="cart-wrapper">
+    <div class="cart-title">Shopping Cart</div>
+    <div class="cart-body">
+        <div class="cart-container">
+            <div class="cart-header">Your Items</div>
+            <input type="hidden" id="cartMaKH" th:value="${maKH}" />
             <div class="table-responsive">
-                <table class="table table-bordered align-middle">
-                    <thead>
+                <table class="table cart-table">
+                    <thead class="table-light">
                     <tr>
                         <th></th>
-                        <th>Ảnh</th>
-                        <th>Sản phẩm</th>
+                        <th>Image</th>
+                        <th>Product</th>
+                        <th>Color</th>
                         <th>Size</th>
-                        <th>Màu</th>
-                        <th class="text-end">Giá</th>
-                        <th>Số lượng</th>
-                        <th class="text-end">Tổng</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
                     </tr>
                     </thead>
-                    <tbody id="cartList">
-                    <!-- JavaScript sẽ render ở đây -->
-                    </tbody>
-                    <tfoot>
-                    <tr>
-                        <td colspan="7" class="text-end">Tổng cộng:</td>
-                        <td id="cartTotal" class="text-end text-danger fw-bold">0 VND</td>
-                    </tr>
-                    </tfoot>
+                    <tbody id="cartBody"></tbody>
                 </table>
             </div>
         </div>
+        <div class="summary-container">
+            <h5 style="font-size: 1.5rem; font-weight: bold">Cart Total</h5>
+            <hr>
+            <div id="totalPrice" class="total-price mb-3">Total: 0 đ</div>
+            <button class="btn btn-dark w-100">Proceed to Checkout</button>
+        </div>
+    </div>
+    <div class="cart-actions">
+        <button class="btn" onclick="loadCarts(document.getElementById('cartMaKH').value)">View Cart</button>
+        <button class="btn" onclick="deleteSelectedItems()">Delete Selected</button>
+        <button class="btn" onclick="deleteAllItems()">Clear Cart</button>
     </div>
 </div>
-
-
 <div th:replace="Client/footer :: footer"></div>
-
 <script th:src="@{/js/jquery.js}"></script>
 <script th:src="@{/js/vendors.min.js}"></script>
 <script th:src="@{/js/main.js}"></script>
-<script th:src="@{/js/sticky-header.js}"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
 
-<script src="[https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js](https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js)"></script>
-<script src="[https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js](https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js)"></script>
-
+<!--<script src="/js/demo-cart.js"></script>-->
 <script>
-    // Cấu hình Firebase (lặp lại ở đây hoặc import từ một file chung)
     const firebaseConfig = {
         apiKey: "AIzaSyAiQr7IZK9i8x5V0BglQIRLfr0G1ByMkrU",
         authDomain: "datn-d3877.firebaseapp.com",
-        databaseURL: "[https://datn-d3877-default-rtdb.asia-southeast1.firebasedatabase.app](https://datn-d3877-default-rtdb.asia-southeast1.firebasedatabase.app)",
+        databaseURL: "https://datn-d3877-default-rtdb.asia-southeast1.firebasedatabase.app",
         projectId: "datn-d3877",
         storageBucket: "datn-d3877.firebasestorage.app",
         messagingSenderId: "416913725261",
@@ -212,180 +165,180 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    let currentMaKH = ""; // Biến để lưu mã khách hàng hiện tại
 
-    // Hàm định dạng tiền tệ
-    function formatCurrency(amount) {
-        if (typeof amount !== 'number' || isNaN(amount)) {
-            return "N/A";
-        }
-        return amount.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
-    }
+    // --- CARTBOX ---
+    function addCart() {
+        const maKH = document.getElementById('cartMaKH')?.value;
+        const tenSP = document.getElementById('carttenSP')?.textContent.trim();
+        const hinhAnh = document.getElementById('cartanhChinh')?.src;
+        const mau = document.querySelector('input[name="maMau"]:checked')?.value || '';
+        const size = document.querySelector('input[name="maSize"]:checked')?.value || '';
+        const soLuong = parseInt(document.getElementById('cartSoLuong')?.value);
+        const giaText = document.getElementById('cartGia')?.textContent.replace(/[^\d]/g, '');
+        const gia = parseFloat(giaText);
 
-    // Hàm tải giỏ hàng
-    function loadCart(maKHToLoad = null) {
-        // Chỉ dựa vào maKHToLoad hoặc giá trị từ input ẩn maKHFromSession
-        const maKH = maKHToLoad || document.getElementById("maKHFromSession").value.trim();
-
-        if (!maKH) {
-            // Cập nhật thông báo nếu không tìm thấy mã khách hàng
-            alert("Vui lòng đăng nhập để xem giỏ hàng của bạn.");
-            document.getElementById("cartList").innerHTML = "<tr><td colspan='8' class='text-center text-muted py-4'>Bạn chưa đăng nhập. Vui lòng đăng nhập để xem giỏ hàng.</td></tr>";
-            document.getElementById("cartTotal").textContent = formatCurrency(0);
+        if (!tenSP || !hinhAnh || !mau || !size || !soLuong || !gia || !maKH) {
+            alert("Vui lòng chọn đầy đủ thông tin sản phẩm!");
             return;
         }
 
-        currentMaKH = maKH; // Cập nhật mã khách hàng hiện tại
+        const item = { tenSP, hinhAnh, mau, size, SoLuong: soLuong, Gia: gia };
+        const cartRef = db.ref('Cart/' + maKH + '/items');
 
-        const cartList = document.getElementById("cartList");
-        const cartTotal = document.getElementById("cartTotal");
-
-        cartList.innerHTML = "<tr><td colspan='8' class='text-center text-info py-4'>Đang tải giỏ hàng...</td></tr>";
-        cartTotal.textContent = "Đang tải...";
-
-        let totalCartValue = 0;
-
-        db.ref("Cart").orderByChild("MaKH").equalTo(maKH).once("value", cartSnapshot => {
-            const cartData = cartSnapshot.val();
-            if (!cartData) {
-                cartList.innerHTML = "<tr><td colspan='8' class='text-center text-muted py-4'>Giỏ hàng trống.</td></tr>";
-                cartTotal.textContent = formatCurrency(0);
-                return;
-            }
-
-            const cartKey = Object.keys(cartData)[0];
-            const items = cartData[cartKey].items;
-
-            if (!items || Object.keys(items).length === 0) {
-                cartList.innerHTML = "<tr><td colspan='8' class='text-center text-muted py-4'>Giỏ hàng trống.</td></tr>";
-                cartTotal.textContent = formatCurrency(0);
-                return;
-            }
-
-            const productDetailsPromises = [];
-            const productDetailsMap = {};
-
-            // Duyệt qua các item trong giỏ hàng để lấy ID_SPCT và chuẩn bị query sản phẩm
-            for (const itemKey in items) {
-                if (items.hasOwnProperty(itemKey)) {
-                    const item = items[itemKey];
-                    // Firebase Realtime Database không hỗ trợ query theo nhiều key cùng lúc như Firestore
-                    // Do đó, chúng ta vẫn phải thực hiện các truy vấn riêng lẻ cho từng ID_SPCT
-                    // và chờ tất cả hoàn thành.
-                    // (Lưu ý: Nếu số lượng item rất lớn, cân nhắc cấu trúc lại DB hoặc sử dụng Firestore)
-                    productDetailsPromises.push(
-                        db.ref("SanPhamChiTiet/" + item.ID_SPCT).once("value").then(spSnap => {
-                            if (spSnap.exists()) {
-                                productDetailsMap[item.ID_SPCT] = spSnap.val();
-                            } else {
-                                console.warn(`Không tìm thấy chi tiết sản phẩm cho ID_SPCT: ${item.ID_SPCT}`);
-                            }
-                        })
-                    );
+        // Kiểm tra nếu sản phẩm đã có
+        cartRef.once('value').then(snapshot => {
+            let exists = false;
+            let existingKey = null;
+            snapshot.forEach(child => {
+                const val = child.val();
+                if (val.tenSP === tenSP && val.mau === mau && val.size === size) {
+                    exists = true;
+                    existingKey = child.key;
                 }
-            }
-
-            Promise.all(productDetailsPromises).then(() => {
-                cartList.innerHTML = ""; // Xóa nội dung "Đang tải"
-
-                for (const [itemKey, item] of Object.entries(items)) {
-                    const spDetail = productDetailsMap[item.ID_SPCT];
-
-                    if (!spDetail) {
-                        // Nếu không tìm thấy chi tiết sản phẩm, bỏ qua hoặc hiển thị thông báo lỗi
-                        console.warn(`Bỏ qua sản phẩm không tìm thấy chi tiết: ${item.ID_SPCT}`);
-                        continue;
-                    }
-
-                    const itemCalculatedPrice = item.Gia || spDetail.Gia || 0;
-                    const itemTotal = itemCalculatedPrice * item.SoLuong;
-                    totalCartValue += itemTotal;
-
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `
-                        <td class="text-center"><a href="#" onclick="removeCartItem('${cartKey}', '${itemKey}')" class="text-danger">&times;</a></td>
-                        <td><img src="${spDetail.Anh || '/images/default.png'}" alt="${spDetail.TenSP || 'Sản phẩm'}" /></td>
-                        <td>${spDetail.TenSP || 'Sản phẩm'}</td>
-                        <td>${spDetail.Size || '-'}</td>
-                        <td>${spDetail.MauSac || '-'}</td>
-                        <td class="text-end">${formatCurrency(itemCalculatedPrice)}</td>
-                        <td>
-                            <input type="number" min="1" value="${item.SoLuong}"
-                                onchange="updateCartQuantity('${cartKey}', '${itemKey}', this.value)"
-                                class="form-control" style="width: 70px;">
-                        </td>
-                        <td class="text-end">${formatCurrency(itemTotal)}</td>
-                    `;
-                    cartList.appendChild(tr);
-                }
-
-                cartTotal.textContent = formatCurrency(totalCartValue);
-            }).catch(error => {
-                console.error("Lỗi khi tải chi tiết sản phẩm hoặc xử lý dữ liệu:", error);
-                cartList.innerHTML = "<tr><td colspan='8' class='text-center text-danger py-4'>Đã xảy ra lỗi khi tải giỏ hàng.</td></tr>";
-                cartTotal.textContent = "Lỗi";
             });
+
+            if (exists && existingKey) {
+                // Cập nhật số lượng
+                const existingItemRef = cartRef.child(existingKey);
+                existingItemRef.child('SoLuong').once('value').then(qSnap => {
+                    const oldQty = qSnap.val() || 0;
+                    existingItemRef.update({ SoLuong: oldQty + soLuong }).then(() => {
+                        alert('Đã cập nhật số lượng sản phẩm!');
+                        resetCartForm();
+                        loadCarts(maKH);
+                    });
+                });
+            } else {
+                // Thêm sản phẩm mới
+                cartRef.push(item).then(() => {
+                    alert('Thêm vào giỏ hàng thành công!');
+                    resetCartForm();
+                    loadCarts(maKH);
+                });
+            }
         }).catch(error => {
-            console.error("Lỗi khi tải giỏ hàng của khách hàng:", error);
-            cartList.innerHTML = "<tr><td colspan='8' class='text-center text-danger py-4'>Đã xảy ra lỗi khi tải giỏ hàng.</td></tr>";
-            cartTotal.textContent = "Lỗi";
+            console.error("Lỗi thêm giỏ hàng:", error);
+            alert("Thêm vào giỏ hàng thất bại!");
         });
     }
 
-    // Hàm cập nhật số lượng
-    function updateCartQuantity(cartKey, itemKey, newQty) {
-        const qty = parseInt(newQty);
-        if (isNaN(qty) || qty <= 0) {
-            alert("Số lượng phải là một số dương.");
-            loadCart(); // Tải lại để khôi phục số lượng cũ
+    function resetCartForm() {
+        document.getElementById('cartSoLuong').value = '1';
+        document.querySelectorAll('input[name="maMau"]').forEach(el => el.checked = false);
+        document.querySelectorAll('input[name="maSize"]').forEach(el => el.checked = false);
+    }
+
+
+
+
+    function loadCarts(maKH) {
+        const cartBody = document.getElementById("cartBody");
+        cartBody.innerHTML = '';
+        let total = 0;
+
+        const cartRef = firebase.database().ref('Cart/' + maKH + '/items');
+        cartRef.once('value', snapshot => {
+            if (!snapshot.exists()) {
+                cartBody.innerHTML = '<tr><td colspan="7" class="text-center">Your cart is empty</td></tr>';
+                document.getElementById("totalPrice").textContent = "Total: 0 đ";
+                return;
+            }
+
+            snapshot.forEach(child => {
+                const item = child.val();
+                const itemId = child.key;
+                const lineTotal = item.Gia * item.SoLuong;
+                total += lineTotal;
+
+                const row = document.createElement('tr');
+                row.className = 'fade-in';
+                row.innerHTML = `
+                    <td><input type="checkbox" class="cartCheckbox" data-item-id="${itemId}" onchange="calculateSelectedTotal('${maKH}')"></td>
+                    <td><img src="${item.hinhAnh}" alt=""></td>
+                    <td>${item.tenSP}</td>
+                    <td>${item.mau}</td>
+                    <td>${item.size}</td>
+                    <td class="qty-controls">
+                        <button onclick="changeQuantity('${maKH}', '${itemId}', -1)">–</button>
+                        <span id="qty_${itemId}" class="mx-2">${item.SoLuong}</span>
+                        <button onclick="changeQuantity('${maKH}', '${itemId}', 1)">+</button>
+                    </td>
+                    <td>${(lineTotal).toLocaleString()} đ</td>
+                `;
+                cartBody.appendChild(row);
+            });
+
+            document.getElementById("totalPrice").textContent = "Total: " + total.toLocaleString() + " đ";
+        });
+    }
+
+    function calculateSelectedTotal(maKH) {
+        const checkboxes = document.querySelectorAll(".cartCheckbox:checked");
+        let total = 0;
+
+        const cartRef = db.ref('Cart/' + maKH + '/items');
+        cartRef.once('value', snapshot => {
+            snapshot.forEach(child => {
+                const item = child.val();
+                const itemId = child.key;
+
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.getAttribute("data-item-id") === itemId) {
+                        total += item.SoLuong * item.Gia;
+                    }
+                });
+            });
+
+            document.getElementById("totalPrice").textContent = "Tổng tiền (đã chọn): " + total.toLocaleString() + " đ";
+        });
+    }
+
+    function changeQuantity(maKH, itemId, delta) {
+        const qtySpan = document.getElementById(`qty_${itemId}`);
+        let currentQty = parseInt(qtySpan.textContent);
+
+        let newQty = currentQty + delta;
+        if (newQty < 1) return;
+
+        const itemRef = db.ref('Cart/' + maKH + '/items/' + itemId);
+        itemRef.child('SoLuong').set(newQty).then(() => {
+            loadCarts(maKH);
+        });
+    }
+
+
+
+    function deleteAllItems() {
+        const maKH = document.getElementById("cartMaKH").value;
+        if (!confirm("Bạn có chắc muốn xóa toàn bộ giỏ hàng?")) return;
+
+        db.ref('Cart/' + maKH + '/items').remove().then(() => {
+            loadCarts(maKH);
+        });
+    }
+
+
+    function deleteSelectedItems() {
+        const maKH = document.getElementById("cartMaKH").value;
+        const checkboxes = document.querySelectorAll(".cartCheckbox:checked");
+
+        if (checkboxes.length === 0) {
+            alert("Vui lòng chọn sản phẩm để xóa!");
             return;
         }
 
-        db.ref(`Cart/${cartKey}/items/${itemKey}/SoLuong`).set(qty)
-            .then(() => {
-                console.log(`Cập nhật số lượng thành công cho ${itemKey} trong giỏ hàng ${cartKey}`);
-                loadCart(); // Tải lại giỏ hàng để cập nhật tổng tiền
-            })
-            .catch(error => {
-                console.error("Lỗi khi cập nhật số lượng:", error);
-                alert("Không thể cập nhật số lượng. Vui lòng thử lại.");
-            });
+        if (!confirm("Bạn có chắc chắn muốn xóa các sản phẩm đã chọn?")) return;
+
+        const cartRef = db.ref('Cart/' + maKH + '/items');
+
+        checkboxes.forEach(checkbox => {
+            const itemId = checkbox.getAttribute("data-item-id");
+            cartRef.child(itemId).remove();
+        });
+
+        setTimeout(() => loadCarts(maKH), 500); // chờ chút cho Firebase xử lý xong
     }
 
-    // Hàm xóa sản phẩm
-    function removeCartItem(cartKey, itemKey) {
-        if (confirm("Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?")) {
-            db.ref(`Cart/${cartKey}/items/${itemKey}`).remove()
-                .then(() => {
-                    console.log(`Xóa sản phẩm ${itemKey} khỏi giỏ hàng ${cartKey} thành công.`);
-                    loadCart(); // Tải lại giỏ hàng để cập nhật hiển thị
-                })
-                .catch(error => {
-                    console.error("Lỗi khi xóa sản phẩm:", error);
-                    alert("Không thể xóa sản phẩm. Vui lòng thử lại.");
-                });
-        }
-    }
-
-    // Khi tài liệu tải xong
-    document.addEventListener("DOMContentLoaded", () => {
-        const loadCartButton = document.getElementById("loadCartButton");
-        if (loadCartButton) {
-            loadCartButton.addEventListener("click", () => {
-                loadCart(); // Gọi loadCart khi bấm nút
-            });
-        }
-
-        // Tự động tải giỏ hàng nếu maKH có sẵn từ session
-        const maKHFromSession = document.getElementById("maKHFromSession").value.trim();
-        if (maKHFromSession) {
-            loadCart(maKHFromSession);
-        } else {
-            // Hiển thị thông báo nếu không có mã khách hàng từ session
-            document.getElementById("cartList").innerHTML = "<tr><td colspan='8' class='text-center text-muted py-4'>Bạn chưa đăng nhập. Vui lòng đăng nhập để xem giỏ hàng.</td></tr>";
-            document.getElementById("cartTotal").textContent = formatCurrency(0);
-        }
-    });
 </script>
 </body>
 </html>
