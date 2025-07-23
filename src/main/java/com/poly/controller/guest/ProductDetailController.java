@@ -1,9 +1,11 @@
 package com.poly.controller.guest;
 
 import com.poly.entity.ChiTietSanPham;
+import com.poly.entity.KhachHang;
 import com.poly.entity.SanPham;
 import com.poly.service.ChiTietSanPhamService;
 import com.poly.service.SanPhamService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,7 +25,7 @@ public class ProductDetailController {
     private ChiTietSanPhamService chiTietSanPhamService;
 
     @GetMapping("/{maSP}")
-    public String productDetail(@PathVariable("maSP") String maSP, Model model) {
+    public String productDetail(@PathVariable("maSP") String maSP, Model model, HttpSession session) {
         // Tìm sản phẩm theo mã
         SanPham sanPham = sanPhamService.findById(maSP).orElse(null);
         if (sanPham == null) {
@@ -44,6 +46,12 @@ public class ProductDetailController {
                 .map(ChiTietSanPham::getSize)
                 .distinct()
                 .collect(Collectors.toList());
+
+        KhachHang user = (KhachHang) session.getAttribute("user");
+        if (user != null) {
+            String maKH = user.getMaKH();
+            model.addAttribute("maKH", maKH); // Gửi qua view nếu cần
+        }
 
         model.addAttribute("sanPham", sanPham);
         model.addAttribute("dsMau", dsMau);

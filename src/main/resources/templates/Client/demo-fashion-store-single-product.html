@@ -4,39 +4,33 @@
     <meta charset="UTF-8">
     <title th:text="${sanPham.tenSP}">Chi tiết sản phẩm</title>
 
-    <!-- favicon icon -->
     <link rel="shortcut icon" th:href="@{/images/logoST.png}">
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
 
-    <!-- Google Fonts Preconnect -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <!-- CSS Libraries -->
     <link rel="stylesheet" th:href="@{/css/vendors.min.css}">
     <link rel="stylesheet" th:href="@{/css/icon.min.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/responsive.css}">
     <link rel="stylesheet" th:href="@{/demos/fashion-store/fashion-store.css}" />
-
-    <!-- Bootstrap CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-          crossorigin="anonymous">
-
-    <!-- Custom CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
     <style>
         body {
-            background-color: #f9f9f9;
+            background-color: #f8f9fa;
+            padding-top: 100px;
         }
 
         .product-container {
-            padding: 100px 20px 40px; /* ✅ padding-top để tránh bị header che */
+            padding: 120px 15px 60px;
         }
 
-        /* Ảnh chính */
         .main-img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
             border-radius: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             transition: transform 0.3s ease-in-out;
         }
 
@@ -44,64 +38,56 @@
             transform: scale(1.02);
         }
 
-        /* Thumbnail */
         .thumbnail-img {
             width: 80px;
             height: 80px;
             object-fit: cover;
             cursor: pointer;
             border-radius: 6px;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: 0.3s;
+            border: 1px solid #dee2e6;
         }
 
         .thumbnail-img:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        /* Thông tin sản phẩm */
         .product-info {
+            background: #fff;
             padding: 30px;
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
         }
 
         .price-tag {
-            font-size: 26px;
+            font-size: 24px;
             color: #e74c3c;
-            font-weight: 600;
+            font-weight: bold;
         }
 
-        /* Màu sắc */
         .color-radio {
             display: none;
         }
 
         .color-label {
-            width: 30px;
-            height: 30px;
+            width: 32px;
+            height: 32px;
             display: inline-block;
             border-radius: 50%;
             border: 2px solid #ccc;
-            margin-right: 10px;
-            cursor: pointer;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .color-radio:checked + .color-label {
             border: 3px solid #000;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
         }
 
-        .color-label:hover {
-            transform: scale(1.1);
-        }
-
-        /* Kích thước */
         .shop-size label {
             padding: 6px 14px;
-            border: 1px solid #ccc;
+            border: 1px solid #ced4da;
             margin: 5px 8px 5px 0;
             border-radius: 6px;
             cursor: pointer;
@@ -116,7 +102,6 @@
             background-color: #000;
             color: #fff;
             border-color: #000;
-            box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
         }
 
         .input-group button:hover {
@@ -124,139 +109,119 @@
             color: #fff !important;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
+            .main-img {
+                height: 350px;
+            }
+
             .thumbnail-img {
                 width: 60px;
                 height: 60px;
             }
-
-            .product-info {
-                padding: 20px;
-            }
         }
     </style>
-
 </head>
 <body>
-
-<!-- Header -->
 <div th:replace="Client/header :: header"></div>
 
-<!-- Product Detail Section -->
 <div class="container product-container">
-    <div class="row g-5 align-items-start">
-
-        <!-- Left: Product Images -->
+    <div class="row g-5">
         <div class="col-md-6">
-            <img id="anhChinh"
+            <img id="cartanhChinh"
                  th:if="${sanPham.hinhAnh != null and sanPham.hinhAnh.size() > 0}"
                  th:src="@{'/images/' + ${sanPham.hinhAnh[0].hinhAnh}}"
                  alt="Ảnh chính"
-                 class="img-fluid main-img w-100 mb-3" />
+                 class="main-img" />
 
             <img th:if="${sanPham.hinhAnh == null or sanPham.hinhAnh.size() == 0}"
                  src="/images/default.png"
                  alt="Không có ảnh"
-                 class="img-fluid main-img w-100 mb-3" />
+                 class="main-img" />
 
-            <div class="d-flex flex-wrap gap-2"
+            <div class="d-flex flex-wrap gap-2 mt-3"
                  th:if="${sanPham.hinhAnh != null and sanPham.hinhAnh.size() > 1}">
                 <th:block th:each="ha, iterStat : ${sanPham.hinhAnh}">
                     <img th:if="${iterStat.index > 0}"
                          th:src="@{'/images/' + ${ha.hinhAnh}}"
                          onclick="doiAnhChinh(this)"
-                         class="thumbnail-img border"
+                         class="thumbnail-img"
                          alt="thumbnail" />
                 </th:block>
             </div>
         </div>
 
-        <!-- Right: Product Info -->
         <div class="col-md-6">
             <div class="product-info">
-                <h3 class="mb-3" th:text="${sanPham.tenSP}">Tên sản phẩm</h3>
+                <h3 class="mb-3" id="carttenSP" th:text="${sanPham.tenSP}">Tên sản phẩm</h3>
                 <p><strong>Mã sản phẩm:</strong> <span th:text="${sanPham.maSP}"></span></p>
+                <p class="price-tag" id="cartGia" th:if="${#lists.size(sanPham.chiTietSanPham) > 0 and sanPham.chiTietSanPham[0].giaXuat != null}" th:text="${#numbers.formatDecimal(sanPham.chiTietSanPham[0].giaXuat, 0, 'COMMA', 0, 'POINT')}"></p>
 
-                <p class="price-tag mb-3"
-                   th:if="${#lists.size(sanPham.chiTietSanPham) > 0 and sanPham.chiTietSanPham[0].giaXuat != null}"
-                   th:text="${#numbers.formatDecimal(sanPham.chiTietSanPham[0].giaXuat, 0, 'COMMA', 0, 'POINT')}"></p>
-
-                <form th:action="@{/cart/add}" method="post">
+                <form>
                     <input type="hidden" name="maSP" th:value="${sanPham.maSP}" />
+                    <input type="hidden" id="cartMaKH" th:value="${maKH}" />
 
-                    <!-- Màu -->
+
                     <div class="mb-4">
                         <label class="form-label">Chọn màu:</label>
                         <div class="d-flex flex-wrap gap-3">
-                            <div th:each="mau : ${dsMau}" class="position-relative">
-                                <input type="radio" class="color-radio" name="maMau"
-                                       th:id="'mau-' + ${mau.maMau}"
-                                       th:value="${mau.maMau}" required />
-                                <label th:for="'mau-' + ${mau.maMau}"
-                                       class="color-label"
-                                       th:style="'background-color:' + ${#strings.toLowerCase(mau.maMau)}"
-                                       th:title="${mau.tenMau}">
-                                </label>
+                            <div th:each="mau : ${dsMau}">
+                                <input type="radio" class="color-radio" id="cartMau" name="maMau" th:id="'mau-' + ${mau.maMau}" th:value="${mau.maMau}" required />
+                                <label th:for="'mau-' + ${mau.maMau}" class="color-label" th:style="'background-color:' + ${#strings.toLowerCase(mau.maMau)}" th:title="${mau.tenMau}"></label>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Size -->
                     <div class="mb-4">
                         <label class="form-label">Chọn size:</label>
                         <div class="shop-size d-flex flex-wrap">
                             <div th:each="size : ${dsSize}">
-                                <input type="radio" name="maSize"
-                                       th:id="${'size-' + size.maSize}"
-                                       th:value="${size.maSize}" required />
-                                <label th:for="${'size-' + size.maSize}"
-                                       th:text="${size.tenSize}"></label>
+                                <input type="radio" id="cartSize" name="maSize" th:id="'size-' + ${size.maSize}" th:value="${size.maSize}" required />
+                                <label th:for="'size-' + ${size.maSize}" th:text="${size.tenSize}"></label>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Số lượng -->
                     <div class="mb-4">
-                        <label for="soLuong" class="form-label">Số lượng:</label>
+                        <label for="cartSoLuong" class="form-label">Số lượng:</label>
                         <div class="input-group" style="width: 150px;">
                             <button class="btn btn-outline-dark" type="button" onclick="thayDoiSoLuong(-1)">-</button>
-                            <input type="text" name="soLuong" id="soLuong" class="form-control text-center" value="1" readonly>
+                            <input type="text" name="soLuong" id="cartSoLuong" class="form-control text-center" value="1" readonly>
                             <button class="btn btn-outline-dark" type="button" onclick="thayDoiSoLuong(1)">+</button>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-dark btn-lg w-100">Thêm vào giỏ hàng</button>
+                 <button type="button" class="btn btn-dark btn-lg w-100" onclick="addCart()">Thêm vào giỏ hàng</button>
+
+
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Footer -->
 <div th:replace="Client/footer :: footer"></div>
 
-<!-- Scripts: Đặt jQuery trước main.js -->
 <script th:src="@{/js/jquery.js}"></script>
 <script th:src="@{/js/vendors.min.js}"></script>
 <script th:src="@{/js/main.js}"></script>
 <script th:src="@{/js/sticky-header.js}"></script>
+<script src="/js/demo-cart.js"></script>
 
-<!-- Inline JS -->
 <script>
     function doiAnhChinh(thumbnail) {
-        const anhChinh = document.getElementById("anhChinh");
+        const anhChinh = document.getElementById("cartanhChinh");
         anhChinh.src = thumbnail.src;
     }
 
     function thayDoiSoLuong(delta) {
-        const input = document.getElementById("soLuong");
+        const input = document.getElementById("cartSoLuong");
         let value = parseInt(input.value);
         if (isNaN(value)) value = 1;
         value += delta;
         if (value < 1) value = 1;
         input.value = value;
     }
+
 </script>
 </body>
 </html>
