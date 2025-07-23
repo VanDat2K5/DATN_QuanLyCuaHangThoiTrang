@@ -10,67 +10,112 @@
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
     <link rel="stylesheet" th:href="@{/css/responsive.css}"/>
     <link rel="stylesheet" th:href="@{/demos/fashion-store/fashion-store.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- GIỮ LẠI PHẦN <head> NHƯ CŨ, CHỈ THÊM CSS NÀY VÀ ĐỔI class SIDEBAR -->
+
     <style>
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding-top: 60px;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f9f9f9;
+            padding-top: 80px;
         }
 
         .custom-container {
-            max-width: 1200px;
+            max-width: 1280px;
             margin: 0 auto;
             padding: 30px 15px;
         }
 
+        .custom-sidebar {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.06);
+            margin-bottom: 30px;
+        }
+
+        .custom-sidebar h5,
+        .custom-sidebar h6 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .custom-sidebar .filter-list {
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .custom-sidebar .filter-list li {
+            margin-bottom: 10px;
+        }
+
+        .custom-sidebar .filter-list a {
+            color: #333;
+            text-decoration: none;
+            display: inline-block;
+            padding: 5px 0;
+            transition: 0.3s;
+        }
+
+        .custom-sidebar .filter-list a:hover {
+            color: #0d6efd;
+            font-weight: 500;
+        }
+
+        .custom-sidebar .color-dot {
+            width: 12px;
+            height: 12px;
+            display: inline-block;
+            border-radius: 50%;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
         .custom-product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
         }
 
         .custom-product-card {
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
             overflow: hidden;
-            transition: transform 0.3s ease;
             position: relative;
+            transition: 0.3s;
         }
 
         .custom-product-card:hover {
             transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .custom-product-image {
+            height: 280px;
+            overflow: hidden;
         }
 
         .custom-product-image img {
             width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .custom-product-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            opacity: 0;
-            transition: opacity 0.3s;
+            object-fit: cover;
+            transition: transform 0.3s ease;
         }
 
-        .custom-product-card:hover .custom-product-overlay {
-            opacity: 1;
+        .custom-product-card:hover .custom-product-image img {
+            transform: scale(1.08);
         }
 
         .custom-product-actions {
             position: absolute;
-            top: 50%;
+            bottom: 15px;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translateX(-50%);
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: opacity 0.3s ease;
         }
 
         .custom-product-card:hover .custom-product-actions {
@@ -78,103 +123,194 @@
         }
 
         .custom-add-btn {
-            background-color: #000;
+            background-color: #0d6efd;
             color: #fff;
             padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
             text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
         }
 
         .custom-product-info {
-            padding: 15px;
+            padding: 16px;
             text-align: center;
         }
 
         .custom-product-info a {
             display: block;
-            font-weight: 600;
             font-size: 16px;
-            color: #222;
-            text-decoration: none;
+            font-weight: 600;
+            color: #333;
             margin-bottom: 8px;
+            text-decoration: none;
         }
 
         .custom-product-price {
-            color: #ff3e3e;
+            color: #dc3545;
             font-size: 18px;
             font-weight: bold;
         }
 
         .custom-pagination {
             display: flex;
-            list-style: none;
-            padding: 0;
             justify-content: center;
+            gap: 8px;
             margin-top: 40px;
+            padding-left: 0;
+            list-style: none;
         }
 
-        .custom-pagination .custom-page-item {
-            margin: 0 6px;
+        .custom-page-item {
+            display: inline-block;
         }
 
-        .custom-pagination .custom-page-link {
-            padding: 8px 14px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            text-decoration: none;
+        .custom-page-link {
+            display: block;
+            padding: 8px 16px;
+            background: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
             color: #333;
-            font-weight: 500;
+            text-decoration: none;
+            transition: 0.3s;
         }
 
-        .custom-pagination .custom-active .custom-page-link {
-            background-color: #000;
+        .custom-page-link:hover {
+            background-color: #0d6efd;
             color: #fff;
-            border-color: #000;
         }
 
-        .custom-pagination .custom-disabled .custom-page-link {
-            color: #aaa;
+        .custom-active .custom-page-link {
+            background-color: #0d6efd;
+            color: white;
+            pointer-events: none;
+        }
+
+        .custom-disabled .custom-page-link {
+            opacity: 0.5;
             pointer-events: none;
         }
     </style>
+
 </head>
 <body>
-
 <div th:replace="Client/header :: header"></div>
+<div class="container-fluid">
+    <div class="row gx-4 gy-5 px-4 py-5">
+        <!-- Sidebar -->
+        <aside class="col-lg-3">
+            <div class="accordion custom-sidebar" id="filterAccordion">
 
-<div class="custom-container">
-    <div class="custom-product-grid">
-        <div class="custom-product-card" th:each="sp : ${products}">
-            <div class="custom-product-image">
-                <img th:if="${sp.hinhAnhDauTien != null}" th:src="@{${sp.hinhAnhDauTien}}" alt="Ảnh sản phẩm">
-                <div class="custom-product-overlay"></div>
-                <div class="custom-product-actions">
-                    <a th:href="@{/shop/{id}(id=${sp.maSP})}" class="custom-add-btn">Add to Cart</a>
+                <!-- Giới tính -->
+                <div class="accordion-item mb-2">
+                    <h2 class="accordion-header" id="headingGender">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGender">
+                            Giới tính
+                        </button>
+                    </h2>
+                    <div id="collapseGender" class="accordion-collapse collapse" data-bs-parent="#filterAccordion">
+                        <div class="accordion-body">
+                            <ul>
+                                <li><a href="/shop/filter?gender=nam">Nam</a></li>
+                                <li><a href="/shop/filter?gender=nu">Nữ</a></li>
+                                <li><a href="/shop/filter?gender=unisex">Unisex</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Danh mục -->
+                <div class="accordion-item mb-2">
+                    <h2 class="accordion-header" id="headingCategory">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategory">
+                            Danh mục
+                        </button>
+                    </h2>
+                    <div id="collapseCategory" class="accordion-collapse collapse" data-bs-parent="#filterAccordion">
+                        <div class="accordion-body">
+                            <ul>
+                                <li><a href="#">Jeans</a></li>
+                                <li><a href="#">Trousers</a></li>
+                                <li><a href="#">Swimwear</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Màu sắc -->
+                <div class="accordion-item mb-2">
+                    <h2 class="accordion-header" id="headingColor">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseColor">
+                            Màu sắc
+                        </button>
+                    </h2>
+                    <div id="collapseColor" class="accordion-collapse collapse" data-bs-parent="#filterAccordion">
+                        <div class="accordion-body">
+                            <ul>
+                                <li><a href="#"><span class="color-dot" style="background:#232323;"></span>Đen</a></li>
+                                <li><a href="#"><span class="color-dot" style="background:#5881bf;"></span>Xanh</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kích thước -->
+                <div class="accordion-item mb-2">
+                    <h2 class="accordion-header" id="headingSize">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSize">
+                            Kích thước
+                        </button>
+                    </h2>
+                    <div id="collapseSize" class="accordion-collapse collapse" data-bs-parent="#filterAccordion">
+                        <div class="accordion-body">
+                            <ul>
+                                <li><a href="#">S</a></li>
+                                <li><a href="#">M</a></li>
+                                <li><a href="#">L</a></li>
+                                <li><a href="#">XL</a></li>
+                                <li><a href="#">XXL</a></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="custom-product-info">
-                <a th:href="@{/shop/{id}(id=${sp.maSP})}" th:text="${sp.tenSP}">Tên sản phẩm</a>
-                <div class="custom-product-price" th:text="'$' + ${sp.giaXuat}">Giá</div>
+        </aside>
+
+
+
+        <!-- Product Grid -->
+        <main class="col-lg-9">
+            <div class="custom-product-grid">
+                <div class="custom-product-card" th:each="sp : ${products}">
+                    <div class="custom-product-image">
+                        <img th:if="${sp.hinhAnhDauTien != null}" th:src="@{${sp.hinhAnhDauTien}}" alt="Ảnh sản phẩm">
+                        <img th:unless="${sp.hinhAnhDauTien != null}" th:src="@{/images/default-product.jpg}" alt="No image">
+                        <div class="custom-product-actions">
+                            <a th:href="@{/shop/{id}(id=${sp.maSP})}" class="custom-add-btn">Xem sản phẩm</a>
+                        </div>
+                    </div>
+                    <div class="custom-product-info">
+                        <a th:href="@{/shop/{id}(id=${sp.maSP})}" th:text="${sp.tenSP}">Tên sản phẩm</a>
+                        <div class="custom-product-price" th:text="${#numbers.formatDecimal(sp.giaXuat, 0, 'COMMA', 0, 'POINT')} + ' đ'">Giá</div>
+                    </div>
+                </div>
             </div>
-        </div>
+            <!-- Pagination -->
+            <ul class="custom-pagination" th:if="${totalPages > 1}">
+                <li class="custom-page-item" th:classappend="${currentPage == 1} ? ' custom-disabled'">
+                    <a class="custom-page-link" th:href="@{/shop(page=${currentPage - 1}, size=${pageSize})}">&laquo;</a>
+                </li>
+                <li class="custom-page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == currentPage} ? ' custom-active'">
+                    <a class="custom-page-link" th:href="@{/shop(page=${i}, size=${pageSize})}" th:text="${i}">1</a>
+                </li>
+                <li class="custom-page-item" th:classappend="${currentPage == totalPages} ? ' custom-disabled'">
+                    <a class="custom-page-link" th:href="@{/shop(page=${currentPage + 1}, size=${pageSize})}">&raquo;</a>
+                </li>
+            </ul>
+        </main>
     </div>
-
-    <ul class="custom-pagination" th:if="${totalPages > 1}">
-        <li class="custom-page-item" th:classappend="${currentPage == 1} ? ' custom-disabled'">
-            <a class="custom-page-link" th:href="@{/shop(page=${currentPage - 1}, size=${pageSize})}">&laquo;</a>
-        </li>
-        <li class="custom-page-item"
-            th:each="i : ${#numbers.sequence(1, totalPages)}"
-            th:classappend="${i == currentPage} ? ' custom-active'">
-            <a class="custom-page-link" th:href="@{/shop(page=${i}, size=${pageSize})}" th:text="${i}">1</a>
-        </li>
-        <li class="custom-page-item" th:classappend="${currentPage == totalPages} ? ' custom-disabled'">
-            <a class="custom-page-link" th:href="@{/shop(page=${currentPage + 1}, size=${pageSize})}">&raquo;</a>
-        </li>
-    </ul>
 </div>
-
 <div th:replace="Client/footer :: footer"></div>
 <script th:src="@{/js/jquery.js}"></script>
 <script th:src="@{/js/vendors.min.js}"></script>

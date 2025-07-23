@@ -30184,3 +30184,144 @@ footer .footer-navbar .nav-item:last-child a {
         height: 120px;
     }
 }
+
+/* ===================================
+   Client Dropdown Menu Styling
+====================================== */
+.header-user-icon .dropdown-menu {
+    border: none;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    padding: 8px 0;
+    min-width: 200px;
+    margin-top: 15px;
+    margin-right: 50px;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transform: translateX(-80px);
+}
+
+.header-user-icon .dropdown-item {
+    padding: 12px 20px;
+    color: #333;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin: 2px 8px;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+}
+
+.header-user-icon .dropdown-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.header-user-icon .dropdown-item:hover {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    color: #3498db;
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+    text-decoration: none;
+}
+
+.header-user-icon .dropdown-item:hover::before {
+    left: 100%;
+}
+
+.header-user-icon .dropdown-divider {
+    margin: 6px 12px;
+    border-color: #e9ecef;
+    border-width: 1px;
+    opacity: 0.6;
+}
+
+/* User icon hover effect */
+.header-user-icon .dropdown-toggle {
+    transition: all 0.3s ease;
+    border-radius: 20px;
+    padding: 8px 12px;
+}
+
+.header-user-icon .dropdown-toggle:hover {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    color: #3498db;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
+}
+
+/* Simple dropdown menu styling */
+.simple-dropdown .dropdown-menu {
+    border: none;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    padding: 8px 0;
+    min-width: 180px;
+    margin-top: 15px;
+    margin-right: 15px;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transform: translateX(-30px);
+}
+
+.simple-dropdown .dropdown-menu li {
+    list-style: none;
+}
+
+.simple-dropdown .dropdown-menu a {
+    padding: 12px 20px;
+    color: #333;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin: 2px 8px;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    display: block;
+}
+
+.simple-dropdown .dropdown-menu a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.simple-dropdown .dropdown-menu a:hover {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    color: #3498db;
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+    text-decoration: none;
+}
+
+.simple-dropdown .dropdown-menu a:hover::before {
+    left: 100%;
+}
+
+/* Override dropdown positioning to prevent touching screen edge */
+.header-user-icon .dropdown-menu {
+    margin-right: 50px !important;
+    transform: translateX(-80px) !important;
+}
+
+.simple-dropdown .dropdown-menu {
+    margin-right: 40px !important;
+    transform: translateX(-60px) !important;
+}

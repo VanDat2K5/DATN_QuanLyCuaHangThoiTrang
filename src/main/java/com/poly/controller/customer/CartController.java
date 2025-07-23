@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class CartController {
 
     @GetMapping("/cart")
+
     public String cartPage(Model model, HttpSession session) {
         KhachHang user = (KhachHang) session.getAttribute("user");
         if (user != null) {
@@ -20,4 +21,3 @@ public class CartController {
         return "test-cart/demo-cart";
     }
 }
-

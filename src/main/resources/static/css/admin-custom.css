@@ -1,108 +1,253 @@
-
-
-/* --------- ADMIN HEADER MODERN --------- */
-
-
-.background{
-    background: #78a2d2;
-    height: 35px;
-    width: 100%;    
-}
-.admin-header-navbar {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-    /* margin: 24px 0 16px 0; */
-    padding: 0 32px;
-    min-height: 72px;
-    display: flex;
-    align-items: center;
-}
-.admin-header-container {
+/* Sidebar style */
+body{
     width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.container2{
+    width: 5%;
+}
+
+.container{
+    width: 95%;
+}
+
+.sidebar-header {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    width: 70px;
+    height: 60px;
+    background: #1a252f;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+    z-index: 1001;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.sidebar-logo {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+.sidebar-toggle {
+    background: #fff;
+    border: none;
+    color: #000;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
+
+.sidebar-menu {
+    position: fixed;
+    top: 80px;
+    left: 10px;
+    width: 70px;
+    height: calc(100vh - 90px);
+    background-color: #2c3e50;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px 0;
+    z-index: 1000;
+    align-items: center;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.sidebar-menu a {
+    color: #ccc;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+    position: relative;
+}
+
+.sidebar-menu a span {
+    display: none;
+}
+
+.sidebar-menu a.active {
+    background-color: #3498db;
+    color: #fff;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.sidebar-menu a:hover:not(.active) {
+    background-color: #34495e;
+    color: #fff;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(52, 73, 94, 0.3);
+}
+
+.sidebar-menu a:hover i {
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+}
+
+.sidebar-menu a i {
+    transition: all 0.3s ease;
+}
+
+/* Header style */
+.admin-header-navbar {
+    position: fixed;
+    top: 0;
+    left: 90px;
+    right: 0;
+    height: 60px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    z-index: 999;
+}
+
+.admin-header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0 30px;
+}
+
 .admin-header-logo {
     display: flex;
     align-items: center;
-}
-.logo-stylelife {
-    height: 40px;
-    width:40px;
-    object-fit: contain;
-    display: block;
-}
-.nav-menu {
-    display: flex;
-    align-items: center;
-    gap: 25px;
-    list-style: none;
-    margin: 0 auto;
-    padding: 0;
-}
-.nav-menu-item {
-    display: flex;
-    align-items: center;
-}
-.nav-menu-link {
-    color: #bbb8b8;
-    font-size: 15px;
-    /* font-weight: 500; */
-    background: none;
-    border: none;
-    outline: none;
-    box-shadow: none;
-    padding: 12px 18px 8px 18px;
-    transition: color 0.2s;
-    border-radius: 0 !important;
-    position: relative;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-}
-/* hiển thị vị trí của trang đang chọn */
-.nav-menu-link.active {
-    color: #78a2d2;
-    font-weight: 700;
+    gap: 10px;
 }
 
-.nav-menu-link:hover {
-    color: #78a2d2;
+.logo-stylelife {
+    height: 40px;
+    width: auto;
 }
+
+.brand-text {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #333;
+}
+
 .admin-header-right {
     display: flex;
     align-items: center;
-    gap: 18px;
-}
-.admin-header-bell {
-    color: #6b7280;
-    font-size: 1.35rem;
-    margin-right: 8px;
-    text-decoration: none;
-    transition: color 0.2s;
-}
-.admin-header-bell:hover {
-    color: #ffffff;
-}
-.admin-header-avatar {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #e5e7eb;
-}
-.text{
-    margin-top: 5px;
-    font-size: 20px;
-    font-weight: 600;
-    color: black !important;
+    gap: 20px;
 }
 
-/* --------PROMO SECTION-------- */
+.admin-header-bell {
+    color: #666;
+    font-size: 1.2rem;
+    text-decoration: none;
+}
+
+.admin-header-bell:hover {
+    color: #333;
+}
+
+.admin-header-avatar {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+}
+
+/* Admin Header Dropdown */
+.admin-header-avatar-container {
+display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+    padding: 5px;
+    border-radius: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.admin-header-avatar-container:hover {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.admin-header-avatar-container .bi-chevron-down {
+    font-size: 0.8rem;
+    margin-left: 5px;
+    transition: transform 0.3s ease;
+}
+
+.admin-header-avatar-container.show .bi-chevron-down {
+    transform: rotate(180deg);
+}
+
+/* Dropdown Menu Styling */
+.admin-header-navbar .dropdown-menu {
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    padding: 8px 0;
+    min-width: 200px;
+}
+
+.admin-header-navbar .dropdown-item {
+    padding: 8px 16px;
+    color: #333;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.admin-header-navbar .dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.admin-header-navbar .dropdown-item i {
+    width: 16px;
+    text-align: center;
+}
+
+.admin-header-navbar .dropdown-divider {
+    margin: 4px 0;
+    border-color: #e9ecef;
+}
+
+/* Nội dung chính */
+.main-content {
+    margin-left: 90px;
+    margin-top: 60px;
+    padding: 30px;
+    min-height: calc(100vh - 60px);
+}
+
+/* Card style */
+.card {
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    border: none;
+    border-radius: 8px;
+}
+
+/* Promo Section */
 .promo-section {
     position: relative;
-    height: 100vh;
-    color: white;
+    min-height: 400px;
+    margin-bottom: 40px;
+    border-radius: 12px;
     overflow: hidden;
 }
 
@@ -110,169 +255,146 @@
     position: absolute;
     top: 0;
     left: 0;
-    height:85%;
-    width: 100%;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     background-size: cover;
     background-position: center;
-    filter: brightness(0.6);
-    z-index: -1;
-    transition: background-image 0.5s ease-in-out;
+    z-index: 1;
 }
 
-.promo-card img {
-    height: 300px;
-    object-fit: cover;
+.promo-section .container {
+    position: relative;
+    z-index: 2;
+    color: white;
 }
 
 .promo-card {
-    backdrop-filter: blur(4px);
-    background-color: rgba(255, 255, 255, 0.1);
-    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.promo-card:hover {
+    transform: translateY(-5px);
 }
 
 .scrolling-wrapper {
+    display: flex;
     overflow-x: auto;
-    white-space: nowrap;
+    gap: 15px;
+    padding: 10px 0;
 }
-.scrolling-wrapper .card {
-    display: inline-block;
-    margin-right: 1rem;
-    vertical-align: top;
-}
-/* -------------KEY FEATURES--------------- */
-.admin-wrapper{
 
-    font-family: 'Segoe UI', sans-serif;
-      background-color: #fff;
-      padding: 40px;
+/* Admin Wrapper */
+.admin-wrapper {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
 }
+
+.subtitle {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
 .feature-box {
-    border: 1px solid #eaeaea;
-    border-radius: 20px;
-    padding: 30px 20px;
     text-align: center;
-    transition: 0.3s;
-    background-color: #fff;
-    height: 100%;
-  }
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
 
-  .feature-box:hover {
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-    transform: translateY(-5px);
-  }
+.feature-box:hover {
+    transform: translateY(-3px);
+}
 
-  .feature-icon {
-    font-size: 32px;
+.feature-icon {
+    font-size: 2.5rem;
     margin-bottom: 15px;
-  }
+}
 
-  .subtitle {
-    text-transform: uppercase;
-    font-size: 12px;
-    color: #999;
-    letter-spacing: 1px;
-  }
-
-  .feature-text {
+.feature-text {
     font-weight: 500;
     color: #333;
-    font-size: 16px;
-  }
+}
 
-  .btn-download {
-    border-radius: 30px;
-    font-size: 14px;
-  }
- .sidebar {
-      position: fixed;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      width: 80px;
-      background-color: #000;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-top: 1rem;
-      border-radius: 20px;
-      z-index: 1000;
+.btn-download {
+    background: #333;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+}
+
+.btn-download:hover {
+	background: #555;
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar-header,
+    .sidebar-menu {
+        width: 60px;
+        left: 5px;
     }
-
-    .sidebar .logo {
-      font-weight: bold;
-      font-size: 20px;
-      margin-bottom: 2rem;
-    }
-
-    .sidebar .nav-icons {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      margin-top: 1rem;
-    }
-
-    .sidebar .nav-icons i {
-      font-size: 20px;
-      color: white;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-
-    .sidebar .nav-icons i:hover {
-      transform: scale(1.2);
-      color: #ccc;
-    }
-
-    .sidebar .toggle-btn {
-      position: absolute;
-      right: -15px;
-      top: 60px;
-      background-color: white;
-      color: black;
-      border-radius: 50%;
-      padding: 2px 6px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-      cursor: pointer;
-      z-index: 10;
-    }
-
-    .sidebar .bottom-icon {
-      margin-top: auto;
-      margin-bottom: 1rem;
-    }
-
-    .sidebar .bottom-icon i {
-      font-size: 20px;
-      color: white;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@media (max-width: 900px) {
+    
     .admin-header-navbar {
-        padding: 0 8px;
+        left: 75px;
     }
-    .nav-menu {
-        gap: 16px;
+    
+    .main-content {
+        margin-left: 75px;
     }
-    .admin-header-avatar {
-        width: 32px;
-        height: 32px;
+    
+    .sidebar-menu a {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+    
+    .sidebar-logo {
+        font-size: 1rem;
     }
 }
+
+
+
+/*  * show-order-custom */
+.status-badge {
+    padding: 0.35em 0.7em;
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    text-transform: capitalize;
+    font-weight: 500;
+}
+
+.status-DaThanhToan {
+    background-color: #28a745;
+    color: #fff;
+}
+.status-DangVanChuyen {
+    background-color: #0dcaf0;
+    color: #fff;
+}
+.status-DaNhanHang {
+    background-color: #0d6efd;
+    color: #fff;
+}
+.status-DaHuy {
+    background-color: #dc3545;
+    color: #fff;
+}
+.status-Doi-Tra_Hang {
+    background-color: #ffc107;
+    color: #000;
+} 

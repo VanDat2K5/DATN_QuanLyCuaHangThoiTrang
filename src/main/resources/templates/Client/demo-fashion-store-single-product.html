@@ -5,8 +5,13 @@
     <title th:text="${sanPham.tenSP}">Chi tiết sản phẩm</title>
 
     <link rel="shortcut icon" th:href="@{/images/logoST.png}">
+
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
 
     <link rel="stylesheet" th:href="@{/css/vendors.min.css}">
     <link rel="stylesheet" th:href="@{/css/icon.min.css}">
@@ -154,9 +159,15 @@
             <div class="product-info">
                 <h3 class="mb-3" id="carttenSP" th:text="${sanPham.tenSP}">Tên sản phẩm</h3>
                 <p><strong>Mã sản phẩm:</strong> <span th:text="${sanPham.maSP}"></span></p>
+
                 <p class="price-tag" id="cartGia" th:if="${#lists.size(sanPham.chiTietSanPham) > 0 and sanPham.chiTietSanPham[0].giaXuat != null}" th:text="${#numbers.formatDecimal(sanPham.chiTietSanPham[0].giaXuat, 0, 'COMMA', 0, 'POINT')}"></p>
 
                 <form>
+
+                <p class="price-tag" th:if="${#lists.size(sanPham.chiTietSanPham) > 0 and sanPham.chiTietSanPham[0].giaXuat != null}" th:text="${#numbers.formatDecimal(sanPham.chiTietSanPham[0].giaXuat, 0, 'COMMA', 0, 'POINT')}"></p>
+
+                <form th:action="@{/cart/add}" method="post">
+
                     <input type="hidden" name="maSP" th:value="${sanPham.maSP}" />
                     <input type="hidden" id="cartMaKH" th:value="${maKH}" />
 
@@ -165,7 +176,11 @@
                         <label class="form-label">Chọn màu:</label>
                         <div class="d-flex flex-wrap gap-3">
                             <div th:each="mau : ${dsMau}">
+
                                 <input type="radio" class="color-radio" id="cartMau" name="maMau" th:id="'mau-' + ${mau.maMau}" th:value="${mau.maMau}" required />
+
+                                <input type="radio" class="color-radio" name="maMau" th:id="'mau-' + ${mau.maMau}" th:value="${mau.maMau}" required />
+
                                 <label th:for="'mau-' + ${mau.maMau}" class="color-label" th:style="'background-color:' + ${#strings.toLowerCase(mau.maMau)}" th:title="${mau.tenMau}"></label>
                             </div>
                         </div>
@@ -175,7 +190,11 @@
                         <label class="form-label">Chọn size:</label>
                         <div class="shop-size d-flex flex-wrap">
                             <div th:each="size : ${dsSize}">
+
                                 <input type="radio" id="cartSize" name="maSize" th:id="'size-' + ${size.maSize}" th:value="${size.maSize}" required />
+
+                                <input type="radio" name="maSize" th:id="'size-' + ${size.maSize}" th:value="${size.maSize}" required />
+
                                 <label th:for="'size-' + ${size.maSize}" th:text="${size.tenSize}"></label>
                             </div>
                         </div>
