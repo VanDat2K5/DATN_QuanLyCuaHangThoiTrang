@@ -5,8 +5,13 @@
     <title th:text="${sanPham.tenSP}">Chi tiết sản phẩm</title>
 
     <link rel="shortcut icon" th:href="@{/images/logoST.png}">
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
 
     <link rel="stylesheet" th:href="@{/css/vendors.min.css}">
     <link rel="stylesheet" th:href="@{/css/icon.min.css}">
@@ -14,7 +19,6 @@
     <link rel="stylesheet" th:href="@{/css/responsive.css}">
     <link rel="stylesheet" th:href="@{/demos/fashion-store/fashion-store.css}" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-
     <style>
         body {
             background-color: #f8f9fa;
@@ -128,7 +132,7 @@
 <div class="container product-container">
     <div class="row g-5">
         <div class="col-md-6">
-            <img id="anhChinh"
+            <img id="cartanhChinh"
                  th:if="${sanPham.hinhAnh != null and sanPham.hinhAnh.size() > 0}"
                  th:src="@{'/images/' + ${sanPham.hinhAnh[0].hinhAnh}}"
                  alt="Ảnh chính"
@@ -153,18 +157,20 @@
 
         <div class="col-md-6">
             <div class="product-info">
-                <h3 class="mb-3" th:text="${sanPham.tenSP}">Tên sản phẩm</h3>
+                <h3 class="mb-3" id="carttenSP" th:text="${sanPham.tenSP}">Tên sản phẩm</h3>
                 <p><strong>Mã sản phẩm:</strong> <span th:text="${sanPham.maSP}"></span></p>
-                <p class="price-tag" th:if="${#lists.size(sanPham.chiTietSanPham) > 0 and sanPham.chiTietSanPham[0].giaXuat != null}" th:text="${#numbers.formatDecimal(sanPham.chiTietSanPham[0].giaXuat, 0, 'COMMA', 0, 'POINT')}"></p>
+                <p class="price-tag" id="cartGia" th:if="${#lists.size(sanPham.chiTietSanPham) > 0 and sanPham.chiTietSanPham[0].giaXuat != null}" th:text="${#numbers.formatDecimal(sanPham.chiTietSanPham[0].giaXuat, 0, 'COMMA', 0, 'POINT')}"></p>
+                <form>
 
-                <form th:action="@{/cart/add}" method="post">
                     <input type="hidden" name="maSP" th:value="${sanPham.maSP}" />
+                    <input type="hidden" id="cartMaKH" th:value="${maKH}" />
+
 
                     <div class="mb-4">
                         <label class="form-label">Chọn màu:</label>
                         <div class="d-flex flex-wrap gap-3">
                             <div th:each="mau : ${dsMau}">
-                                <input type="radio" class="color-radio" name="maMau" th:id="'mau-' + ${mau.maMau}" th:value="${mau.maMau}" required />
+                                <input type="radio" class="color-radio" id="cartMau" name="maMau" th:id="'mau-' + ${mau.maMau}" th:value="${mau.maMau}" required />
                                 <label th:for="'mau-' + ${mau.maMau}" class="color-label" th:style="'background-color:' + ${#strings.toLowerCase(mau.maMau)}" th:title="${mau.tenMau}"></label>
                             </div>
                         </div>
@@ -174,22 +180,25 @@
                         <label class="form-label">Chọn size:</label>
                         <div class="shop-size d-flex flex-wrap">
                             <div th:each="size : ${dsSize}">
-                                <input type="radio" name="maSize" th:id="'size-' + ${size.maSize}" th:value="${size.maSize}" required />
+
+                                <input type="radio" id="cartSize" name="maSize" th:id="'size-' + ${size.maSize}" th:value="${size.maSize}" required />
                                 <label th:for="'size-' + ${size.maSize}" th:text="${size.tenSize}"></label>
                             </div>
                         </div>
                     </div>
 
                     <div class="mb-4">
-                        <label for="soLuong" class="form-label">Số lượng:</label>
+                        <label for="cartSoLuong" class="form-label">Số lượng:</label>
                         <div class="input-group" style="width: 150px;">
                             <button class="btn btn-outline-dark" type="button" onclick="thayDoiSoLuong(-1)">-</button>
-                            <input type="text" name="soLuong" id="soLuong" class="form-control text-center" value="1" readonly>
+                            <input type="text" name="soLuong" id="cartSoLuong" class="form-control text-center" value="1" readonly>
                             <button class="btn btn-outline-dark" type="button" onclick="thayDoiSoLuong(1)">+</button>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-dark btn-lg w-100">Thêm vào giỏ hàng</button>
+                    <button type="button" class="btn btn-dark btn-lg w-100" onclick="addCart()">Thêm vào giỏ hàng</button>
+
+
                 </form>
             </div>
         </div>
@@ -202,21 +211,23 @@
 <script th:src="@{/js/vendors.min.js}"></script>
 <script th:src="@{/js/main.js}"></script>
 <script th:src="@{/js/sticky-header.js}"></script>
+<script src="/js/demo-cart.js"></script>
 
 <script>
     function doiAnhChinh(thumbnail) {
-        const anhChinh = document.getElementById("anhChinh");
+        const anhChinh = document.getElementById("cartanhChinh");
         anhChinh.src = thumbnail.src;
     }
 
     function thayDoiSoLuong(delta) {
-        const input = document.getElementById("soLuong");
+        const input = document.getElementById("cartSoLuong");
         let value = parseInt(input.value);
         if (isNaN(value)) value = 1;
         value += delta;
         if (value < 1) value = 1;
         input.value = value;
     }
+
 </script>
 </body>
 </html>

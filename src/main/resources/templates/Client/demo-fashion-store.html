@@ -23,7 +23,7 @@
         <div th:replace="Client/header :: header"></div>
         
         <!-- Success/Error messages -->
-        <div th:if="${success}" class="alert alert-success alert-dismissible fade show m-3" role="alert" style="position: fixed; top: 80px; right: 20px; z-index: 9999; min-width: 300px;">
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show centered-alert" role="alert">
             <i class="feather icon-check-circle me-2"></i>
             <span th:text="${success}"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
