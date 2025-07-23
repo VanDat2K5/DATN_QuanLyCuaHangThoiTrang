@@ -1,0 +1,178 @@
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f9f9f9;
+    padding-top: 80px;
+}
+
+.custom-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 30px 15px;
+}
+
+.custom-sidebar {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.06);
+    margin-bottom: 30px;
+}
+
+.custom-sidebar h5,
+.custom-sidebar h6 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.custom-sidebar .filter-list {
+    padding-left: 0;
+    list-style: none;
+}
+
+.custom-sidebar .filter-list li {
+    margin-bottom: 10px;
+}
+
+.custom-sidebar .filter-list a {
+    color: #333;
+    text-decoration: none;
+    display: inline-block;
+    padding: 5px 0;
+    transition: 0.3s;
+}
+
+.custom-sidebar .filter-list a:hover {
+    color: #0d6efd;
+    font-weight: 500;
+}
+
+.custom-sidebar .color-dot {
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.custom-product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.custom-product-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    position: relative;
+    transition: 0.3s;
+}
+
+.custom-product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+}
+
+.custom-product-image {
+    height: 280px;
+    overflow: hidden;
+}
+
+.custom-product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.custom-product-card:hover .custom-product-image img {
+    transform: scale(1.08);
+}
+
+.custom-product-actions {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.custom-product-card:hover .custom-product-actions {
+    opacity: 1;
+}
+
+.custom-add-btn {
+    background-color: #0d6efd;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.custom-product-info {
+    padding: 16px;
+    text-align: center;
+}
+
+.custom-product-info a {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    text-decoration: none;
+}
+
+.custom-product-price {
+    color: #dc3545;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.custom-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 40px;
+    padding-left: 0;
+    list-style: none;
+}
+
+.custom-page-item {
+    display: inline-block;
+}
+
+.custom-page-link {
+    display: block;
+    padding: 8px 16px;
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    color: #333;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.custom-page-link:hover {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+.custom-active .custom-page-link {
+    background-color: #0d6efd;
+    color: white;
+    pointer-events: none;
+}
+
+.custom-disabled .custom-page-link {
+    opacity: 0.5;
+    pointer-events: none;
+}
+

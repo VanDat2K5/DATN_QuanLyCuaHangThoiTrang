@@ -48,7 +48,7 @@
                                 <i class="fa-solid fa-angle-down dropdown-toggle" id="navbarDropdownMenuLink1" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
                                 <div class="dropdown-menu submenu-content" aria-labelledby="navbarDropdownMenuLink1"> 
                                     <div class="d-lg-flex mega-menu m-auto flex-column">
-                                        <div class="row row-cols-1 row-cols-lg-5 row-cols-md-3 row-cols-sm-3 mb-50px md-mb-25px xs-mb-15px">
+                                        <!-- <div class="row row-cols-1 row-cols-lg-5 row-cols-md-3 row-cols-sm-3 mb-50px md-mb-25px xs-mb-15px">
                                             <div class="col">
                                                 <ul>  
                                                     <li class="sub-title">Men</li>
@@ -104,7 +104,7 @@
                                                     <li><a href="#">Sunglasses</a></li> 
                                                 </ul>
                                             </div>
-                                        </div>
+                                        </div> -->
                                         <div class="header-banner-zone">
                                             <div class="row row-cols-1 row-cols-sm-2">
                                                 <div class="col">
@@ -118,7 +118,10 @@
                                     </div> 
                                 </div>
                             </li> 
-                            <li class="nav-item dropdown submenu">
+                            <li class="nav-item">
+                                <a href="/magazine" class="nav-link">Magazine</a>
+                            </li>
+                            <!-- <li class="nav-item dropdown submenu">
                                 <a href="/collection" class="nav-link">Collection</a>
                                 <i class="fa-solid fa-angle-down dropdown-toggle" id="navbarDropdownMenuLink2" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
                                 <div class="dropdown-menu submenu-content" aria-labelledby="navbarDropdownMenuLink2"> 
@@ -193,12 +196,9 @@
                                         </div>
                                     </div>
                                 </div>
-                            </li>
+                            </li> -->
                         </ul>
                         <ul class="navbar-nav alt-font navbar-right justify-content-start"> 
-                            <li class="nav-item">
-                                <a href="/magazine" class="nav-link">Magazine</a>
-                            </li>
                             <li class="nav-item dropdown simple-dropdown">
                                 <a href="javascript:void(0);" class="nav-link">Pages</a>
                                 <i class="fa-solid fa-angle-down dropdown-toggle" id="navbarDropdownMenuLink3" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
@@ -207,12 +207,16 @@
                                     <li><a href="/faq">Faq</a></li>
                                     <li><a href="/user/wishlist">Wishlist</a></li>
                                     <li><a href="/login">Account</a></li>
-                                    <li><a href="/cart">Cart</a></li>
                                     <li><a href="/order/checkout">Checkout</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item">
                                 <a href="/contact" class="nav-link">Contact</a>
+                            </li>
+                            <li class="nav-item" th:if="${session.userRole == 'CUSTOMER'}">
+                                <a href="/cart" class="nav-link">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                </a>
                             </li>
                         </ul>
                     </div>
@@ -236,6 +240,7 @@
                                         <li style="padding: 9px;" th:if="${session.userRole == 'ADMIN' || session.userRole == 'EMPLOYEE'}"><a href="/admin" class="dropdown-item">Quản Lý</a></li>
                                         <li style="padding: 9px;" th:if="${session.userRole == 'ADMIN' || session.userRole == 'EMPLOYEE'}"><hr class="dropdown-divider"></li>
                                         <li style="padding: 9px;"><a href="/user/profile" class="dropdown-item">My Profile</a></li>
+                                        <li style="padding: 9px;" th:if="${session.userRole == 'CUSTOMER'}"><a href="/cart" class="dropdown-item">Cart</a></li>
                                         <!-- <li style="padding: 9px;"><a href="/user/orders" class="dropdown-item">My Orders</a></li>
                                         <li style="padding: 9px;"><a href="/user/wishlist" class="dropdown-item">Wishlist</a></li> -->
                                         <li><hr class="dropdown-divider"></li>

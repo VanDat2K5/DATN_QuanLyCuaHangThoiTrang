@@ -18,6 +18,6 @@ public class CartController {
             String maKH = user.getMaKH();
             model.addAttribute("maKH", maKH); // Gửi qua view nếu cần
         }
-        return "test-cart/demo-cart";
+        return "Client/demo-fashion-store-cart";
     }
 }
