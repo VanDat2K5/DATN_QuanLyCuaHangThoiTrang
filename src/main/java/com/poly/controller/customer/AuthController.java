@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import com.poly.service.DiaChiNhanHangService;
 
 @Controller
 @RequestMapping("/user")
@@ -40,6 +41,9 @@ public class AuthController {
 
     @Autowired
     private TaiKhoanService taiKhoanService;
+
+    @Autowired
+    private DiaChiNhanHangService diaChiNhanHangService;
 
     @GetMapping("/profile")
     public String profile(HttpSession session, Model model) {
@@ -69,7 +73,15 @@ public class AuthController {
         List<com.poly.entity.HoaDon> userOrders = new ArrayList<>();
         if (user != null && "CUSTOMER".equals(userRole)) {
             KhachHang khachHang = (KhachHang) user;
+            System.out.println("[DEBUG] MaKH: " + khachHang.getMaKH());
             userOrders = hoaDonService.findByKhachHang_MaKH(khachHang.getMaKH());
+            // Lấy danh sách địa chỉ nhận hàng
+            List<com.poly.entity.DiaChiNhanHang> diaChiList = diaChiNhanHangService.findByKhachHang_MaKH(khachHang.getMaKH());
+            System.out.println("[DEBUG] So dia chi nhan hang: " + diaChiList.size());
+            for (com.poly.entity.DiaChiNhanHang dc : diaChiList) {
+                System.out.println("[DEBUG] Dia chi: " + dc.getId() + " - " + dc.getTenNguoiNhan() + " - " + dc.getSoDTNhanHang() + " - " + dc.getDcNhanHang());
+            }
+            model.addAttribute("diaChiList", diaChiList);
         } else if (user != null && !"CUSTOMER".equals(userRole)) {
             NhanVien nhanVien = (NhanVien) user;
             userOrders = hoaDonService.findByNhanVien_MaNV(nhanVien.getMaNV());

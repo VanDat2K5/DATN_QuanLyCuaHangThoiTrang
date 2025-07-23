@@ -282,6 +282,34 @@
                                         </div>
                                     </div>
                                 </div>
+                                <!-- Shipping Address Section -->
+                                <div class="mt-4">
+                                    <h5>
+                                        <i class="feather icon-feather-map-pin me-2"></i>
+                                        Địa chỉ nhận hàng
+                                    </h5>
+                                    <div th:if="${diaChiList != null and !diaChiList.empty}">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Tên người nhận</th>
+                                                    <th>Số điện thoại</th>
+                                                    <th>Địa chỉ</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="dc : ${diaChiList}">
+                                                    <td th:text="${dc.tenNguoiNhan}">Tên người nhận</td>
+                                                    <td th:text="${dc.soDTNhanHang}">SĐT</td>
+                                                    <td th:text="${dc.dcNhanHang}">Địa chỉ</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div th:if="${diaChiList == null or diaChiList.empty}" class="text-muted">
+                                        Chưa có địa chỉ nhận hàng nào.
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Edit Profile Tab -->
