@@ -73,9 +73,6 @@ body {
                                     <a class="btn btn-sm btn-outline-info" th:href="@{'/admin/management/input/view/' + ${pn.maPN}}">
                                         <i class="bi bi-eye"></i> Xem
                                     </a>
-                                    <a class="btn btn-sm btn-outline-warning" th:href="@{'/admin/management/input/edit/' + ${pn.maPN}}">
-                                        <i class="bi bi-pencil-square"></i> Sửa
-                                    </a>
                                 </td>
                             </tr>
                             <tr th:if="${#lists.isEmpty(phieuNhaps)}">
