@@ -86,4 +86,10 @@ public class ChiTietSanPhamServiceImpl implements ChiTietSanPhamService {
     public boolean existsById(String id) {
         return chiTietSanPhamRepository.existsById(id);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ChiTietSanPham> findBySanPham_MaSPContainingIgnoreCase(String maSP, Pageable pageable) {
+        return chiTietSanPhamRepository.findBySanPham_MaSPContainingIgnoreCase(maSP, pageable);
+    }
 }

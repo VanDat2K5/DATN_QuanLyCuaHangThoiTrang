@@ -11,38 +11,38 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 
 @Controller
-@RequestMapping("/admin")
+@RequestMapping("/admin/management/employee")
 public class EmployeeManagementController {
 
     @Autowired
     private NhanVienService nhanVienService;
 
-    @GetMapping("/employee-management")
+    @GetMapping
     public String employeeManagement(Model model) {
         List<NhanVien> employees = nhanVienService.findAll();
         model.addAttribute("employees", employees);
         return "admin/employee-management";
     }
 
-    @GetMapping("/employee-management/add")
+    @GetMapping("/create")
     public String showAddForm(Model model) {
         model.addAttribute("employee", new NhanVien());
         return "admin/employee-form";
     }
 
-    @PostMapping("/employee-management/add")
+    @PostMapping("/create")
     public String addEmployee(@ModelAttribute NhanVien nhanVien, RedirectAttributes redirectAttributes) {
         try {
             // Kiểm tra email đã tồn tại chưa
             if (nhanVienService.findByEmail(nhanVien.getEmail()).size() > 0) {
                 redirectAttributes.addFlashAttribute("error", "Email đã tồn tại!");
-                return "redirect:/admin/employee-management/add";
+                return "redirect:/admin/management/employee/create";
             }
 
             // Kiểm tra số điện thoại đã tồn tại chưa
             if (nhanVienService.findBySoDT(nhanVien.getSoDT()).size() > 0) {
                 redirectAttributes.addFlashAttribute("error", "Số điện thoại đã tồn tại!");
-                return "redirect:/admin/employee-management/add";
+                return "redirect:/admin/management/employee/create";
             }
 
             nhanVienService.save(nhanVien);
@@ -50,34 +50,34 @@ public class EmployeeManagementController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
         }
-        return "redirect:/admin/employee-management";
+        return "redirect:/admin/management/employee";
     }
 
-    @GetMapping("/employee-management/edit/{id}")
+    @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable String id, Model model) {
         NhanVien employee = nhanVienService.findById(id).orElse(null);
         if (employee == null) {
-            return "redirect:/admin/employee-management";
+            return "redirect:/admin/management/employee";
         }
         model.addAttribute("employee", employee);
         return "admin/employee-form";
     }
 
-    @PostMapping("/employee-management/edit")
+    @PostMapping("/edit")
     public String editEmployee(@ModelAttribute NhanVien nhanVien, RedirectAttributes redirectAttributes) {
         try {
             // Kiểm tra email đã tồn tại chưa (trừ nhân viên hiện tại)
             List<NhanVien> existingByEmail = nhanVienService.findByEmail(nhanVien.getEmail());
             if (existingByEmail.size() > 0 && !existingByEmail.get(0).getMaNV().equals(nhanVien.getMaNV())) {
                 redirectAttributes.addFlashAttribute("error", "Email đã tồn tại!");
-                return "redirect:/admin/employee-management/edit/" + nhanVien.getMaNV();
+                return "redirect:/admin/management/employee/edit/" + nhanVien.getMaNV();
             }
 
             // Kiểm tra số điện thoại đã tồn tại chưa (trừ nhân viên hiện tại)
             List<NhanVien> existingByPhone = nhanVienService.findBySoDT(nhanVien.getSoDT());
             if (existingByPhone.size() > 0 && !existingByPhone.get(0).getMaNV().equals(nhanVien.getMaNV())) {
                 redirectAttributes.addFlashAttribute("error", "Số điện thoại đã tồn tại!");
-                return "redirect:/admin/employee-management/edit/" + nhanVien.getMaNV();
+                return "redirect:/admin/management/employee/edit/" + nhanVien.getMaNV();
             }
 
             nhanVienService.save(nhanVien);
@@ -85,10 +85,10 @@ public class EmployeeManagementController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
         }
-        return "redirect:/admin/employee-management";
+        return "redirect:/admin/management/employee";
     }
 
-    @PostMapping("/employee-management/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String deleteEmployee(@PathVariable String id, RedirectAttributes redirectAttributes) {
         try {
             nhanVienService.deleteById(id);
@@ -96,10 +96,10 @@ public class EmployeeManagementController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
         }
-        return "redirect:/admin/employee-management";
+        return "redirect:/admin/management/employee";
     }
 
-    @PostMapping("/employee-management/toggle-status/{id}")
+    @PostMapping("/toggle-status/{id}")
     public String toggleStatus(@PathVariable String id, RedirectAttributes redirectAttributes) {
         try {
             NhanVien employee = nhanVienService.findById(id).orElse(null);
@@ -112,6 +112,6 @@ public class EmployeeManagementController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
         }
-        return "redirect:/admin/employee-management";
+        return "redirect:/admin/management/employee";
     }
-} 
+}

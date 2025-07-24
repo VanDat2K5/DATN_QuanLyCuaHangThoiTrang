@@ -1,6 +1,8 @@
 package com.poly.controller.admin;
 
+import com.poly.entity.HinhAnh;
 import com.poly.entity.SanPham;
+import com.poly.service.HinhAnhService;
 import com.poly.service.SanPhamService;
 import com.poly.service.LoaiSanPhamService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +11,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
-@RequestMapping("/admin")
+@RequestMapping("/admin/management/product")
 public class ProductManagementController_2 {
 
     @Autowired
@@ -21,81 +29,179 @@ public class ProductManagementController_2 {
     @Autowired
     private LoaiSanPhamService loaiSanPhamService;
 
+    @Autowired
+    private HinhAnhService hinhAnhService;
+
     // Hiển thị danh sách sản phẩm
-    @GetMapping("/product-management")
-    public String productManagement(Model model) {
-        List<SanPham> products = sanPhamService.findAll();
-        model.addAttribute("products", products);
-        model.addAttribute("categories", loaiSanPhamService.findAll());
+    @GetMapping
+    public String productManagement(Model model,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false) String keyword) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<SanPham> products;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            products = sanPhamService.findByMaSPContainingIgnoreCase(keyword, pageable);
+            model.addAttribute("keyword", keyword);
+        } else {
+            products = sanPhamService.findAll(pageable);
+        }
+        for (SanPham sp : products.getContent()) {
+            List<HinhAnh> images = hinhAnhService.findBySanPham_MaSP(sp.getMaSP());
+            if (!images.isEmpty()) {
+                sp.setHinhAnh(images);
+            }
+        }
+        model.addAttribute("products", products.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", products.getTotalPages());
+        model.addAttribute("totalItems", products.getTotalElements());
         return "admin/product-management";
     }
 
     // Hiển thị form thêm sản phẩm
-    @GetMapping("/product-management/add")
+    @GetMapping("/create")
     public String showAddForm(Model model) {
         model.addAttribute("product", new SanPham());
         model.addAttribute("categories", loaiSanPhamService.findAll());
+        model.addAttribute("genders", SanPham.Gender.values()); // Thêm enum giới tính
         return "admin/product-form";
     }
 
-    // Thêm sản phẩm mới
-    @PostMapping("/product-management/add")
-    public String addProduct(@ModelAttribute SanPham product, RedirectAttributes redirectAttributes) {
+    // Thêm sản phẩm mới + upload nhiều ảnh
+    @PostMapping("/create")
+    public String addProduct(@ModelAttribute @Valid SanPham product,
+            BindingResult br,
+            @RequestParam(value = "images", required = false) MultipartFile[] images,
+            RedirectAttributes redirectAttributes,
+            Model model) {
+        if (br.hasErrors()) {
+            model.addAttribute("categories", loaiSanPhamService.findAll());
+            model.addAttribute("genders", SanPham.Gender.values());
+            return "admin/product-form";
+        }
         try {
-            sanPhamService.save(product);
+            if (product.getMaSP() == null || product.getMaSP().isBlank()) {
+                product.setMaSP("SP" + System.currentTimeMillis());
+            }
+            if (product.getGioiTinh() == null) {
+                product.setGioiTinh(SanPham.Gender.UNISEX);
+            }
+            SanPham savedProduct = sanPhamService.save(product);
+            if (images != null && images.length > 0) {
+                hinhAnhService.storeImages(savedProduct, images);
+            }
             redirectAttributes.addFlashAttribute("success", "Thêm sản phẩm thành công!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Lỗi khi thêm sản phẩm: " + e.getMessage());
         }
-        return "redirect:/admin/product-management";
+        return "redirect:/admin/management/product";
     }
 
     // Hiển thị form sửa sản phẩm
-    @GetMapping("/product-management/edit/{id}")
-    public String showEditForm(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
-        SanPham product = sanPhamService.findById(id).orElse(null);
-        if (product == null) {
-            redirectAttributes.addFlashAttribute("error", "Không tìm thấy sản phẩm!");
-            return "redirect:/admin/product-management";
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable("id") String id, Model model, RedirectAttributes ra) {
+        SanPham sp = sanPhamService.findById(id).orElse(null);
+        if (sp == null) {
+            ra.addFlashAttribute("error", "Không tìm thấy sản phẩm!");
+            return "redirect:/admin/management/product";
         }
-        model.addAttribute("product", product);
+        List<HinhAnh> images = hinhAnhService.findBySanPham_MaSP(id);
+        sp.setHinhAnh(images);
+        model.addAttribute("product", sp);
         model.addAttribute("categories", loaiSanPhamService.findAll());
+        // model.addAttribute("images", images);
+        model.addAttribute("genders", SanPham.Gender.values());
         return "admin/product-form";
     }
 
-    // Cập nhật sản phẩm
-    @PostMapping("/product-management/edit/{id}")
-    public String updateProduct(@PathVariable String id, @ModelAttribute SanPham product,
-            RedirectAttributes redirectAttributes) {
+    // Cập nhật sản phẩm (không ảnh)
+    @PostMapping("/edit/{id}")
+    public String updateProduct(@PathVariable String id,
+            @Valid @ModelAttribute("product") SanPham product,
+            BindingResult br,
+            RedirectAttributes redirectAttributes,
+            Model model) {
+        if (br.hasErrors()) {
+            model.addAttribute("categories", loaiSanPhamService.findAll());
+            model.addAttribute("genders", SanPham.Gender.values());
+            return "admin/product-form";
+        }
         try {
             product.setMaSP(id);
+            if (product.getGioiTinh() == null) {
+                product.setGioiTinh(SanPham.Gender.UNISEX);
+            }
             sanPhamService.save(product);
             redirectAttributes.addFlashAttribute("success", "Cập nhật sản phẩm thành công!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Lỗi khi cập nhật sản phẩm: " + e.getMessage());
         }
-        return "redirect:/admin/product-management";
+        return "redirect:/admin/management/product";
     }
 
-    // Xóa sản phẩm
-    @GetMapping("/product-management/delete/{id}")
+    // Thêm ảnh cho sản phẩm (không upload, chỉ gán từ thư mục)
+    @PostMapping("/edit/{id}/images")
+    public String uploadMoreImages(@PathVariable("id") String id,
+            @RequestParam("images") MultipartFile[] images,
+            RedirectAttributes ra) {
+        SanPham sp = sanPhamService.findById(id).orElse(null);
+        if (sp == null) {
+            ra.addFlashAttribute("error", "Không tìm thấy sản phẩm để cập nhật ảnh!");
+            return "redirect:/admin/management/product";
+        }
+        try {
+            hinhAnhService.storeImages(sp, images);
+            ra.addFlashAttribute("success", "Gán thêm ảnh thành công!");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Lỗi khi gán ảnh: " + e.getMessage());
+        }
+        return "redirect:/admin/management/product/edit/" + id;
+    }
+
+    // Xoá ảnh theo ID
+    @PostMapping("/images/{id}/delete")
+    public String deleteImage(@PathVariable("id") Integer imageId,
+            @RequestParam("productId") String productId,
+            RedirectAttributes ra) {
+        try {
+            hinhAnhService.deleteById(imageId);
+            ra.addFlashAttribute("success", "Xoá ảnh thành công!");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Lỗi khi xoá ảnh: " + e.getMessage());
+        }
+        return "redirect:/admin/management/product/edit/" + productId;
+    }
+
+    // Xóa sản phẩm + ảnh liên quan
+    @GetMapping("/delete/{id}")
     public String deleteProduct(@PathVariable String id, RedirectAttributes redirectAttributes) {
         try {
+            List<HinhAnh> images = hinhAnhService.findBySanPham_MaSP(id);
+            for (HinhAnh img : images) {
+                hinhAnhService.deleteById(img.getId());
+            }
             sanPhamService.deleteById(id);
-            redirectAttributes.addFlashAttribute("success", "Xóa sản phẩm thành công!");
+            redirectAttributes.addFlashAttribute("success", "Đã xoá sản phẩm và ảnh liên quan!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Lỗi khi xóa sản phẩm: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Lỗi khi xoá sản phẩm: " + e.getMessage());
         }
-        return "redirect:/admin/product-management";
+        return "redirect:/admin/management/product";
     }
 
     // Tìm kiếm sản phẩm
-    @GetMapping("/product-management/search")
-    public String searchProducts(@RequestParam String keyword, Model model) {
-        List<SanPham> products = sanPhamService.findByTenSPContaining(keyword);
-        model.addAttribute("products", products);
+    @GetMapping("/search")
+    public String searchProducts(@RequestParam String keyword, Model model,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<SanPham> products = sanPhamService.findByMaSPContainingIgnoreCase(keyword, pageable);
+        model.addAttribute("products", products.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", products.getTotalPages());
+        model.addAttribute("totalItems", products.getTotalElements());
         model.addAttribute("categories", loaiSanPhamService.findAll());
-        model.addAttribute("searchKeyword", keyword);
+        model.addAttribute("keyword", keyword);
         return "admin/product-management";
     }
 }

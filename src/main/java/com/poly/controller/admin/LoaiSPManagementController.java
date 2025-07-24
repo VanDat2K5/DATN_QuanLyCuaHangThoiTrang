@@ -13,7 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 
 @Controller
-@RequestMapping("/admin/categories")
+@RequestMapping("/admin/management/categories")
 @RequiredArgsConstructor
 public class LoaiSPManagementController {
 
@@ -22,8 +22,8 @@ public class LoaiSPManagementController {
     /* ─────────────────────── GET LIST + FORM ─────────────────────── */
     @GetMapping
     public String showCategoryPage(Model model,
-                                   @ModelAttribute("message") String msg,
-                                   @ModelAttribute("error") String err) {
+            @ModelAttribute("message") String msg,
+            @ModelAttribute("error") String err) {
 
         List<LoaiSanPham> categories = loaiSanPhamService.findAll();
         model.addAttribute("categories", categories);
@@ -38,14 +38,14 @@ public class LoaiSPManagementController {
     /* ─────────────────────── THÊM MỚI ─────────────────────── */
     @PostMapping("/create")
     public String create(@Valid @ModelAttribute("categoryForm") LoaiSanPham form,
-                         BindingResult result,
-                         RedirectAttributes ra) {
+            BindingResult result,
+            RedirectAttributes ra) {
 
         if (result.hasErrors()) {
             ra.addFlashAttribute("org.springframework.validation.BindingResult.categoryForm", result);
             ra.addFlashAttribute("categoryForm", form);
             ra.addFlashAttribute("error", "Vui lòng kiểm tra lại dữ liệu!");
-            return "redirect:/admin/categories";
+            return "redirect:/admin/management/categories";
         }
 
         // Nếu không có mã → sinh mã mới
@@ -55,7 +55,7 @@ public class LoaiSPManagementController {
 
         loaiSanPhamService.save(form);
         ra.addFlashAttribute("message", "Thêm danh mục thành công!");
-        return "redirect:/admin/categories";
+        return "redirect:/admin/management/categories";
     }
 
     /* ─────────────────────── MỞ FORM SỬA ─────────────────────── */
@@ -64,7 +64,7 @@ public class LoaiSPManagementController {
         LoaiSanPham cat = loaiSanPhamService.findById(id).orElse(null);
         if (cat == null) {
             ra.addFlashAttribute("error", "Không tìm thấy danh mục!");
-            return "redirect:/admin/categories";
+            return "redirect:/admin/management/categories";
         }
 
         model.addAttribute("categoryForm", cat);
@@ -76,21 +76,21 @@ public class LoaiSPManagementController {
     /* ─────────────────────── CẬP NHẬT ─────────────────────── */
     @PostMapping("/edit/{id}")
     public String update(@PathVariable("id") String id,
-                         @Valid @ModelAttribute("categoryForm") LoaiSanPham form,
-                         BindingResult result,
-                         RedirectAttributes ra) {
+            @Valid @ModelAttribute("categoryForm") LoaiSanPham form,
+            BindingResult result,
+            RedirectAttributes ra) {
 
         if (result.hasErrors()) {
             ra.addFlashAttribute("org.springframework.validation.BindingResult.categoryForm", result);
             ra.addFlashAttribute("categoryForm", form);
             ra.addFlashAttribute("editing", true);
             ra.addFlashAttribute("error", "Cập nhật thất bại, hãy kiểm tra dữ liệu!");
-            return "redirect:/admin/categories/edit/" + id;
+            return "redirect:/admin/management/categories/edit/" + id;
         }
 
         loaiSanPhamService.save(form);
         ra.addFlashAttribute("message", "Cập nhật danh mục thành công!");
-        return "redirect:/admin/categories";
+        return "redirect:/admin/management/categories";
     }
 
     /* ─────────────────────── XOÁ ĐƠN LẺ ─────────────────────── */
@@ -105,6 +105,6 @@ public class LoaiSPManagementController {
             }
         }, () -> ra.addFlashAttribute("error", "Không tìm thấy danh mục!"));
 
-        return "redirect:/admin/categories";
+        return "redirect:/admin/management/categories";
     }
 }

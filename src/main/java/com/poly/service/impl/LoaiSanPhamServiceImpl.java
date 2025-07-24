@@ -58,4 +58,10 @@ public class LoaiSanPhamServiceImpl implements LoaiSanPhamService {
     public boolean existsById(String id) {
         return loaiSanPhamRepository.existsById(id);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<LoaiSanPham> findByMaLoaiSPContainingIgnoreCase(String maLoaiSP, Pageable pageable) {
+        return loaiSanPhamRepository.findByMaLoaiSPContainingIgnoreCase(maLoaiSP, pageable);
+    }
 }

@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.poly.entity.SanPham;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface SanPhamRepository extends JpaRepository<SanPham, String> {
     List<SanPham> findAll();
@@ -18,4 +20,6 @@ public interface SanPhamRepository extends JpaRepository<SanPham, String> {
     List<SanPham> findByLoaiSP_MaLoaiSPAndGioiTinh(String maLoaiSP, SanPham.Gender gioiTinh);
 
     List<SanPham> findByTenSPContainingAndGioiTinh(String tenSP, SanPham.Gender gioiTinh);
+
+    Page<SanPham> findByMaSPContainingIgnoreCase(String maSP, Pageable pageable);
 }

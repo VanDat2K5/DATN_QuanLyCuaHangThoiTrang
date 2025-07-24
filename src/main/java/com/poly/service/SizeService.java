@@ -20,4 +20,6 @@ public interface SizeService {
     List<Size> findByTenSizeContaining(String tenSize);
 
     boolean existsById(String id);
+
+    Page<Size> findByMaSizeContainingIgnoreCase(String maSize, Pageable pageable);
 }

@@ -26,4 +26,6 @@ public interface ChiTietSanPhamService {
     List<ChiTietSanPham> findBySoLuongLessThanEqual(Integer soLuong);
 
     boolean existsById(String id);
+
+    Page<ChiTietSanPham> findBySanPham_MaSPContainingIgnoreCase(String maSP, Pageable pageable);
 }

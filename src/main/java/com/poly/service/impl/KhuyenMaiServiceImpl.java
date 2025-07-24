@@ -71,4 +71,10 @@ public class KhuyenMaiServiceImpl implements KhuyenMaiService {
     public boolean existsById(String id) {
         return khuyenMaiRepository.existsById(id);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<KhuyenMai> findByMaKMContainingIgnoreCase(String maKM, Pageable pageable) {
+        return khuyenMaiRepository.findByMaKMContainingIgnoreCase(maKM, pageable);
+    }
 }

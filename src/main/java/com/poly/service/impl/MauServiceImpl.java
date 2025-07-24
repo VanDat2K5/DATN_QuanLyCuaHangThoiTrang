@@ -58,4 +58,10 @@ public class MauServiceImpl implements MauService {
     public boolean existsById(String id) {
         return mauRepository.existsById(id);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Mau> findByMaMauContainingIgnoreCase(String maMau, Pageable pageable) {
+        return mauRepository.findByMaMauContainingIgnoreCase(maMau, pageable);
+    }
 }

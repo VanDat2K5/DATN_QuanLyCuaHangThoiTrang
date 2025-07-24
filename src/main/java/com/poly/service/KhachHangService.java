@@ -27,4 +27,6 @@ public interface KhachHangService {
     Optional<KhachHang> findByEmail(String email);
 
     boolean existsById(String id);
+
+    Page<KhachHang> findByMaKHContainingIgnoreCase(String maKH, Pageable pageable);
 }

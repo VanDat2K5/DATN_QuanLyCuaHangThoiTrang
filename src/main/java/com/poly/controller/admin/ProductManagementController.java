@@ -7,6 +7,9 @@ import com.poly.service.LoaiSanPhamService;
 import com.poly.service.SanPhamService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -44,6 +47,23 @@ public class ProductManagementController {
         model.addAttribute("products", products);
         model.addAttribute("productImages", productImages);
         model.addAttribute("genders", SanPham.Gender.values()); // Thêm enum giới tính
+        return "admin/product/list";
+    }
+
+    // Tìm kiếm sản phẩm theo mã có phân trang
+    @GetMapping("/search")
+    public String searchProductsByMaSP(
+            @RequestParam(name = "keyword", required = false) String maSP,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<SanPham> productPage = sanPhamService.findByMaSPContainingIgnoreCase(maSP == null ? "" : maSP, pageable);
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("totalItems", productPage.getTotalElements());
+        model.addAttribute("keyword", maSP);
         return "admin/product/list";
     }
 

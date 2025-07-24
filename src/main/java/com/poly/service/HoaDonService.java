@@ -33,6 +33,6 @@ public interface HoaDonService {
     boolean existsById(String id);
 
     int updateTrangThaiByMaHD(String maHD, String trangThai);
-    
-   
+
+    Page<HoaDon> findByMaHDContainingIgnoreCase(String maHD, Pageable pageable);
 }

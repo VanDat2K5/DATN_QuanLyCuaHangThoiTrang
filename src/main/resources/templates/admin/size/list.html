@@ -3,14 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Danh sách Size</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />    
+    <link rel="stylesheet" href="/css/admin-custom.css" />
+    <link rel="stylesheet" th:href="@{/css/icon.min.css}">
 </head>
 <body class="p-4">
 
-<div class="container">
+    <!-- Sidebar -->
+    <div th:replace="~{admin/admin-header :: sidebar-admin}"></div>
+  
+    <!-- Header -->
+    <div th:replace="~{admin/admin-header :: header-admin}"></div>
+    <div class="main-content">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Danh sách Size</h2>
-        <a th:href="@{/size/add}" class="btn btn-success">
+        <a th:href="@{/admin/management/size/add}" class="btn btn-success">
             <i class="bi bi-plus-circle me-1"></i> Thêm size mới
         </a>
     </div>
@@ -28,12 +35,12 @@
             <td th:text="${s.maSize}">S</td>
             <td th:text="${s.tenSize}">Small</td>
             <td class="text-center">
-                <a th:href="@{/size/edit/{id}(id=${s.maSize})}"
+                <a th:href="@{/admin/management/size/edit/{id}(id=${s.maSize})}"
                    class="btn btn-sm btn-primary me-1">
                     <i class="bi bi-pencil-square"></i> Sửa
                 </a>
                 <!-- dùng inline Thymeleaf cho onclick -->
-                <a th:href="@{/size/delete/{id}(id=${s.maSize})}"
+                <a th:href="@{/admin/management/size/delete/{id}(id=${s.maSize})}"
                    onclick="return confirm('Xác nhận xóa size [[${s.tenSize}]]?');"
                    class="btn btn-sm btn-danger">
                     <i class="bi bi-trash"></i> Xóa

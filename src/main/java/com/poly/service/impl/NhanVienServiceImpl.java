@@ -88,4 +88,10 @@ public class NhanVienServiceImpl implements NhanVienService {
     public List<NhanVien> findByIsAdminAndIsActivity(Boolean isAdmin, Boolean isActivity) {
         return nhanVienRepository.findByIsAdminAndIsActivity(isAdmin, isActivity);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<NhanVien> findByMaNVContainingIgnoreCase(String maNV, Pageable pageable) {
+        return nhanVienRepository.findByMaNVContainingIgnoreCase(maNV, pageable);
+    }
 }

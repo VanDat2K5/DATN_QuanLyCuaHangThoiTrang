@@ -94,4 +94,9 @@ public class HoaDonServiceImpl implements HoaDonService {
     public int updateTrangThaiByMaHD(String maHD, String trangThai) {
         return hoaDonRepository.updateTrangThaiByMaHD(maHD, trangThai);
     }
+
+    @Override
+    public Page<HoaDon> findByMaHDContainingIgnoreCase(String keyword, Pageable pageable) {
+        return hoaDonRepository.findByMaHDContainingIgnoreCase(keyword, pageable);
+    }
 }

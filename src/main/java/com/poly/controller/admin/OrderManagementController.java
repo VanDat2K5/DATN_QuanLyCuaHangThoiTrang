@@ -57,29 +57,27 @@ public class OrderManagementController {
 
 	@GetMapping
 	public String listOrders(Model model,
-	                         @RequestParam(defaultValue = "0") int page,
-	                         @RequestParam(defaultValue = "5") int size,
-	                         @RequestParam(required = false) String keyword) {
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int size,
+			@RequestParam(required = false) String keyword) {
 
-	    Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "NgayLap"));
-	    Page<HoaDon> orders;
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "NgayLap"));
+		Page<HoaDon> orders;
 
-	    if (keyword != null && !keyword.trim().isEmpty()) {
-//	        orders = hoaDonService.searchHoaDon(keyword, pageable);
-	    	orders = hoaDonService.findAll(pageable);
-	        model.addAttribute("keyword", keyword); // giữ lại từ khoá khi quay lại form
-	    } else {
-	        orders = hoaDonService.findAll(pageable);
-	    }
+		if (keyword != null && !keyword.trim().isEmpty()) {
+			orders = hoaDonService.findByMaHDContainingIgnoreCase(keyword, pageable);
+			model.addAttribute("keyword", keyword);
+		} else {
+			orders = hoaDonService.findAll(pageable);
+		}
 
-	    model.addAttribute("orders", orders.getContent());
-	    model.addAttribute("currentPage", page);
-	    model.addAttribute("totalPages", orders.getTotalPages());
-	    model.addAttribute("totalItems", orders.getTotalElements());
+		model.addAttribute("orders", orders.getContent());
+		model.addAttribute("currentPage", page);
+		model.addAttribute("totalPages", orders.getTotalPages());
+		model.addAttribute("totalItems", orders.getTotalElements());
 
-	    return "admin/order-management";
+		return "admin/order-management";
 	}
-
 
 	@GetMapping("/view/{id}")
 	public String viewOrder(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
@@ -128,25 +126,23 @@ public class OrderManagementController {
 		}
 		return "admin/show-order";
 	}
-	
+
 	@PostMapping("/update")
 	public String updateOrderStatus(HttpServletRequest request) {
-	    Map<String, String[]> params = request.getParameterMap();
+		Map<String, String[]> params = request.getParameterMap();
 
-	    for (String key : params.keySet()) {
-	        if (key.startsWith("save_")) {
-	            String maHD = key.substring(5);
-	            String trangThai = request.getParameter("trangThai_" + maHD);
+		for (String key : params.keySet()) {
+			if (key.startsWith("save_")) {
+				String maHD = key.substring(5);
+				String trangThai = request.getParameter("trangThai_" + maHD);
 
-	            // Gọi service cập nhật trạng thái
-	            hoaDonService.updateTrangThaiByMaHD(maHD, trangThai);
-	            break;
-	        }
-	    }
+				// Gọi service cập nhật trạng thái
+				hoaDonService.updateTrangThaiByMaHD(maHD, trangThai);
+				break;
+			}
+		}
 
-	    return "redirect:/admin/management/orders";
+		return "redirect:/admin/management/orders";
 	}
-	
-	
 
 }

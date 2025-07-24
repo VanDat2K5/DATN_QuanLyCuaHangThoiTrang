@@ -70,4 +70,10 @@ public class KhachHangServiceImpl implements KhachHangService {
     public boolean existsById(String id) {
         return khachHangRepository.existsById(id);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<KhachHang> findByMaKHContainingIgnoreCase(String maKH, Pageable pageable) {
+        return khachHangRepository.findByMaKHContainingIgnoreCase(maKH, pageable);
+    }
 }

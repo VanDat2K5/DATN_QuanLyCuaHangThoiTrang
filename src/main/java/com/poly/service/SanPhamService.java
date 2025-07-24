@@ -24,12 +24,14 @@ public interface SanPhamService {
 
     boolean existsById(String id);
 
-
     Page<SanPhamViewDTO> findAllSanPhamDTO(Pageable pageable);
 
     // Thêm các method tìm kiếm theo giới tính
     List<SanPhamViewDTO> findByGioiTinh(SanPham.Gender gioiTinh);
+
     List<SanPhamViewDTO> findByLoaiSanPham_MaLoaiSPAndGioiTinh(String maLoaiSP, SanPham.Gender gioiTinh);
+
     List<SanPhamViewDTO> findByTenSPContainingAndGioiTinh(String tenSP, SanPham.Gender gioiTinh);
 
+    Page<SanPham> findByMaSPContainingIgnoreCase(String maSP, Pageable pageable);
 }

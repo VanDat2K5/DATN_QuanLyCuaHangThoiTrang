@@ -43,95 +43,101 @@
                         <input type="text" th:field="*{nhanVien.tenNV}" class="form-control" readonly />
                     </div>
                 </div>
-                <div class="card shadow-sm rounded-4 p-4 mb-4">
-                    <h5 class="fw-bold mb-3">Thêm sản phẩm nhập</h5>
-                    <form th:action="@{/admin/management/input/create/add-product}" method="post" class="row align-items-end g-2 mb-3">
-                        <div class="col-auto">
-                            <select id="loaiThem" name="loaiThem" class="form-select" onchange="onLoaiThemChange()">
-                                <option value="cu" selected>Sản phẩm cũ</option>
-                                <option value="moi">Thêm mới</option>
-                            </select>
-                        </div>
-                        <div class="col-auto">
-                            <select id="chonSanPhamCu" name="maSP" class="form-select">
-                                <option th:each="sp : ${sanPhams}" th:value="${sp.maSP}" th:text="${sp.tenSP}"></option>
-                            </select>
-                            <input id="tenSpMoi" name="tenSpMoi" type="text" class="form-control mt-1" placeholder="Tên sản phẩm mới" style="display:none;" />
-                        </div>
-                        <div class="col-auto">
-                            <select name="mauSac" class="form-select">
-                                <option th:each="m : ${mauSacs}" th:value="${m.maMau}" th:text="${m.tenMau}"></option>
-                            </select>
-                        </div>
-                        <div class="col-auto">
-                            <select name="size" class="form-select">
-                                <option th:each="s : ${sizes}" th:value="${s.maSize}" th:text="${s.tenSize}"></option>
-                            </select>
-                        </div>
-                        <div class="col-auto">
-                            <input name="soLuongNhap" type="number" class="form-control" min="1" placeholder="Số lượng" />
-                        </div>
-                        <div class="col-auto">
-                            <input name="giaNhap" type="number" class="form-control" min="0" placeholder="Giá nhập" />
-                        </div>
-                        <div class="col-auto">
-                            <input id="loHang" name="loHang" type="text" class="form-control" value="002" readonly />
-                        </div>
-                        <div class="col-auto">
-                            <button type="submit" class="btn btn-outline-primary">
-                                <i class="bi bi-plus-circle"></i> Thêm sản phẩm
-                            </button>
-                        </div>
-                    </form>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover align-middle text-center">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>Loại</th>
-                                    <th>Mã SP</th>
-                                    <th>Tên SP</th>
-                                    <th>Màu</th>
-                                    <th>Size</th>
-                                    <th>Số lượng</th>
-                                    <th>Giá nhập</th>
-                                    <th>Lô hàng</th>
-                                    <th>Hành động</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="ct, idx : ${productList}">
-                                    <td th:text="${ct.chiTietSanPham.sanPham.tenSP == null ? 'Thêm mới' : 'Sản phẩm cũ'}"></td>
-                                    <td th:text="${ct.chiTietSanPham.sanPham.maSP}"></td>
-                                    <td th:text="${ct.chiTietSanPham.sanPham.tenSP != null ? ct.chiTietSanPham.sanPham.tenSP : ct.chiTietSanPham.sanPham.maSP}"></td>
-                                    <td th:text="${ct.chiTietSanPham.mau.maMau}"></td>
-                                    <td th:text="${ct.chiTietSanPham.size.maSize}"></td>
-                                    <td th:text="${ct.soLuongNhap}"></td>
-                                    <td th:text="${ct.giaNhap}"></td>
-                                    <td th:text="${ct.loHang}"></td>
-                                    <td>
-                                        <a th:href="@{'/admin/management/input/create/remove-product/' + ${idx.index}}" class="btn btn-danger btn-sm">
-                                            <i class="bi bi-trash"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="6" class="text-end fw-bold">Tổng tiền:</td>
-                                    <td th:text="${#numbers.formatDecimal(tongTien, 0, 'COMMA', 0, 'POINT') + ' ₫'}"></td>
-                                    <td></td>
-                                </tr>
-                            </tfoot>
-                        </table>
+            </form>
+            <!-- Form thêm sản phẩm KHÔNG lồng trong form lớn -->
+            <form th:action="@{/admin/management/input/create/add-product}" method="post" class="row align-items-end g-2 mb-3">
+                <div class="col-auto">
+                    <select id="loaiThem" name="loaiThem" class="form-select" onchange="onLoaiThemChange()">
+                        <option value="cu" selected>Sản phẩm cũ</option>
+                        <option value="moi">Thêm mới</option>
+                    </select>
+                </div>
+                <div class="col-auto" id="divSanPhamCu">
+                    <div class="input-group">
+                        <select id="chonSanPhamCu" name="maSP" class="form-select">
+                            <option th:each="sp : ${sanPhams}" th:value="${sp.maSP}" th:text="${sp.tenSP}"></option>
+                        </select>
+                        <a th:href="@{/admin/management/product/create}" class="btn btn-outline-primary" id="btnTaoSanPhamMoi" style="display:none;">Tạo mới</a>
                     </div>
                 </div>
-                <div class="d-flex justify-content-end gap-2">
+                <div class="col-auto">
+                    <select name="mauSac" class="form-select">
+                        <option th:each="m : ${mauSacs}" th:value="${m.maMau}" th:text="${m.tenMau}"></option>
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <select name="size" class="form-select">
+                        <option th:each="s : ${sizes}" th:value="${s.maSize}" th:text="${s.tenSize}"></option>
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <input name="soLuongNhap" type="number" class="form-control" min="1" placeholder="Số lượng" />
+                </div>
+                <div class="col-auto">
+                    <input name="giaNhap" type="number" class="form-control" min="0" placeholder="Giá nhập" />
+                </div>
+                <div class="col-auto">
+                    <input id="loHang" name="loHang" type="text" class="form-control" value="002" readonly />
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="bi bi-plus-circle"></i> Thêm sản phẩm
+                    </button>
+                </div>
+            </form>
+            <div class="card shadow-sm rounded-4 p-4 mb-4">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle text-center">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Loại</th>
+                                <th>Mã SP</th>
+                                <th>Tên SP</th>
+                                <th>Loại SP</th>
+                                <th>Màu</th>
+                                <th>Size</th>
+                                <th>Số lượng</th>
+                                <th>Giá nhập</th>
+                                <th>Lô hàng</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="ct, idx : ${productList}">
+                                <td th:text="${ct.chiTietSanPham.sanPham.tenSP == null ? 'Thêm mới' : 'Sản phẩm cũ'}"></td>
+                                <td th:text="${ct.chiTietSanPham.sanPham.maSP}"></td>
+                                <td th:text="${ct.chiTietSanPham.sanPham.tenSP != null ? ct.chiTietSanPham.sanPham.tenSP : ct.chiTietSanPham.sanPham.maSP}"></td>
+                                <td th:text="${ct.chiTietSanPham.sanPham.loaiSP != null ? ct.chiTietSanPham.sanPham.loaiSP.loaiSP : ''}"></td>
+                                <td th:text="${ct.chiTietSanPham.mau.maMau}"></td>
+                                <td th:text="${ct.chiTietSanPham.size.maSize}"></td>
+                                <td th:text="${ct.soLuongNhap}"></td>
+                                <td th:text="${ct.giaNhap}"></td>
+                                <td th:text="${ct.loHang}"></td>
+                                <td>
+                                    <a th:href="@{'/admin/management/input/create/remove-product/' + ${idx.index}}" class="btn btn-danger btn-sm">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="8" class="text-end fw-bold">Tổng tiền:</td>
+                                <td th:text="${#numbers.formatDecimal(productList.?sum(ct -> ct.giaNhap * ct.soLuongNhap), 0, 'COMMA', 0, 'POINT') + ' ₫'}"></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end gap-2">
+                <form th:action="@{/admin/management/input/create}" method="post" th:object="${phieuNhap}">
                     <button type="submit" class="btn btn-success">
                         <i class="bi bi-save"></i> Lưu phiếu nhập
                     </button>
-                    <a th:href="@{/admin/management/input}" class="btn btn-secondary">Hủy</a>
-                </div>
-            </form>
+                </form>
+                <a th:href="@{/admin/management/input}" class="btn btn-secondary">Hủy</a>
+            </div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -139,7 +145,7 @@
         function onLoaiThemChange() {
             var loai = document.getElementById('loaiThem').value;
             document.getElementById('chonSanPhamCu').style.display = (loai === 'cu') ? '' : 'none';
-            document.getElementById('tenSpMoi').style.display = (loai === 'moi') ? '' : 'none';
+            document.getElementById('btnTaoSanPhamMoi').style.display = (loai === 'moi') ? '' : 'none';
             document.getElementById('loHang').value = (loai === 'moi') ? '001' : '002';
         }
         window.onload = onLoaiThemChange;
