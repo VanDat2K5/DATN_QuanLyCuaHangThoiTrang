@@ -30,4 +30,6 @@ public interface NhanVienService {
     List<NhanVien> findByIsActivity(Boolean isActivity);
 
     List<NhanVien> findByIsAdminAndIsActivity(Boolean isAdmin, Boolean isActivity);
+
+    Page<NhanVien> findByMaNVContainingIgnoreCase(String maNV, Pageable pageable);
 }

@@ -58,4 +58,10 @@ public class SizeServiceImpl implements SizeService {
     public boolean existsById(String id) {
         return sizeRepository.existsById(id);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Size> findByMaSizeContainingIgnoreCase(String maSize, Pageable pageable) {
+        return sizeRepository.findByMaSizeContainingIgnoreCase(maSize, pageable);
+    }
 }

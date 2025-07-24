@@ -15,8 +15,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import com.poly.entity.ChiTietPhieuNhap;
+import com.poly.entity.LoaiSanPham;
 import com.poly.entity.Mau;
 import com.poly.entity.NhanVien;
 import com.poly.entity.PhieuNhap;
@@ -25,6 +29,7 @@ import com.poly.entity.Size;
 
 import com.poly.service.ChiTietSanPhamService;
 import com.poly.service.ChiTietPhieuNhapService;
+import com.poly.service.LoaiSanPhamService;
 import com.poly.service.MauService;
 import com.poly.service.PhieuNhapService;
 import com.poly.service.SizeService;
@@ -45,11 +50,13 @@ public class InputManagementController {
     private final PhieuNhapService phieuNhapService;
     private final ChiTietPhieuNhapService chiTietPhieuNhapService;
     private final CodeGenerator codeGenerator;
+    private final LoaiSanPhamService loaiSanPhamService;
 
     @Autowired
     public InputManagementController(SanPhamService sanPhamService, ChiTietSanPhamService chiTietSanPhamService,
             MauService mauService, SizeService sizeService, PhieuNhapService phieuNhapService,
-            ChiTietPhieuNhapService chiTietPhieuNhapService, CodeGenerator codeGenerator) {
+            ChiTietPhieuNhapService chiTietPhieuNhapService, CodeGenerator codeGenerator,
+            LoaiSanPhamService loaiSanPhamService) {
         this.sanPhamService = sanPhamService;
         this.chiTietSanPhamService = chiTietSanPhamService;
         this.mauService = mauService;
@@ -57,13 +64,19 @@ public class InputManagementController {
         this.phieuNhapService = phieuNhapService;
         this.chiTietPhieuNhapService = chiTietPhieuNhapService;
         this.codeGenerator = codeGenerator;
+        this.loaiSanPhamService = loaiSanPhamService;
     }
 
     @GetMapping
-    public String inputManagement(Model model) {
-        List<PhieuNhap> phieuNhaps = phieuNhapService.findAll();
-        System.out.println(phieuNhaps.size());
-        model.addAttribute("phieuNhaps", phieuNhaps);
+    public String inputManagement(Model model,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<PhieuNhap> phieuNhapPage = phieuNhapService.findAll(pageable);
+        model.addAttribute("phieuNhaps", phieuNhapPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", phieuNhapPage.getTotalPages());
+        model.addAttribute("totalItems", phieuNhapPage.getTotalElements());
         return "admin/input-management.html";
     }
 
@@ -109,11 +122,10 @@ public class InputManagementController {
         phieuNhapService.save(phieuNhap);
 
         model.addAttribute("phieuNhap", phieuNhap);
-
         model.addAttribute("sanPhams", sanPhamService.findAll());
         model.addAttribute("mauSacs", mauService.findAll());
         model.addAttribute("sizes", sizeService.findAll());
-
+        model.addAttribute("loaiSanPhams", loaiSanPhamService.findAll());
         return "admin/input-create.html";
     }
 
@@ -122,6 +134,7 @@ public class InputManagementController {
             @RequestParam String loaiThem,
             @RequestParam(required = false) String maSP,
             @RequestParam(required = false) String tenSpMoi,
+            @RequestParam(required = false) String maLoaiSP,
             @RequestParam String mauSac,
             @RequestParam String size,
             @RequestParam int soLuongNhap,
@@ -142,6 +155,11 @@ public class InputManagementController {
         } else {
             sp.setMaSP(tenSpMoi != null ? tenSpMoi.replaceAll("\\s+", "_").toUpperCase() : "MOI");
             sp.setTenSP(tenSpMoi);
+            if (maLoaiSP != null && !maLoaiSP.isEmpty()) {
+                LoaiSanPham loai = new LoaiSanPham();
+                loai.setMaLoaiSP(maLoaiSP);
+                sp.setLoaiSP(loai);
+            }
         }
         Mau m = new Mau();
         m.setMaMau(mauSac);
@@ -153,16 +171,15 @@ public class InputManagementController {
         chiTiet.getChiTietSanPham().setSize(s);
         chiTiet.setSoLuongNhap(soLuongNhap);
         chiTiet.setGiaNhap(BigDecimal.valueOf(giaNhap));
-        chiTiet.setLoHang(loHang);
+        chiTiet.setLoHang(codeGenerator.generateImportDetailCode(chiTiet));
         productList.add(chiTiet);
         session.setAttribute("productList", productList);
-
-        // Render lại view
         model.addAttribute("phieuNhap", new PhieuNhap());
         model.addAttribute("productList", productList);
         model.addAttribute("sanPhams", sanPhamService.findAll());
         model.addAttribute("mauSacs", mauService.findAll());
         model.addAttribute("sizes", sizeService.findAll());
+        model.addAttribute("loaiSanPhams", loaiSanPhamService.findAll());
         return "admin/input-create.html";
     }
 

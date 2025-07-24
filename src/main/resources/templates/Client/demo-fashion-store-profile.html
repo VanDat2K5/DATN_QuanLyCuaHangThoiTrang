@@ -50,20 +50,20 @@
         <section class="pt-0 pb-5">
             <div class="container">
                 <!-- Alert Messages -->
-                <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <div th:if="${success}" class="alert alert-success alert-dismissible fade show text-dark" role="alert">
                     <i class="feather icon-feather-check-circle me-2"></i>
                     <span th:text="${success}"></span>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
-                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show text-dark" role="alert">
                     <i class="feather icon-feather-alert-circle me-2"></i>
                     <span th:text="${error}"></span>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
 
                 <!-- OAuth Account Creation Notice -->
-                <div th:if="${oauthUser and needsAccount}" class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <div class="d-flex align-items-center" style="color: #000;">
+                <div th:if="${oauthUser and needsAccount}" class="alert alert-warning alert-dismissible fade show text-dark" role="alert">
+                    <div class="d-flex align-items-center">
                         <i class="feather icon-feather-alert-triangle me-3 fs-24"></i>
                         <div class="flex-grow-1">
                             <h6 class="mb-1">
@@ -203,7 +203,7 @@
                                                                 th:data-order-money="${order != null ? order.tongTien : 0}"
                                                                 th:data-username="${username}"
                                                                 title="Xem mã QR thanh toán">
-                                                            <i class="feather icon-feather-qr-code"></i>
+                                                                <i class="fa-solid fa-qrcode"></i>
                                                         </button>
                                                         
                                                         <!-- Cancel Button for specific statuses -->
@@ -214,13 +214,13 @@
                                                               onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?')">
                                                             <input type="hidden" name="orderId" th:value="${order != null ? order.maHD : ''}">
                                                             <button type="submit" class="btn btn-sm btn-outline-danger" title="Hủy đơn hàng">
-                                                                <i class="feather icon-feather-x"></i>
+                                                                <i class="fa-solid fa-x"></i>
                                                             </button>
                                                         </form>
                                                         
                                                         <!-- View Details Button -->
                                                         <a href="#" class="btn btn-sm btn-outline-info" title="Xem chi tiết">
-                                                            <i class="feather icon-feather-eye"></i>
+                                                            <i class="fa-solid fa-eye"></i>
                                                         </a>
                                                     </div>
                                                 </div>
@@ -228,7 +228,7 @@
                                         </div>
                                     </div>
                                     <div th:if="${!hasOrders}" class="text-center py-4">
-                                        <i class="feather icon-feather-inbox fs-48 text-muted mb-3"></i>
+                                        <i class="fa-solid fa-inbox fs-48 text-muted mb-3"></i>
                                         <p class="text-muted">No orders found</p>
                                     </div>
                                 </div>

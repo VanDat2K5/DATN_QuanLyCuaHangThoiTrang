@@ -20,7 +20,7 @@
     <div class="container-fluid">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold">Quản Lý Nhân Viên</h2>
-        <a href="/admin/employee-management/add" class="btn btn-success">
+        <a href="/admin/management/employee/create" class="btn btn-success">
           <i class="bi bi-person-plus"></i> Thêm Nhân Viên
         </a>
       </div>
@@ -101,7 +101,7 @@
               </td>
               <td>
                 <div class="btn-group" role="group">
-                  <a th:href="@{/admin/employee-management/edit/{id}(id=${employee.maNV})}" 
+                  <a th:href="@{/admin/management/employee/edit/{id}(id=${employee.maNV})}" 
                      class="btn btn-warning btn-sm" title="Sửa">
                     <i class="bi bi-pencil"></i>
                   </a>
@@ -209,7 +209,7 @@
       if (confirm('Bạn có chắc chắn muốn thay đổi trạng thái nhân viên này?')) {
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = `/admin/employee-management/toggle-status/${employeeId}`;
+        form.action = `/admin/management/employee/toggle-status/${employeeId}`;
         document.body.appendChild(form);
         form.submit();
       }
@@ -218,7 +218,7 @@
     // Delete employee
     function deleteEmployee(employeeId, employeeName) {
       document.getElementById('employeeName').textContent = employeeName;
-      document.getElementById('deleteForm').action = `/admin/employee-management/delete/${employeeId}`;
+      document.getElementById('deleteForm').action = `/admin/management/employee/delete/${employeeId}`;
       new bootstrap.Modal(document.getElementById('deleteModal')).show();
     }
 

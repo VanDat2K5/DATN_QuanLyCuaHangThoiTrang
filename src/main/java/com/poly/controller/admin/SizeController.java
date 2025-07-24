@@ -8,7 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/size")
+@RequestMapping("/admin/management/size")
 public class SizeController {
 
     @Autowired
@@ -18,21 +18,21 @@ public class SizeController {
     @GetMapping
     public String list(Model model) {
         model.addAttribute("list", sizeService.findAll());
-        return "admin/size/list";  // tương ứng templates/admin/size/list.html
+        return "admin/size/list"; // tương ứng templates/admin/size/list.html
     }
 
     // 2. Form thêm mới
     @GetMapping("/add")
     public String addForm(Model model) {
         model.addAttribute("size", new Size());
-        return "admin/size/form";  // tương ứng templates/admin/size/form.html
+        return "admin/size/form"; // tương ứng templates/admin/size/form.html
     }
 
     // 3. Lưu (thêm mới hoặc cập nhật)
     @PostMapping("/save")
     public String save(@ModelAttribute("size") Size size) {
         sizeService.save(size);
-        return "redirect:/size";
+        return "redirect:/admin/management/size";
     }
 
     // 4. Form sửa
@@ -48,6 +48,6 @@ public class SizeController {
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") String id) {
         sizeService.deleteById(id);
-        return "redirect:/size";
+        return "redirect:/admin/management/size";
     }
 }

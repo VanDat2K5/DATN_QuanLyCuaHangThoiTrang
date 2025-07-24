@@ -7,6 +7,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
   <link rel="stylesheet" href="/css/admin-custom.css">
+  <link rel="stylesheet" th:href="@{/css/icon.min.css}">
   <style>
     body {
       background-color: #f8f9fa;
@@ -41,14 +42,14 @@
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold">Quản Lý Sản Phẩm</h2>
         <div class="d-flex gap-2">
-          <form th:action="@{/admin/product-management/search}" method="get" class="d-flex search-box">
+          <form th:action="@{/admin/management/product/search}" method="get" class="d-flex search-box">
             <input type="search" name="keyword" class="form-control me-2" 
-                   th:value="${searchKeyword}" placeholder="Tìm sản phẩm..." />
+                   th:value="${keyword}" placeholder="Tìm sản phẩm..." />
             <button type="submit" class="btn btn-outline-primary">
               <i class="bi bi-search"></i>
             </button>
           </form>
-          <a href="/admin/product-management/add" class="btn btn-success">
+          <a href="/admin/management/product/create" class="btn btn-success">
             <i class="bi bi-plus-circle"></i> Thêm Sản Phẩm
           </a>
         </div>
@@ -76,32 +77,36 @@
               <th>Tên Sản Phẩm</th>
               <th>Loại SP</th>
               <th>Giới Tính</th>
-              <th>Trạng Thái</th>
+              <!-- <th>Trạng Thái</th> -->
               <th>Hành Động</th>
             </tr>
           </thead>
           <tbody>
             <tr th:each="product : ${products}">
               <td>
-                <img th:src="@{/images/aothun1.jpg}" alt="Sản phẩm" class="product-image">
+                <th:block th:if="${product.hinhAnh != null and #lists.size(product.hinhAnh) > 0}">
+                  <img th:src="@{'/images/' + ${product.hinhAnh[0].hinhAnh}}" alt="Sản phẩm" class="product-image">
+                </th:block>
+                <th:block th:unless="${product.hinhAnh != null and #lists.size(product.hinhAnh) > 0}">
+                  <span class="text-muted">Không có ảnh</span>
+                </th:block>
               </td>
               <td th:text="${product.maSP}">SP001</td>
               <td th:text="${product.tenSP}">Tên sản phẩm</td>
               <td th:text="${product.loaiSP?.loaiSP}">Loại SP</td>
               <td th:text="${product.gioiTinh?.displayName}">Giới tính</td>
-              <td><span class="badge status-active">Đang bán</span></td>
               <td>
-                <div class="btn-group" role="group">
-                  <a th:href="@{/admin/product-management/edit/{id}(id=${product.maSP})}" 
+                <div class="btn">  
+                  <a th:href="@{/admin/management/product/edit/{id}(id=${product.maSP})}" 
                      class="btn btn-warning btn-sm" title="Sửa">
                     <i class="bi bi-pencil"></i>
                   </a>
-                  <button type="button" class="btn btn-danger btn-sm delete-btn" 
-                          th:data-product-id="${product.maSP}"
-                          th:data-product-name="${product.tenSP}"
-                          title="Xóa">
-                    <i class="bi bi-trash"></i>
-                  </button>
+                </div>
+                <div class="btn">
+                  <a th:href="@{/admin/chitiet/detail-management(productId=${product.maSP})}" 
+                     class="btn btn-info btn-sm" title="Xem chi tiết">
+                    <i class="bi bi-eye"></i>
+                  </a>
                 </div>
               </td>
             </tr>
@@ -115,6 +120,43 @@
         </table>
       </div>
     </div>
+    <!-- Phân trang -->
+        <nav class="d-flex justify-content-center mt-4" aria-label="Page navigation">
+          <th:block th:with="
+            startPage=${currentPage > 2} ? ${currentPage - 2} : 0,
+            endPage=${currentPage + 2 < totalPages} ? ${currentPage + 2} : ${totalPages - 1}">
+            <ul class="pagination">
+                <li th:if="${startPage > 0}" class="page-item">
+                    <a class="page-link"
+                        th:href="@{/admin/management/product(page=0,keyword=${keyword})}"><i class="fa-notdog fa-solid fa-backward-step"></i></a>
+                </li>
+                <li th:if="${currentPage > 0}" class="page-item">
+                    <a class="page-link"
+                    th:href="@{/admin/management/product(page=${currentPage - 1},keyword=${keyword})}"><i class="fa-notdog fa-solid fa-backward"></i></a>
+                </li>
+                <li th:if="${startPage > 0}" class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+                <li th:each="i : ${#numbers.sequence(startPage, endPage)}"
+                    th:classappend="${i == currentPage} ? 'active' : ''" class="page-item">
+                    <a class="page-link"
+                    th:href="@{/admin/management/product(page=${i},keyword=${keyword})}"
+                    th:text="${i + 1}"></a>
+                </li>
+                <li th:if="${endPage < totalPages - 1}" class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+                <li th:if="${currentPage < totalPages - 1}" class="page-item">
+                    <a class="page-link"
+                    th:href="@{/admin/management/product(page=${currentPage + 1},keyword=${keyword})}"><i class="fa-notdog fa-solid fa-forward"></i></a>
+                </li>
+                <li th:if="${endPage < totalPages - 1}" class="page-item">
+                    <a class="page-link"
+                    th:href="@{/admin/management/product(page=${totalPages - 1},keyword=${keyword})}"><i class="fa-notdog fa-solid fa-forward-step"></i></a>
+                </li>
+            </ul>
+          </th:block>
+        </nav>
   </div>
 
   <!-- Delete Confirmation Modal -->
@@ -138,7 +180,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
+  <!-- <script>
     // Delete confirmation
     document.addEventListener('DOMContentLoaded', function() {
       const deleteButtons = document.querySelectorAll('.delete-btn');
@@ -152,7 +194,7 @@
           const productName = this.getAttribute('data-product-name');
           
           productNameElement.textContent = productName;
-          deleteConfirmBtn.href = `/admin/product-management/delete/${productId}`;
+          deleteConfirmBtn.href = `/admin/management/product/delete/${productId}`;
           
           deleteModal.show();
         });
@@ -167,6 +209,6 @@
         });
       }, 5000);
     });
-  </script>
+  </script> -->
 </body>
 </html> 

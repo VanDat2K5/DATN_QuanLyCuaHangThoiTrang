@@ -8,7 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/color")
+@RequestMapping("/admin/management/color")
 public class MauController {
 
     @Autowired
@@ -25,19 +25,22 @@ public class MauController {
         model.addAttribute("color", new Mau());
         return "admin/color/form";
     }
+
     @PostMapping("/save")
     public String save(@ModelAttribute Mau mau) {
         mauService.save(mau);
-        return "redirect:/color";
+        return "redirect:/admin/management/color";
     }
+
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable String id, Model model) {
         model.addAttribute("color", mauService.findById(id).orElseThrow());
         return "color/form";
     }
+
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable String id) {
         mauService.deleteById(id);
-        return "redirect:/color";
+        return "redirect:/admin/management/color";
     }
 }

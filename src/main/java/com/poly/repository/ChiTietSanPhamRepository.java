@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.poly.entity.ChiTietSanPham;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface ChiTietSanPhamRepository extends JpaRepository<ChiTietSanPham, String> {
     List<ChiTietSanPham> findAll();
@@ -15,4 +17,6 @@ public interface ChiTietSanPhamRepository extends JpaRepository<ChiTietSanPham, 
     List<ChiTietSanPham> findBySize_MaSize(String maSize);
 
     List<ChiTietSanPham> findBySoLuongLessThanEqual(Integer soLuong);
+
+    Page<ChiTietSanPham> findBySanPham_MaSPContainingIgnoreCase(String maSP, Pageable pageable);
 }

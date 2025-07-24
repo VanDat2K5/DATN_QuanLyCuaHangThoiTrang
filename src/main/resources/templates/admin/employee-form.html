@@ -35,7 +35,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
               </div>
 
-              <form th:action="${employee.maNV != null ? '/admin/employee-management/edit' : '/admin/employee-management/add'}" 
+              <form th:action="${employee.maNV != null ? '/admin/management/employee/edit' : '/admin/management/employee/create'}" 
                     th:object="${employee}" method="post" id="employeeForm">
                 
                 <!-- Hidden field for edit mode -->
@@ -94,7 +94,7 @@
 
                 <!-- Buttons -->
                 <div class="d-flex justify-content-between mt-4">
-                  <a href="/admin/employee-management" class="btn btn-secondary">
+                  <a href="/admin/management/employee" class="btn btn-secondary">
                     <i class="bi bi-arrow-left me-2"></i>Quay lại
                   </a>
                   <div>

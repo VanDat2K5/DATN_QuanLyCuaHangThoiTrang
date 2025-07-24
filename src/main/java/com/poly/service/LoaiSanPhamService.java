@@ -20,4 +20,6 @@ public interface LoaiSanPhamService {
     List<LoaiSanPham> findByLoaiSPContaining(String loaiSP);
 
     boolean existsById(String id);
+
+    Page<LoaiSanPham> findByMaLoaiSPContainingIgnoreCase(String maLoaiSP, Pageable pageable);
 }

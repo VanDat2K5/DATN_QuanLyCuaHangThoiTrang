@@ -65,4 +65,10 @@ public class PhieuNhapServiceImpl implements PhieuNhapService {
     public boolean existsById(String id) {
         return phieuNhapRepository.existsById(id);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<PhieuNhap> findByMaPNContainingIgnoreCase(String maPN, Pageable pageable) {
+        return phieuNhapRepository.findByMaPNContainingIgnoreCase(maPN, pageable);
+    }
 }

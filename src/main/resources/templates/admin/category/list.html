@@ -12,7 +12,7 @@
   <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
   <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
 
-  <a th:href="@{/category/create}" class="btn btn-primary">Tạo mới</a>
+  <a th:href="@{/admin/management/categories/create}" class="btn btn-primary">Tạo mới</a>
 
   <table class="table">
     <thead>
@@ -27,8 +27,8 @@
       <td th:text="${category.maLoaiSP}"></td>
       <td th:text="${category.loaiSP}"></td>
       <td>
-        <a th:href="@{/category/edit/{id}(id=${category.maLoaiSP})}" class="btn btn-sm btn-warning">Sửa</a>
-        <a th:href="@{/category/delete/{id}(id=${category.maLoaiSP})}" class="btn btn-sm btn-danger">Xóa</a>
+        <a th:href="@{/admin/management/categories/edit/{id}(id=${category.maLoaiSP})}" class="btn btn-sm btn-warning">Sửa</a>
+        <a th:href="@{/admin/management/categories/delete/{id}(id=${category.maLoaiSP})}" class="btn btn-sm btn-danger">Xóa</a>
       </td>
     </tr>
     </tbody>

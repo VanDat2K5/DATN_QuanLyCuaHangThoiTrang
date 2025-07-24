@@ -23,4 +23,6 @@ public interface PhieuNhapService {
     List<PhieuNhap> findByNgayNhapBetween(LocalDate startDate, LocalDate endDate);
 
     boolean existsById(String id);
+
+    Page<PhieuNhap> findByMaPNContainingIgnoreCase(String maPN, Pageable pageable);
 }

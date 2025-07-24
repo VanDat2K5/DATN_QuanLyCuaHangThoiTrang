@@ -25,4 +25,6 @@ public interface KhuyenMaiService {
     List<KhuyenMai> findByGiamGreaterThanEqual(Integer giam);
 
     boolean existsById(String id);
+
+    Page<KhuyenMai> findByMaKMContainingIgnoreCase(String maKM, Pageable pageable);
 }

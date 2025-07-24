@@ -91,7 +91,6 @@ public class SanPhamServiceImpl implements SanPhamService {
                 .collect(Collectors.toList());
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public List<SanPhamViewDTO> findByTenSPContainingAndGioiTinh(String tenSP, SanPham.Gender gioiTinh) {
@@ -99,6 +98,12 @@ public class SanPhamServiceImpl implements SanPhamService {
                 .stream()
                 .map(SanPhamViewDTO::new)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<SanPham> findByMaSPContainingIgnoreCase(String maSP, Pageable pageable) {
+        return sanPhamRepository.findByMaSPContainingIgnoreCase(maSP, pageable);
     }
 
 }

@@ -20,4 +20,6 @@ public interface MauService {
     List<Mau> findByTenMauContaining(String tenMau);
 
     boolean existsById(String id);
+
+    Page<Mau> findByMaMauContainingIgnoreCase(String maMau, Pageable pageable);
 }

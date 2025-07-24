@@ -5,11 +5,18 @@
     <meta charset="UTF-8">
     <title th:text="${color.maMau} != null ? 'Sửa màu' : 'Thêm màu mới'">Form màu</title>
     <!-- Bootstrap CSS -->
-    <link th:href="@{https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />    
+    <link rel="stylesheet" href="/css/admin-custom.css" />
+    <link rel="stylesheet" th:href="@{/css/icon.min.css}">
 </head>
 <body>
+    <!-- Sidebar -->
 
-<div class="container py-5">
+    <div th:replace="~{admin/admin-header :: sidebar-admin}"></div>
+  
+    <!-- Header -->
+    <div th:replace="~{admin/admin-header :: header-admin}"></div>
+    <div class="main-content">
     <div class="row justify-content-center">
         <div class="col-lg-6">
 
@@ -19,7 +26,7 @@
                 </div>
                 <div class="card-body">
 
-                    <form th:action="@{/color/save}" th:object="${color}" method="post" novalidate>
+                    <form th:action="@{/admin/management/color/save}" th:object="${color}" method="post" novalidate>
 
                         <div class="mb-3">
                             <label for="maMau" class="form-label">Mã màu</label>
@@ -40,7 +47,7 @@
                         </div>
 
                         <div class="d-flex justify-content-end">
-                            <a th:href="@{/color}" class="btn btn-secondary me-2">Hủy</a>
+                            <a th:href="@{/admin/management/color}" class="btn btn-secondary me-2">Hủy</a>
                             <button type="submit" class="btn btn-primary">Lưu</button>
                         </div>
 

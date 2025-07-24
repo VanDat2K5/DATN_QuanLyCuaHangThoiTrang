@@ -67,9 +67,9 @@ body {
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="fw-bold text-primary">Quản Lý Hoá Đơn</h2>
                <!-- Form tìm kiếm -->
-				<form class="d-flex mb-4" th:action="@{/admin/management/orders}" method="get">
-				    <input type="search" name="keyword" class="form-control w-25 me-2" placeholder="Tìm đơn hàng..." />
-				    <button class="btn btn-primary" type="submit">Tìm</button>
+			   <form class="d-flex mb-4" th:action="@{/admin/management/orders}" method="get">
+					<input type="search" name="keyword" class="form-control me-3" placeholder="Tìm mã hoá đơn" />
+					<button class="btn btn-primary px-4" type="submit">Tìm</button>
 				</form>
 
             </div>
@@ -134,16 +134,43 @@ body {
                         </table>
                     </div>
                 </form>
-
-                <!-- Phân trang -->
-                <nav class="mt-3">
-                    <ul class="pagination justify-content-end">
-                        <li class="page-item"><a class="page-link" href="#">Trước</a></li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">Sau</a></li>
-                    </ul>
-                </nav>
+				<!-- Phân trang -->
+				<nav class="d-flex justify-content-center mt-4" aria-label="Page navigation">
+					<th:block th:with="
+					startPage=${currentPage > 2} ? ${currentPage - 2} : 0,
+					endPage=${currentPage + 2 < totalPages} ? ${currentPage + 2} : ${totalPages - 1}">
+					<ul class="pagination">
+						<li th:if="${startPage > 0}" class="page-item">
+							<a class="page-link"
+								th:href="@{/admin/management/orders(page=0,keyword=${keyword})}"><i class="fa-notdog fa-solid fa-backward-step"></i></a>
+						</li>
+						<li th:if="${currentPage > 0}" class="page-item">
+							<a class="page-link"
+							th:href="@{/admin/management/orders(page=${currentPage - 1},keyword=${keyword})}"><i class="fa-notdog fa-solid fa-backward"></i></a>
+						</li>
+						<li th:if="${startPage > 0}" class="page-item disabled">
+							<span class="page-link">...</span>
+						</li>
+						<li th:each="i : ${#numbers.sequence(startPage, endPage)}"
+							th:classappend="${i == currentPage} ? 'active' : ''" class="page-item">
+							<a class="page-link"
+							th:href="@{/admin/management/orders(page=${i},keyword=${keyword})}"
+							th:text="${i + 1}"></a>
+						</li>
+						<li th:if="${endPage < totalPages - 1}" class="page-item disabled">
+							<span class="page-link">...</span>
+						</li>
+						<li th:if="${currentPage < totalPages - 1}" class="page-item">
+							<a class="page-link"
+							th:href="@{/admin/management/orders(page=${currentPage + 1},keyword=${keyword})}"><i class="fa-notdog fa-solid fa-forward"></i></a>
+						</li>
+						<li th:if="${endPage < totalPages - 1}" class="page-item">
+							<a class="page-link"
+							th:href="@{/admin/management/orders(page=${totalPages - 1},keyword=${keyword})}"><i class="fa-notdog fa-solid fa-forward-step"></i></a>
+						</li>
+					</ul>
+					</th:block>
+				</nav>
             </div>
         </div>
     </div>
