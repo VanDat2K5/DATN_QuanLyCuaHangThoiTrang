@@ -80,6 +80,8 @@ function addCart() {
                       });
                     resetCartForm();
                     loadCarts(maKH);
+                    updateCartItemCount(maKH);
+
                 });
             });
         } else {
@@ -145,7 +147,6 @@ function loadCarts(maKH) {
             const item = child.val();
             const itemId = child.key;
             const lineTotal = item.Gia * item.SoLuong;
-            total += lineTotal;
 
             const row = document.createElement('tr');
             row.className = 'fade-in';
@@ -155,11 +156,20 @@ function loadCarts(maKH) {
                 <td>${item.tenSP}</td>
                 <td>${item.mau}</td>
                 <td>${item.size}</td>
-                <td class="qty-controls">
-                    <button onclick="changeQuantity('${maKH}', '${itemId}', -1)">–</button>
-                    <span id="qty_${itemId}" class="mx-2">${item.SoLuong}</span>
-                    <button onclick="changeQuantity('${maKH}', '${itemId}', 1)">+</button>
-                </td>
+                <td class="qty-controls text-center">
+    <div class="input-group justify-content-center" style="max-width: 120px; margin: auto;">
+        <button class="btn btn-dark btn-sm" onclick="changeQuantity('${maKH}', '${itemId}', -1)">–</button>
+        <input type="number"
+               id="qty_${itemId}"
+               class="form-control text-center no-spinner"
+               value="${item.SoLuong}"
+               min="1"
+               style="width: 50px;"
+               onchange="updateQuantity('${maKH}', '${itemId}', this.value)">
+        <button class="btn btn-dark btn-sm" onclick="changeQuantity('${maKH}', '${itemId}', 1)">+</button>
+    </div>
+</td>
+
                 <td>${(lineTotal).toLocaleString()} đ</td>
             `;
             cartBody.appendChild(row);
@@ -191,17 +201,19 @@ function calculateSelectedTotal(maKH) {
 }
 
 function changeQuantity(maKH, itemId, delta) {
-    const qtySpan = document.getElementById(`qty_${itemId}`);
-    let currentQty = parseInt(qtySpan.textContent);
+    const qtyInput = document.getElementById(`qty_${itemId}`);
+    let currentQty = parseInt(qtyInput.value); //
 
     let newQty = currentQty + delta;
-    if (newQty < 1) return;
+    if (newQty < 1 || isNaN(newQty)) return;
 
     const itemRef = db.ref('Cart/' + maKH + '/items/' + itemId);
     itemRef.child('SoLuong').set(newQty).then(() => {
         loadCarts(maKH);
+        updateCartItemCount(maKH);
     });
 }
+
 
 
 
@@ -211,6 +223,8 @@ function deleteAllItems() {
 
     db.ref('Cart/' + maKH + '/items').remove().then(() => {
         loadCarts(maKH);
+        updateCartItemCount(maKH);
+
     });
 }
 
@@ -234,6 +248,28 @@ function deleteSelectedItems() {
     });
 
     setTimeout(() => loadCarts(maKH), 100);
+}
+
+function updateCartItemCount(maKH) {
+    const cartCountSpan = document.getElementById("cart-count-badge");
+    if (!cartCountSpan) return;
+
+    const cartRef = db.ref('Cart/' + maKH + '/items');
+    cartRef.on('value', (snapshot) => {
+        let totalCount = 0;
+        snapshot.forEach((child) => {
+            const item = child.val();
+            totalCount += item.SoLuong || 0;
+        });
+
+        if (totalCount > 0) {
+            cartCountSpan.textContent = totalCount;
+            cartCountSpan.style.display = "inline-block";
+        } else {
+            cartCountSpan.textContent = '';
+            cartCountSpan.style.display = "none";
+        }
+    });
 }
 
 function ThanhToan() {
@@ -280,6 +316,10 @@ function ThanhToan() {
 
 
 
-window.onload = function() {
-    loadCarts(document.getElementById('cartMaKH').value);
+window.onload = function () {
+    const maKH = document.getElementById('cartMaKH')?.value;
+    if (maKH) {
+        loadCarts(maKH);
+        updateCartItemCount(maKH);
+    }
 }
