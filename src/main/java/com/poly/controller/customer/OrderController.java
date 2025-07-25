@@ -3,15 +3,18 @@ package com.poly.controller.customer;
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.poly.entity.HoaDon;
 import com.poly.entity.KhachHang;
 import com.poly.util.CodeGenerator;
 
 import jakarta.servlet.http.HttpSession;
-
+@Controller
+@RequestMapping("/customer/payment")
 public class OrderController {
 
 	@Autowired
@@ -28,10 +31,13 @@ public class OrderController {
 		return "/";
 	}
 	
-	@GetMapping("/1")
+	@GetMapping("/confirm")
 	public String show(Model model, HttpSession session) {
 		
-		return "/admin/show-customer";
+		
+
+		return "/Client/confirm-payment.html";
 	}
+	
 	
 }

@@ -275,11 +275,10 @@ function ThanhToan() {
     setTimeout(() => loadCarts(maKH), 100);
 }
 
-
-
-
-
-
 window.onload = function() {
     loadCarts(document.getElementById('cartMaKH').value);
 }
+
+function redirectToConfirm() {
+   window.location.href = "confirm-payment.html";
+ }
