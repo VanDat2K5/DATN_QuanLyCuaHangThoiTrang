@@ -10,8 +10,8 @@ import com.poly.service.PhieuNhapService;
 import com.poly.service.NhanVienService;
 import com.poly.entity.HoaDon;
 import com.poly.service.SanPhamService;
-import com.poly.entity.ChiTietPhieuNhap;
-import com.poly.service.ChiTietPhieuNhapService;
+import com.poly.entity.ChiTietSanPham;
+import com.poly.service.ChiTietSanPhamService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,18 +26,18 @@ public class CodeGenerator {
     private final HoaDonService hoaDonService;
     private final PhieuNhapService phieuNhapService;
     private final SanPhamService sanPhamService;
-    private final ChiTietPhieuNhapService chiTietPhieuNhapService;
+    private final ChiTietSanPhamService chiTietSanPhamService;
 
     @Autowired
     public CodeGenerator(KhachHangService khachHangService, NhanVienService nhanVienService,
             HoaDonService hoaDonService, PhieuNhapService phieuNhapService, SanPhamService sanPhamService,
-            ChiTietPhieuNhapService chiTietPhieuNhapService) {
+            ChiTietSanPhamService chiTietSanPhamService) {
         this.khachHangService = khachHangService;
         this.nhanVienService = nhanVienService;
         this.hoaDonService = hoaDonService;
         this.phieuNhapService = phieuNhapService;
         this.sanPhamService = sanPhamService;
-        this.chiTietPhieuNhapService = chiTietPhieuNhapService;
+        this.chiTietSanPhamService = chiTietSanPhamService;
     }
 
     public String generateCustomerCode() {
@@ -76,47 +76,46 @@ public class CodeGenerator {
         return String.format("PN%03d", nextNumber);
     }
 
-    /**
-     * Sinh mã lô hàng cho chi tiết phiếu nhập.
-     * Nếu sản phẩm, màu, size đã tồn tại trong các chi tiết phiếu nhập trước đó,
-     * thì tăng số lô hàng lên (ví dụ: LO1, LO2, ... cho cùng một sản
-     * phẩm/màu/size).
-     * Nếu chưa có thì trả về LO1.
-     */
-    public String generateImportDetailCode(ChiTietPhieuNhap chiTietMoi) {
-        List<ChiTietPhieuNhap> allChiTietPhieuNhap = chiTietPhieuNhapService.findAll();
-
+    public String generateProductDetailCode(String maSP, String mau, String size) {
+        List<ChiTietSanPham> allChiTietSanPham = chiTietSanPhamService.findAll();
         int maxLo = 0;
-        for (ChiTietPhieuNhap ct : allChiTietPhieuNhap) {
-            if (ct.getChiTietSanPham() != null && chiTietMoi.getChiTietSanPham() != null) {
-                boolean sameSP = ct.getChiTietSanPham().getSanPham() != null
-                        && chiTietMoi.getChiTietSanPham().getSanPham() != null
-                        && ct.getChiTietSanPham().getSanPham().getMaSP()
-                                .equals(chiTietMoi.getChiTietSanPham().getSanPham().getMaSP());
-                boolean sameMau = ct.getChiTietSanPham().getMau() != null
-                        && chiTietMoi.getChiTietSanPham().getMau() != null
-                        && ct.getChiTietSanPham().getMau().getMaMau()
-                                .equals(chiTietMoi.getChiTietSanPham().getMau().getMaMau());
-                boolean sameSize = ct.getChiTietSanPham().getSize() != null
-                        && chiTietMoi.getChiTietSanPham().getSize() != null
-                        && ct.getChiTietSanPham().getSize().getMaSize()
-                                .equals(chiTietMoi.getChiTietSanPham().getSize().getMaSize());
-                if (sameSP && sameMau && sameSize) {
-                    String loHang = ct.getLoHang();
-                    if (loHang != null && loHang.startsWith("LO")) {
-                        try {
-                            int soLo = Integer.parseInt(loHang.substring(2));
-                            if (soLo > maxLo) {
-                                maxLo = soLo;
-                            }
-                        } catch (NumberFormatException e) {
+        for (ChiTietSanPham ct : allChiTietSanPham) {
+            if (ct.getSanPham().getMaSP().equals(maSP) && ct.getMau().getMaMau().equals(mau)
+                    && ct.getSize().getMaSize().equals(size)) {
+                String loHang = ct.getLoHang();
+                if (loHang != null && loHang.startsWith("LH")) {
+                    try {
+                        int soLo = Integer.parseInt(loHang.substring(2));
+                        if (soLo > maxLo) {
+                            maxLo = soLo;
                         }
+                    } catch (NumberFormatException e) {
                     }
                 }
             }
         }
-        int nextLo = maxLo + 1;
-        return "LO" + nextLo;
+        return maSP + "_" + mau + "_" + size + "_" + "LH" + (maxLo + 1);
+    }
+
+    public String generateImportDetailCode(String maSP, String mau, String size) {
+        List<ChiTietSanPham> allChiTietSanPham = chiTietSanPhamService.findAll();
+        int maxLo = 0;
+        for (ChiTietSanPham ct : allChiTietSanPham) {
+            if (ct.getSanPham().getMaSP().equals(maSP) && ct.getMau().getMaMau().equals(mau)
+                    && ct.getSize().getMaSize().equals(size)) {
+                String loHang = ct.getLoHang();
+                if (loHang != null && loHang.startsWith("LH")) {
+                    try {
+                        int soLo = Integer.parseInt(loHang.substring(2));
+                        if (soLo > maxLo) {
+                            maxLo = soLo;
+                        }
+                    } catch (NumberFormatException e) {
+                    }
+                }
+            }
+        }
+        return "LH" + (maxLo + 1);
     }
 
     // khachHang.setMaKH(UUID.randomUUID().toString().substring(0, 20));
