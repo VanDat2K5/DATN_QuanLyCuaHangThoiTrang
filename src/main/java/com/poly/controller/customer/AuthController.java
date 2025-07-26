@@ -25,6 +25,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import com.poly.service.DiaChiNhanHangService;
+import org.springframework.web.bind.annotation.PathVariable;
+import jakarta.validation.Valid;
+import com.poly.form.AddressForm;
+import com.poly.entity.DiaChiNhanHang;
+import java.util.function.Consumer;
 
 @Controller
 @RequestMapping("/user")
@@ -235,8 +240,7 @@ public class AuthController {
                 return "redirect:/user/profile";
             }
 
-            // Check if user owns this order (for customers) or has permission (for
-            // employees)
+            // Check if user owns this order (for customers) or has permission (for employees)
             if ("CUSTOMER".equals(userRole)) {
                 KhachHang customer = (KhachHang) user;
                 if (!order.getKhachHang().getMaKH().equals(customer.getMaKH())) {
@@ -261,5 +265,70 @@ public class AuthController {
         }
 
         return "redirect:/user/profile";
+    }
+
+    // ================== ADD ==================
+    @PostMapping("/add")
+    public String add(@Valid AddressForm form,
+                      HttpSession session,
+                      RedirectAttributes ra) {
+        KhachHang kh = requireLogin(session, ra);
+        if (kh == null) return redirectProfile();
+
+        DiaChiNhanHang dc = form.toEntity(kh);
+        diaChiNhanHangService.save(dc);
+        ra.addFlashAttribute("success", "Đã thêm địa chỉ!");
+        return redirectProfile();
+    }
+
+    // ================== DELETE ==================
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable Integer id,
+                         HttpSession session,
+                         RedirectAttributes ra) {
+        return withOwnedAddress(id, session, ra, dc -> {
+            diaChiNhanHangService.deleteById(id);
+            ra.addFlashAttribute("success", "Đã xóa địa chỉ!");
+        });
+    }
+
+    // ================== EDIT ==================
+    @PostMapping("/{id}/edit")
+    public String edit(@PathVariable Integer id,
+                       @Valid AddressForm form,
+                       HttpSession session,
+                       RedirectAttributes ra) {
+        return withOwnedAddress(id, session, ra, dc -> {
+            dc.setTenNguoiNhan(form.getTenNguoiNhan());
+            dc.setSoDTNhanHang(form.getSoDTNhanHang());
+            dc.setDcNhanHang(form.getDcNhanHang());
+            diaChiNhanHangService.save(dc);
+            ra.addFlashAttribute("success", "Đã cập nhật địa chỉ!");
+        });
+    }
+
+    // Helper: kiểm tra đăng nhập và quyền
+    private KhachHang requireLogin(HttpSession session, RedirectAttributes ra) {
+        String userRole = Security.getUserRole(session);
+        Object user = session.getAttribute("user");
+        if (!"CUSTOMER".equals(userRole)) {
+            ra.addFlashAttribute("error", "Bạn không có quyền thực hiện hành động này.");
+            return null;
+        }
+        return (KhachHang) user;
+    }
+    private String redirectProfile() {
+        return "redirect:/user/profile";
+    }
+    private String withOwnedAddress(Integer id, HttpSession session, RedirectAttributes ra, Consumer<DiaChiNhanHang> action) {
+        KhachHang kh = requireLogin(session, ra);
+        if (kh == null) return redirectProfile();
+        DiaChiNhanHang dc = diaChiNhanHangService.findById(id).orElse(null);
+        if (dc == null || !dc.getKhachHang().getMaKH().equals(kh.getMaKH())) {
+            ra.addFlashAttribute("error", "Bạn không có quyền sửa địa chỉ này.");
+            return redirectProfile();
+        }
+        action.accept(dc);
+        return redirectProfile();
     }
 }
