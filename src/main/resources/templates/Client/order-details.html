@@ -1,0 +1,499 @@
+<!doctype html>
+<html class="no-js" lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Chi tiết đơn hàng - StyleTech Store</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="author" content="ThemeZaa">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+        <meta name="description" content="Order Details">
+        <!-- favicon icon -->
+        <link rel="shortcut icon" href="/images/logoST.png">
+        <!-- google fonts preconnect -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <!-- style sheets and font icons  -->
+        <link rel="stylesheet" href="/css/vendors.min.css"/>
+        <link rel="stylesheet" href="/css/icon.min.css"/>
+        <link rel="stylesheet" href="/css/style.css"/>
+        <link rel="stylesheet" href="/css/responsive.css"/>
+        <link rel="stylesheet" href="/demos/fashion-store/fashion-store.css" />
+        <!-- Bootstrap CSS fallback -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Feather Icons fallback -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/feather-icons@4.29.0/dist/feather.min.css">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    </head>
+    <body data-mobile-nav-style="classic">
+        <div th:replace="Client/header :: header"></div>
+        
+        <!-- start section -->
+        <section class="top-space-margin half-section bg-gradient-very-light-gray">
+            <div class="container">
+                <div class="row align-items-center justify-content-center" data-anime='{ "el": "childs", "translateY": [-15, 0], "opacity": [0,1], "duration": 300, "delay": 0, "staggervalue": 200, "easing": "easeOutQuad" }'>
+                    <div class="col-12 col-xl-8 col-lg-10 text-center position-relative page-title-extra-large">
+                        <h1 class="alt-font fw-600 text-dark-gray mb-10px">Chi tiết đơn hàng</h1> 
+                    </div>
+                    <div class="col-12 breadcrumb breadcrumb-style-01 d-flex justify-content-center">
+                        <ul>
+                            <li><a href="/">Home</a></li> 
+                            <li><a href="/user/profile">Profile</a></li>
+                            <li>Chi tiết đơn hàng</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- end section -->
+
+        <!-- start section -->
+        <section class="pt-0 pb-5">
+            <div class="container">
+                <!-- Back Button -->
+                <div class="mb-4">
+                    <a href="/user/profile" class="btn btn-outline-secondary">
+                        <i class="feather icon-feather-arrow-left me-2"></i>
+                        Quay lại Profile
+                    </a>
+                </div>
+
+                <!-- Order Information -->
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">
+                                    <i class="feather icon-feather-shopping-bag me-2"></i>
+                                    Thông tin đơn hàng #<span th:text="${order.maHD}">Order ID</span>
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <strong>Mã đơn hàng:</strong>
+                                            <span th:text="${order.maHD}">Order ID</span>
+                                        </div>
+                                        <div class="mb-3">
+                                            <strong>Ngày đặt hàng:</strong>
+                                            <span th:text="${order.ngayLap != null ? #temporals.format(order.ngayLap, 'dd/MM/yyyy') : 'N/A'}">Date</span>
+                                        </div>
+                                        <div class="mb-3">
+                                            <strong>Trạng thái:</strong>
+                                            <span class="badge" th:class="'badge-' + ${order.trangThai == 'ChoXacNhan' ? 'warning' : (order.trangThai == 'DaThanhToan' ? 'info' : (order.trangThai == 'DangVanChuyen' ? 'primary' : (order.trangThai == 'DaNhanHang' ? 'success' : (order.trangThai == 'DaHuy' ? 'danger' : 'secondary'))))}" 
+                                                  th:text="${order.trangThai}">Status</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <strong>Phương thức thanh toán:</strong>
+                                            <span th:text="${order.ptThanhToan}">Payment Method</span>
+                                        </div>
+                                        <div class="mb-3">
+                                            <strong>Tổng tiền:</strong>
+                                            <span class="text-primary fw-bold" th:text="${order.tongTien != null ? #numbers.formatDecimal(order.tongTien, 0, 'COMMA', 0, 'POINT') + ' VNĐ' : '0 VNĐ'}">Total</span>
+                                        </div>
+                                        <div class="mb-3" th:if="${order.khuyenMai != null}">
+                                            <strong>Khuyến mãi:</strong>
+                                            <span th:text="${order.khuyenMai.tenKM}">Promotion</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Shipping Information -->
+                        <div class="card mt-4 shadow-sm">
+                            <div class="card-header bg-info text-white">
+                                <h6 class="mb-0">
+                                    <i class="feather icon-feather-map-pin me-2"></i>
+                                    Thông tin giao hàng
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <strong>Người nhận:</strong>
+                                            <span th:text="${order.tenNguoiNhan}">Recipient</span>
+                                        </div>
+                                        <div class="mb-3">
+                                            <strong>Số điện thoại:</strong>
+                                            <span th:text="${order.soDTNhanHang}">Phone</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <strong>Địa chỉ giao hàng:</strong>
+                                            <span th:text="${order.dcNhanHang}">Address</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Order Items -->
+                        <div class="card mt-4 shadow-sm">
+                            <div class="card-header bg-success text-white">
+                                <h6 class="mb-0">
+                                    <i class="feather icon-feather-list me-2"></i>
+                                    Chi tiết sản phẩm
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div th:if="${orderDetails != null and !orderDetails.empty}">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Sản phẩm</th>
+                                                    <th>Màu sắc</th>
+                                                    <th>Kích thước</th>
+                                                    <th>Giá</th>
+                                                    <th>Số lượng</th>
+                                                    <th>Thành tiền</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="item : ${orderDetails}">
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <img th:if="${item.chiTietSanPham.sanPham.hinhAnh != null and !item.chiTietSanPham.sanPham.hinhAnh.empty}" 
+                                                                 th:src="@{'/images/' + item.chiTietSanPham.sanPham.hinhAnh[0].hinhAnh}" 
+                                                                 class="me-3" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;" 
+                                                                 alt="Product Image">
+                                                            <div>
+                                                                <strong th:text="${item.chiTietSanPham.sanPham.tenSP}">Product Name</strong>
+                                                                <br>
+                                                                <small class="text-muted" th:text="${item.chiTietSanPham.sanPham.loaiSP.loaiSP}">Category</small>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td th:text="${item.chiTietSanPham.mau.tenMau}">Color</td>
+                                                    <td th:text="${item.chiTietSanPham.size.tenSize}">Size</td>
+                                                    <td th:text="${item.giaXuat != null ? #numbers.formatDecimal(item.giaXuat, 0, 'COMMA', 0, 'POINT') + ' VNĐ' : '0 VNĐ'}">Price</td>
+                                                    <td th:text="${item.soLuongXuat}">Quantity</td>
+                                                    <td class="fw-bold" th:text="${item.thanhTien != null ? #numbers.formatDecimal(item.thanhTien, 0, 'COMMA', 0, 'POINT') + ' VNĐ' : '0 VNĐ'}">Total</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div th:if="${orderDetails == null or orderDetails.empty}" class="text-center py-4">
+                                    <i class="fa-solid fa-inbox fs-48 text-muted mb-3"></i>
+                                    <p class="text-muted">Không có sản phẩm nào trong đơn hàng</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Summary -->
+                    <div class="col-lg-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-warning text-dark">
+                                <h6 class="mb-0">
+                                    <i class="feather icon-feather-file-text me-2"></i>
+                                    Tóm tắt đơn hàng
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Tổng tiền hàng:</span>
+                                    <span th:text="${order.tongTien != null ? #numbers.formatDecimal(order.tongTien, 0, 'COMMA', 0, 'POINT') + ' VNĐ' : '0 VNĐ'}">Subtotal</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2" th:if="${order.khuyenMai != null}">
+                                    <span>Giảm giá:</span>
+                                    <span class="text-success" th:text="'-' + #numbers.formatDecimal(order.khuyenMai.giam, 0, 'COMMA', 0, 'POINT') + ' VNĐ'">Discount</span>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <strong>Tổng cộng:</strong>
+                                    <strong class="text-primary" th:text="${order.tongTien != null ? #numbers.formatDecimal(order.tongTien, 0, 'COMMA', 0, 'POINT') + ' VNĐ' : '0 VNĐ'}">Total</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Order Actions -->
+                        <div class="card mt-4 shadow-sm">
+                            <div class="card-header bg-secondary text-white">
+                                <h6 class="mb-0">
+                                    <i class="feather icon-feather-settings me-2"></i>
+                                    Thao tác
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <!-- QR Code Button - chỉ hiện khi chưa thanh toán và thanh toán bằng Bank -->
+                                    <button th:if="${order.ptThanhToan == 'Bank' and order.trangThai == 'ChoXacNhan'}" 
+                                            class="btn btn-outline-primary qr-btn" 
+                                            th:data-order-id="${order.maHD}"
+                                            th:data-order-money="${order.tongTien}"
+                                            th:data-username="${userRole == 'CUSTOMER' ? user.tenKH : user.tenNV}"
+                                            title="Xem mã QR thanh toán">
+                                        <i class="fa-solid fa-qrcode me-2"></i>
+                                        Xem mã QR thanh toán
+                                    </button>
+                                    
+                                    <!-- Cancel Button for specific statuses -->
+                                    <form th:if="${order.trangThai == 'ChoXacNhan' or order.trangThai == 'DaThanhToan'}" 
+                                          th:action="@{/user/order/cancel}" 
+                                          method="post" 
+                                          onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?')">
+                                        <input type="hidden" name="orderId" th:value="${order.maHD}">
+                                        <button type="submit" class="btn btn-outline-danger w-100">
+                                            <i class="fa-solid fa-x me-2"></i>
+                                            Hủy đơn hàng
+                                        </button>
+                                    </form>
+                                    
+                                    <!-- Print Button -->
+                                    <button class="btn btn-outline-info w-100" onclick="window.print()">
+                                        <i class="fa-solid fa-print me-2"></i>
+                                        In đơn hàng
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Status Timeline -->
+                        <div class="card mt-4 shadow-sm">
+                            <div class="card-header bg-dark text-white">
+                                <h6 class="mb-0">
+                                    <i class="feather icon-feather-clock me-2"></i>
+                                    Trạng thái đơn hàng
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="timeline">
+                                    <div class="timeline-item" th:class="'timeline-item ' + ${order.trangThai == 'ChoXacNhan' ? 'active' : (order.trangThai == 'DaThanhToan' ? 'active' : (order.trangThai == 'DangVanChuyen' ? 'active' : (order.trangThai == 'DaNhanHang' ? 'active' : '')))}">
+                                        <div class="timeline-marker"></div>
+                                        <div class="timeline-content">
+                                            <h6>Chờ xác nhận</h6>
+                                            <small class="text-muted">Đơn hàng đã được đặt</small>
+                                        </div>
+                                    </div>
+                                    <div class="timeline-item" th:class="'timeline-item ' + ${order.trangThai == 'DaThanhToan' ? 'active' : (order.trangThai == 'DangVanChuyen' ? 'active' : (order.trangThai == 'DaNhanHang' ? 'active' : ''))}">
+                                        <div class="timeline-marker"></div>
+                                        <div class="timeline-content">
+                                            <h6>Đã thanh toán</h6>
+                                            <small class="text-muted">Thanh toán hoàn tất</small>
+                                        </div>
+                                    </div>
+                                    <div class="timeline-item" th:class="'timeline-item ' + ${order.trangThai == 'DangVanChuyen' ? 'active' : (order.trangThai == 'DaNhanHang' ? 'active' : '')}">
+                                        <div class="timeline-marker"></div>
+                                        <div class="timeline-content">
+                                            <h6>Đang vận chuyển</h6>
+                                            <small class="text-muted">Đơn hàng đang được giao</small>
+                                        </div>
+                                    </div>
+                                    <div class="timeline-item" th:class="'timeline-item ' + ${order.trangThai == 'DaNhanHang' ? 'active' : ''}">
+                                        <div class="timeline-marker"></div>
+                                        <div class="timeline-content">
+                                            <h6>Đã nhận hàng</h6>
+                                            <small class="text-muted">Giao hàng thành công</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- end section -->
+
+        <!-- QR Code Modal -->
+        <div class="modal fade qr-modal" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="qrModalLabel">
+                            <i class="feather icon-feather-qr-code me-2"></i>
+                            Mã QR Thanh Toán
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Order Details -->
+                        <div class="order-details mb-4">
+                            <div class="row text-center">
+                                <div class="col-md-4">
+                                    <h6 class="text-muted">Mã đơn hàng</h6>
+                                    <p class="mb-0 fw-bold" id="modalOrderId">Order ID</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6 class="text-muted">Tổng tiền</h6>
+                                    <p class="mb-0 fw-bold text-primary" id="modalOrdermoney">money</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6 class="text-muted">Phương thức</h6>
+                                    <p class="mb-0 fw-bold" id="modalPaymentMethod">Payment Method</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- QR Code -->
+                        <div class="qr-code-container text-center">
+                            <h5 class="mb-3">
+                                <i class="feather icon-feather-qr-code me-2"></i>
+                                Mã QR thanh toán
+                            </h5>
+                            <div id="qrcode" class="mb-3 d-flex justify-content-center"></div>
+                            <p class="text-muted mb-0">
+                                <small>Quét mã QR bằng ứng dụng ngân hàng để thanh toán</small>
+                            </p>
+                        </div>
+
+                        <!-- Payment Instructions -->
+                        <div class="qr-instructions mt-4">
+                            <h6 class="border-bottom pb-2">
+                                <i class="feather icon-feather-info me-2"></i>
+                                Hướng dẫn thanh toán
+                            </h6>
+                            <ol class="mt-3">
+                                <li>Mở ứng dụng ngân hàng trên điện thoại</li>
+                                <li>Chọn tính năng "Quét mã QR" hoặc "Thanh toán QR"</li>
+                                <li>Quét mã QR bên trên</li>
+                                <li>Kiểm tra thông tin đơn hàng và số tiền</li>
+                                <li>Xác nhận thanh toán</li>
+                                <li>Lưu lại biên lai thanh toán</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:replace="Client/footer :: footer"></div>
+        
+        <!-- javascript libraries -->
+        <script type="text/javascript" th:src="@{/js/jquery.js}"></script>
+        <script type="text/javascript" th:src="@{/js/vendors.min.js}"></script>
+        <script type="text/javascript" th:src="@{/js/main.js}"></script>
+        <script th:src="@{/js/QRCode.js}"></script>
+        
+        <style>
+            .timeline {
+                position: relative;
+                padding-left: 30px;
+            }
+            
+            .timeline::before {
+                content: '';
+                position: absolute;
+                left: 15px;
+                top: 0;
+                bottom: 0;
+                width: 2px;
+                background: #e9ecef;
+            }
+            
+            .timeline-item {
+                position: relative;
+                margin-bottom: 20px;
+                opacity: 0.5;
+            }
+            
+            .timeline-item.active {
+                opacity: 1;
+            }
+            
+            .timeline-marker {
+                position: absolute;
+                left: -22px;
+                top: 5px;
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: #e9ecef;
+                border: 2px solid #fff;
+            }
+            
+            .timeline-item.active .timeline-marker {
+                background: #28a745;
+            }
+            
+            .timeline-content h6 {
+                margin-bottom: 5px;
+                font-size: 14px;
+            }
+            
+            .timeline-content small {
+                font-size: 12px;
+            }
+            
+            .card {
+                border: none;
+                border-radius: 10px;
+            }
+            
+            .card-header {
+                border-radius: 10px 10px 0 0 !important;
+                border: none;
+            }
+            
+            .btn {
+                border-radius: 8px;
+            }
+            
+            .table th {
+                border-top: none;
+                font-weight: 600;
+                color: #495057;
+            }
+            
+            .badge {
+                font-size: 0.75em;
+                padding: 0.5em 0.75em;
+            }
+            
+            @media print {
+                .btn, .modal, .breadcrumb {
+                    display: none !important;
+                }
+                
+                .card {
+                    border: 1px solid #000 !important;
+                    box-shadow: none !important;
+                }
+                
+                .card-header {
+                    background: #f8f9fa !important;
+                    color: #000 !important;
+                }
+            }
+        </style>
+        
+        <script>
+            // Add event listeners when document is ready
+            document.addEventListener('DOMContentLoaded', function() {
+                // Add click event listeners to QR buttons
+                document.querySelectorAll('.qr-btn').forEach(function(button) {
+                    button.addEventListener('click', function() {
+                        const orderId = this.getAttribute('data-order-id');
+                        const money = this.getAttribute('data-order-money');
+                        const username = this.getAttribute('data-username');
+                        
+                        // Update modal content
+                        document.getElementById('modalOrderId').textContent = orderId;
+                        document.getElementById('modalOrdermoney').textContent = formatCurrency(money) + ' VNĐ';
+                        document.getElementById('modalPaymentMethod').textContent = 'QR Code';
+                        
+                        // Generate QR code using the existing function
+                        generateQRCode(money, orderId + ' - ' + username);
+                        
+                        // Show modal
+                        const modal = new bootstrap.Modal(document.getElementById('qrModal'));
+                        modal.show();
+                    });
+                });
+            });
+            
+            // Function to format currency
+            function formatCurrency(money) {
+                return new Intl.NumberFormat('vi-VN').format(money);
+            }
+        </script>
+    </body>
+</html> 
