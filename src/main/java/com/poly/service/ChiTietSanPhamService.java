@@ -28,4 +28,7 @@ public interface ChiTietSanPhamService {
     boolean existsById(String id);
 
     Page<ChiTietSanPham> findBySanPham_MaSPContainingIgnoreCase(String maSP, Pageable pageable);
+
+    Optional<ChiTietSanPham> findBySanPham_TenSPAndMau_MaMauAndSize_MaSize(String tenSP, String maMau,
+            String maSize);
 }
