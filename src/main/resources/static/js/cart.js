@@ -206,35 +206,18 @@ function updateCartItemCount(maKH) {
 function ThanhToan() {
     const maKH = document.getElementById("cartMaKH").value;
     const checkboxes = document.querySelectorAll(".cartCheckbox:checked");
+
     if (checkboxes.length === 0) {
         Swal.fire("Vui lòng chọn sản phẩm để thanh toán!");
         return;
     }
-    Swal.fire({
-        title: "Bạn có chắc chắn muốn thanh toán các sản phẩm đã chọn?",
-        text: "Bạn sẽ không thể hoàn tác!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Thanh toán",
-        cancelButtonText: "Hủy"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire({
-                title: "Thanh toán thành công!",
-                text: "Bạn sẽ nhận được email thông báo khi đơn hàng được xử lý!",
-                icon: "success"
-            });
-            const cartRef = db.ref('Cart/' + maKH + '/items');
-            checkboxes.forEach(checkbox => {
-                const itemId = checkbox.getAttribute("data-item-id");
-                cartRef.child(itemId).remove();
-            });
-            setTimeout(() => loadCarts(maKH), 100);
-            updateCartItemCount(maKH);
-        }
-    });
+
+    // Lưu danh sách id sản phẩm đã chọn vào localStorage
+    const selectedIds = Array.from(checkboxes).map(cb => cb.getAttribute("data-item-id"));
+    localStorage.setItem('selectedCartItems', JSON.stringify(selectedIds));
+
+    // Chuyển hướng sang trang xác nhận đơn hàng
+    window.location.href = "/order/checkout";
 }
 
 window.onload = function () {
