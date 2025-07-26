@@ -24,6 +24,76 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/feather-icons@4.29.0/dist/feather.min.css">
         <!-- Profile specific styles -->
         <link rel="stylesheet" th:href="@{/css/profile.css}" />
+        <style>
+            .order-item {
+                border: 1px solid #e9ecef;
+                border-radius: 8px;
+                padding: 15px;
+                margin-bottom: 15px;
+                background: #fff;
+                transition: all 0.3s ease;
+            }
+            
+            .order-item:hover {
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                transform: translateY(-2px);
+            }
+            
+            .status-badge {
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: 500;
+            }
+            
+            .status-ChoXacNhan {
+                background: #fff3cd;
+                color: #856404;
+            }
+            
+            .status-DaThanhToan {
+                background: #d1ecf1;
+                color: #0c5460;
+            }
+            
+            .status-DangVanChuyen {
+                background: #cce5ff;
+                color: #004085;
+            }
+            
+            .status-DaNhanHang {
+                background: #d4edda;
+                color: #155724;
+            }
+            
+            .status-DaHuy {
+                background: #f8d7da;
+                color: #721c24;
+            }
+            
+            .pagination .page-link {
+                color: #007bff;
+                border: 1px solid #dee2e6;
+            }
+            
+            .pagination .page-item.active .page-link {
+                background-color: #007bff;
+                border-color: #007bff;
+                color: white;
+            }
+            
+            .pagination .page-item.disabled .page-link {
+                color: #6c757d;
+                background-color: #fff;
+                border-color: #dee2e6;
+            }
+            
+            .form-select-sm {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.875rem;
+                border-radius: 0.2rem;
+            }
+        </style>
     </head>
     <body data-mobile-nav-style="classic">
         <div th:replace="Client/header :: header"></div>
@@ -170,14 +240,28 @@
                                     </div>
                                 </div>
 
-                                <!-- Recent Orders -->
-                                <div class="mt-4" th:with="hasOrders=${recentOrders != null and !recentOrders.empty}">
-                                    <h5 class="mb-3">
-                                        <i class="feather icon-feather-clock me-2"></i>
-                                        Recent Orders
-                                    </h5>
+                                <!-- Orders with Pagination -->
+                                <div class="mt-4" th:with="hasOrders=${ordersPage != null and ordersPage.hasContent()}">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="mb-0">
+                                            <i class="feather icon-feather-clock me-2"></i>
+                                            Danh sách đơn hàng
+                                        </h5>
+                                        <div class="d-flex align-items-center">
+                                            <span class="me-3">Hiển thị:</span>
+                                            <select class="form-select form-select-sm" style="width: auto;" onchange="changePageSize(this.value)">
+                                                <option value="5" th:selected="${pageSize == 5}">5</option>
+                                                <option value="10" th:selected="${pageSize == 10}">10</option>
+                                                <option value="20" th:selected="${pageSize == 20}">20</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
                                     <div th:if="${hasOrders}">
-                                        <div class="order-item" th:each="order : ${recentOrders}" th:with="isChoXacNhan=${order != null and order.trangThai == 'ChoXacNhan'}, isDaThanhToan=${order != null and order.trangThai == 'DaThanhToan'}">
+                                        <div class="order-item" th:each="order : ${ordersPage.content}" 
+                                             th:with="isChoXacNhan=${order != null and order.trangThai == 'ChoXacNhan'}, 
+                                                      isDaThanhToan=${order != null and order.trangThai == 'DaThanhToan'},
+                                                      isBankPayment=${order != null and order.ptThanhToan == 'Bank'}">
                                             <div class="row align-items-center">
                                                 <div class="col-md-2">
                                                     <strong th:text="${order != null ? order.maHD : 'N/A'}">Order ID</strong>
@@ -196,8 +280,8 @@
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="d-flex gap-1">
-                                                        <!-- QR Code Button for unpaid orders -->
-                                                        <button th:if="${isChoXacNhan}" 
+                                                        <!-- QR Code Button for Bank payment and specific statuses -->
+                                                        <button th:if="${isChoXacNhan and isBankPayment}" 
                                                                 class="btn btn-sm btn-outline-primary qr-btn" 
                                                                 th:data-order-id="${order != null ? order.maHD : ''}"
                                                                 th:data-order-money="${order != null ? order.tongTien : 0}"
@@ -219,17 +303,62 @@
                                                         </form>
                                                         
                                                         <!-- View Details Button -->
-                                                        <a href="#" class="btn btn-sm btn-outline-info" title="Xem chi tiết">
+                                                        <a th:href="@{/user/order/{orderId}(orderId=${order != null ? order.maHD : ''})}" 
+                                                           class="btn btn-sm btn-outline-info" title="Xem chi tiết">
                                                             <i class="fa-solid fa-eye"></i>
                                                         </a>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        
+                                        <!-- Pagination -->
+                                        <nav th:if="${ordersPage.totalPages > 1}" class="mt-4">
+                                            <ul class="pagination justify-content-center">
+                                                <!-- Previous Page -->
+                                                <li class="page-item" th:classappend="${ordersPage.first ? 'disabled' : ''}">
+                                                    <a class="page-link" th:if="${!ordersPage.first}" 
+                                                       th:href="@{/user/profile(page=${currentPage - 1}, size=${pageSize})}">
+                                                        <i class="fa-solid fa-chevron-left"></i>
+                                                    </a>
+                                                    <span class="page-link" th:if="${ordersPage.first}">
+                                                        <i class="fa-solid fa-chevron-left"></i>
+                                                    </span>
+                                                </li>
+                                                
+                                                <!-- Page Numbers -->
+                                                <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, ordersPage.totalPages - 1)}"
+                                                    th:classappend="${pageNum == currentPage ? 'active' : ''}">
+                                                    <a class="page-link" th:href="@{/user/profile(page=${pageNum}, size=${pageSize})}" 
+                                                       th:text="${pageNum + 1}">1</a>
+                                                </li>
+                                                
+                                                <!-- Next Page -->
+                                                <li class="page-item" th:classappend="${ordersPage.last ? 'disabled' : ''}">
+                                                    <a class="page-link" th:if="${!ordersPage.last}" 
+                                                       th:href="@{/user/profile(page=${currentPage + 1}, size=${pageSize})}">
+                                                        <i class="fa-solid fa-chevron-right"></i>
+                                                    </a>
+                                                    <span class="page-link" th:if="${ordersPage.last}">
+                                                        <i class="fa-solid fa-chevron-right"></i>
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                        </nav>
+                                        
+                                        <!-- Page Info -->
+                                        <div class="text-center mt-3">
+                                            <small class="text-muted">
+                                                Hiển thị <span th:text="${ordersPage.numberOfElements}">0</span> 
+                                                trong tổng số <span th:text="${ordersPage.totalElements}">0</span> đơn hàng
+                                                (Trang <span th:text="${currentPage + 1}">1</span> 
+                                                / <span th:text="${ordersPage.totalPages}">1</span>)
+                                            </small>
+                                        </div>
                                     </div>
                                     <div th:if="${!hasOrders}" class="text-center py-4">
                                         <i class="fa-solid fa-inbox fs-48 text-muted mb-3"></i>
-                                        <p class="text-muted">No orders found</p>
+                                        <p class="text-muted">Không có đơn hàng nào</p>
                                     </div>
                                 </div>
                             </div>
@@ -693,6 +822,11 @@
                 document.querySelectorAll('.is-invalid').forEach(function(element) {
                     element.classList.remove('is-invalid');
                 });
+            }
+
+            // Function to change page size
+            function changePageSize(size) {
+                window.location.href = '/user/profile?page=0&size=' + size;
             }
         </script>
     </body>
