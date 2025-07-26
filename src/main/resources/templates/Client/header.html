@@ -213,11 +213,17 @@
                             <li class="nav-item">
                                 <a href="/contact" class="nav-link">Contact</a>
                             </li>
-                            <li class="nav-item" th:if="${session.userRole == 'CUSTOMER'}">
-                                <a href="/cart" class="nav-link">
+                            <li class="nav-item position-relative" th:if="${session.userRole == 'CUSTOMER'}">
+                                <a href="/cart" class="nav-link position-relative">
                                     <i class="fa-solid fa-cart-shopping"></i>
+                                    <span id="cart-count-badge"
+                                          class="badge bg-danger rounded-circle position-absolute"
+                                          style="top: 2px; right: 2px; font-size: 0.6rem; min-width: 16px; height: 16px; line-height: 16px; padding: 0; display: none; text-align: center;">
+            0
+        </span>
                                 </a>
                             </li>
+
                         </ul>
                     </div>
                 </div> 
@@ -278,6 +284,12 @@
     <!-- Toast Notification (SweetAlert2) -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/js/main.js"></script>
+    <!-- Firebase App (core) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <!-- Firebase Database -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js"></script>
+    <!-- Nếu dùng Firebase v9+, thì code cần viết theo kiểu modular -->
+
     <script th:inline="javascript" th:if="${success != null}">
         showToast('[[${success}]]', "success");
     </script>
