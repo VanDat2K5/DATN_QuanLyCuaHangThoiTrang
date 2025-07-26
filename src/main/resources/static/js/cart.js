@@ -1,3 +1,4 @@
+// Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyAiQr7IZK9i8x5V0BglQIRLfr0G1ByMkrU",
     authDomain: "datn-d3877.firebaseapp.com",
@@ -11,7 +12,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-
 // --- CARTBOX ---
 function addCart() {
     const maKH = document.getElementById('cartMaKH')?.value;
@@ -24,28 +24,13 @@ function addCart() {
     const gia = parseFloat(giaText);
 
     if (!tenSP || !hinhAnh || !mau || !size || !soLuong || !gia || !maKH) {
-        const Toast = Swal.mixin({
-            toast: true,
-            position: "top-end",
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-              toast.onmouseenter = Swal.stopTimer;
-              toast.onmouseleave = Swal.resumeTimer;
-            }
-          });
-          Toast.fire({
-            icon: "error",
-            title: "Vui lòng chọn đầy đủ thông tin sản phẩm!"
-          });
+        Swal.fire({ icon: "error", title: "Vui lòng chọn đầy đủ thông tin sản phẩm!" });
         return;
     }
 
     const item = { tenSP, hinhAnh, mau, size, SoLuong: soLuong, Gia: gia };
     const cartRef = db.ref('Cart/' + maKH + '/items');
 
-    // Kiểm tra nếu sản phẩm đã có
     cartRef.once('value').then(snapshot => {
         let exists = false;
         let existingKey = null;
@@ -58,61 +43,27 @@ function addCart() {
         });
 
         if (exists && existingKey) {
-            // Cập nhật số lượng
             const existingItemRef = cartRef.child(existingKey);
             existingItemRef.child('SoLuong').once('value').then(qSnap => {
                 const oldQty = qSnap.val() || 0;
                 existingItemRef.update({ SoLuong: oldQty + soLuong }).then(() => {
-                    const Toast = Swal.mixin({
-                        toast: true,
-                        position: "top-end",
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true,
-                        didOpen: (toast) => {
-                          toast.onmouseenter = Swal.stopTimer;
-                          toast.onmouseleave = Swal.resumeTimer;
-                        }
-                      });
-                      Toast.fire({
-                        icon: "success",
-                        title: "Cập nhật số lượng sản phẩm thành công!"
-                      });
+                    Swal.fire({ icon: "success", title: "Cập nhật số lượng sản phẩm thành công!" });
                     resetCartForm();
                     loadCarts(maKH);
                     updateCartItemCount(maKH);
-
                 });
             });
         } else {
-            // Thêm sản phẩm mới
             cartRef.push(item).then(() => {
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: "top-end",
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                      toast.onmouseenter = Swal.stopTimer;
-                      toast.onmouseleave = Swal.resumeTimer;
-                    }
-                  });
-                  Toast.fire({
-                    icon: "success",
-                    title: "Thêm vào giỏ hàng thành công!"
-                  });
+                Swal.fire({ icon: "success", title: "Thêm vào giỏ hàng thành công!" });
                 resetCartForm();
                 loadCarts(maKH);
+                updateCartItemCount(maKH);
             });
         }
     }).catch(error => {
         console.error("Lỗi thêm giỏ hàng:", error);
-        Swal.fire({
-            title: "Thêm vào giỏ hàng thất bại!",
-            icon: "error",
-            draggable: true
-          });
+        Swal.fire({ title: "Thêm vào giỏ hàng thất bại!", icon: "error" });
     });
 }
 
@@ -122,24 +73,16 @@ function resetCartForm() {
     document.querySelectorAll('input[name="maSize"]').forEach(el => el.checked = false);
 }
 
-
-
-
 function loadCarts(maKH) {
     const cartBody = document.getElementById("cartBody");
     cartBody.innerHTML = '';
     let total = 0;
 
-    const cartRef = firebase.database().ref('Cart/' + maKH + '/items');
+    const cartRef = db.ref('Cart/' + maKH + '/items');
     cartRef.once('value', snapshot => {
         if (!snapshot.exists()) {
-            cartBody.innerHTML = `<tr>
-                                    <td colspan="7" class="text-center text-muted py-4">
-                                        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
-                                        Không có sản phẩm nào trong giỏ hàng
-                                    </td>
-                                </tr>`;
-            document.getElementById("totalPrice").textContent = " 0 đ";
+            cartBody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-4"><i class="bi bi-inbox fs-1 d-block mb-2"></i>Không có sản phẩm nào trong giỏ hàng</td></tr>`;
+            document.getElementById("totalPrice").textContent = "0 đ";
             return;
         }
 
@@ -147,6 +90,7 @@ function loadCarts(maKH) {
             const item = child.val();
             const itemId = child.key;
             const lineTotal = item.Gia * item.SoLuong;
+            total += lineTotal;
 
             const row = document.createElement('tr');
             row.className = 'fade-in';
@@ -157,21 +101,13 @@ function loadCarts(maKH) {
                 <td>${item.mau}</td>
                 <td>${item.size}</td>
                 <td class="qty-controls text-center">
-    <div class="input-group justify-content-center" style="max-width: 120px; margin: auto;">
-        <button class="btn btn-dark btn-sm" onclick="changeQuantity('${maKH}', '${itemId}', -1)">–</button>
-        <input type="number"
-               id="qty_${itemId}"
-               class="form-control text-center no-spinner"
-               value="${item.SoLuong}"
-               min="1"
-               style="width: 50px;"
-               onchange="updateQuantity('${maKH}', '${itemId}', this.value)">
-        <button class="btn btn-dark btn-sm" onclick="changeQuantity('${maKH}', '${itemId}', 1)">+</button>
-    </div>
-</td>
-
-                <td>${(lineTotal).toLocaleString()} đ</td>
-            `;
+                    <div class="input-group justify-content-center" style="max-width: 120px; margin: auto;">
+                        <button class="btn btn-dark btn-sm" onclick="changeQuantity('${maKH}', '${itemId}', -1)">–</button>
+                        <input type="number" id="qty_${itemId}" class="form-control text-center no-spinner" value="${item.SoLuong}" min="1" style="width: 50px;" onchange="updateQuantity('${maKH}', '${itemId}', this.value)">
+                        <button class="btn btn-dark btn-sm" onclick="changeQuantity('${maKH}', '${itemId}', 1)">+</button>
+                    </div>
+                </td>
+                <td>${(lineTotal).toLocaleString()} đ</td>`;
             cartBody.appendChild(row);
         });
 
@@ -188,7 +124,6 @@ function calculateSelectedTotal(maKH) {
         snapshot.forEach(child => {
             const item = child.val();
             const itemId = child.key;
-
             checkboxes.forEach(checkbox => {
                 if (checkbox.getAttribute("data-item-id") === itemId) {
                     total += item.SoLuong * item.Gia;
@@ -202,8 +137,7 @@ function calculateSelectedTotal(maKH) {
 
 function changeQuantity(maKH, itemId, delta) {
     const qtyInput = document.getElementById(`qty_${itemId}`);
-    let currentQty = parseInt(qtyInput.value); //
-
+    let currentQty = parseInt(qtyInput.value);
     let newQty = currentQty + delta;
     if (newQty < 1 || isNaN(newQty)) return;
 
@@ -214,46 +148,44 @@ function changeQuantity(maKH, itemId, delta) {
     });
 }
 
-
-
+function updateQuantity(maKH, itemId, value) {
+    const newQty = parseInt(value);
+    if (isNaN(newQty) || newQty < 1) return;
+    const itemRef = db.ref('Cart/' + maKH + '/items/' + itemId);
+    itemRef.child('SoLuong').set(newQty).then(() => {
+        loadCarts(maKH);
+        updateCartItemCount(maKH);
+    });
+}
 
 function deleteAllItems() {
     const maKH = document.getElementById("cartMaKH").value;
     if (!confirm("Bạn có chắc muốn xóa toàn bộ giỏ hàng?")) return;
-
     db.ref('Cart/' + maKH + '/items').remove().then(() => {
         loadCarts(maKH);
         updateCartItemCount(maKH);
-
     });
 }
-
 
 function deleteSelectedItems() {
     const maKH = document.getElementById("cartMaKH").value;
     const checkboxes = document.querySelectorAll(".cartCheckbox:checked");
-
     if (checkboxes.length === 0) {
         Swal.fire("Vui lòng chọn sản phẩm để xóa!");
         return;
     }
-
     if (!confirm("Bạn có chắc chắn muốn xóa các sản phẩm đã chọn?")) return;
-
     const cartRef = db.ref('Cart/' + maKH + '/items');
-
     checkboxes.forEach(checkbox => {
         const itemId = checkbox.getAttribute("data-item-id");
         cartRef.child(itemId).remove();
     });
-
     setTimeout(() => loadCarts(maKH), 100);
 }
 
 function updateCartItemCount(maKH) {
     const cartCountSpan = document.getElementById("cart-count-badge");
     if (!cartCountSpan) return;
-
     const cartRef = db.ref('Cart/' + maKH + '/items');
     cartRef.on('value', (snapshot) => {
         let totalCount = 0;
@@ -261,7 +193,6 @@ function updateCartItemCount(maKH) {
             const item = child.val();
             totalCount += item.SoLuong || 0;
         });
-
         if (totalCount > 0) {
             cartCountSpan.textContent = totalCount;
             cartCountSpan.style.display = "inline-block";
@@ -275,13 +206,11 @@ function updateCartItemCount(maKH) {
 function ThanhToan() {
     const maKH = document.getElementById("cartMaKH").value;
     const checkboxes = document.querySelectorAll(".cartCheckbox:checked");
-
     if (checkboxes.length === 0) {
         Swal.fire("Vui lòng chọn sản phẩm để thanh toán!");
         return;
     }
-
-    if (!Swal.fire({
+    Swal.fire({
         title: "Bạn có chắc chắn muốn thanh toán các sản phẩm đã chọn?",
         text: "Bạn sẽ không thể hoàn tác!",
         icon: "warning",
@@ -290,31 +219,23 @@ function ThanhToan() {
         cancelButtonColor: "#d33",
         confirmButtonText: "Thanh toán",
         cancelButtonText: "Hủy"
-      }).then((result) => {
+    }).then((result) => {
         if (result.isConfirmed) {
-          Swal.fire({
-            title: "Thanh toán thành công!",
-            text: "Bạn sẽ nhận được email thông báo khi đơn hàng được xử lý!",
-            icon: "success"
-          });
+            Swal.fire({
+                title: "Thanh toán thành công!",
+                text: "Bạn sẽ nhận được email thông báo khi đơn hàng được xử lý!",
+                icon: "success"
+            });
+            const cartRef = db.ref('Cart/' + maKH + '/items');
+            checkboxes.forEach(checkbox => {
+                const itemId = checkbox.getAttribute("data-item-id");
+                cartRef.child(itemId).remove();
+            });
+            setTimeout(() => loadCarts(maKH), 100);
+            updateCartItemCount(maKH);
         }
-      })
-    ) return;
-
-    const cartRef = db.ref('Cart/' + maKH + '/items');
-
-    checkboxes.forEach(checkbox => {
-        const itemId = checkbox.getAttribute("data-item-id");
-        cartRef.child(itemId).remove();
     });
-
-    setTimeout(() => loadCarts(maKH), 100);
 }
-
-
-
-
-
 
 window.onload = function () {
     const maKH = document.getElementById('cartMaKH')?.value;
@@ -322,4 +243,4 @@ window.onload = function () {
         loadCarts(maKH);
         updateCartItemCount(maKH);
     }
-}
+};
