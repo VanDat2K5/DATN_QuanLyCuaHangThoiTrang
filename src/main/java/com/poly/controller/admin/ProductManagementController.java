@@ -5,6 +5,7 @@ import com.poly.entity.SanPham;
 import com.poly.service.HinhAnhService;
 import com.poly.service.SanPhamService;
 import com.poly.service.LoaiSanPhamService;
+import com.poly.util.CodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,6 +32,9 @@ public class ProductManagementController {
 
     @Autowired
     private HinhAnhService hinhAnhService;
+
+    @Autowired
+    private CodeGenerator codeGenerator;
 
     // Hiển thị danh sách sản phẩm
     @GetMapping
@@ -83,7 +87,7 @@ public class ProductManagementController {
         }
         try {
             if (product.getMaSP() == null || product.getMaSP().isBlank()) {
-                product.setMaSP("SP" + System.currentTimeMillis());
+                product.setMaSP(codeGenerator.generateProductCode());
             }
             if (product.getGioiTinh() == null) {
                 product.setGioiTinh(SanPham.Gender.UNISEX);
