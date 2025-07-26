@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +19,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.poly.entity.ChiTietPhieuNhap;
-import com.poly.entity.LoaiSanPham;
+import com.poly.entity.ChiTietSanPham;
 import com.poly.entity.Mau;
 import com.poly.entity.NhanVien;
 import com.poly.entity.PhieuNhap;
@@ -113,19 +115,25 @@ public class InputManagementController {
 
     @GetMapping("/create")
     public String createInput(Model model, HttpSession session) {
-        PhieuNhap phieuNhap = new PhieuNhap();
-        phieuNhap.setMaPN(codeGenerator.generateImportCode());
-        phieuNhap.setTongTien(BigDecimal.ZERO);
-        phieuNhap.setNgayNhap(LocalDate.now());
-        phieuNhap.setNhanVien((NhanVien) session.getAttribute("user"));
-        phieuNhap.setTenNhaCungCap("Tên Nhà Cung Cấp");
-        phieuNhapService.save(phieuNhap);
-
+        PhieuNhap phieuNhap = (PhieuNhap) session.getAttribute("phieuNhap");
+        if (phieuNhap == null) {
+            phieuNhap = new PhieuNhap();
+            phieuNhap.setMaPN(codeGenerator.generateImportCode());
+            phieuNhap.setTongTien(BigDecimal.ZERO);
+            phieuNhap.setNgayNhap(LocalDate.now());
+            phieuNhap.setNhanVien((NhanVien) session.getAttribute("user"));
+            phieuNhap.setTenNhaCungCap("Ten nha cung cap");
+            session.setAttribute("phieuNhap", phieuNhap);
+        }
         model.addAttribute("phieuNhap", phieuNhap);
         model.addAttribute("sanPhams", sanPhamService.findAll());
         model.addAttribute("mauSacs", mauService.findAll());
         model.addAttribute("sizes", sizeService.findAll());
         model.addAttribute("loaiSanPhams", loaiSanPhamService.findAll());
+        List<ChiTietPhieuNhap> productList = (List<ChiTietPhieuNhap>) session.getAttribute("productList");
+        if (productList == null)
+            productList = new ArrayList<>();
+        model.addAttribute("productList", productList);
         return "admin/input-create.html";
     }
 
@@ -133,48 +141,51 @@ public class InputManagementController {
     public String addProductToList(
             @RequestParam String loaiThem,
             @RequestParam(required = false) String maSP,
-            @RequestParam(required = false) String tenSpMoi,
             @RequestParam(required = false) String maLoaiSP,
             @RequestParam String mauSac,
             @RequestParam String size,
             @RequestParam int soLuongNhap,
             @RequestParam double giaNhap,
-            @RequestParam String loHang,
             HttpSession session,
             Model model) {
         List<ChiTietPhieuNhap> productList = (List<ChiTietPhieuNhap>) session.getAttribute("productList");
         if (productList == null)
             productList = new ArrayList<>();
+        // Nếu là sản phẩm mới, chuyển hướng sang trang tạo sản phẩm mới
+        if ("moi".equals(loaiThem)) {
+            return "redirect:/admin/management/product/create?returnToInput=true";
+        }
+        // Nếu là sản phẩm cũ, thêm vào list tạm
         ChiTietPhieuNhap chiTiet = new ChiTietPhieuNhap();
         SanPham sp = new SanPham();
-        if ("cu".equals(loaiThem)) {
-            sp.setMaSP(maSP);
-            SanPham spDB = sanPhamService.findById(maSP).orElse(null);
-            if (spDB != null)
-                sp.setTenSP(spDB.getTenSP());
-        } else {
-            sp.setMaSP(tenSpMoi != null ? tenSpMoi.replaceAll("\\s+", "_").toUpperCase() : "MOI");
-            sp.setTenSP(tenSpMoi);
-            if (maLoaiSP != null && !maLoaiSP.isEmpty()) {
-                LoaiSanPham loai = new LoaiSanPham();
-                loai.setMaLoaiSP(maLoaiSP);
-                sp.setLoaiSP(loai);
-            }
-        }
+        sp.setMaSP(maSP);
+        SanPham spDB = sanPhamService.findById(maSP).orElse(null);
+        if (spDB != null)
+            sp.setTenSP(spDB.getTenSP());
         Mau m = new Mau();
         m.setMaMau(mauSac);
         Size s = new Size();
         s.setMaSize(size);
-        chiTiet.setChiTietSanPham(new com.poly.entity.ChiTietSanPham());
+
+        chiTiet.setSoLuongNhap(soLuongNhap);
+        chiTiet.setGiaNhap(BigDecimal.valueOf(giaNhap));
+        chiTiet.setLoHang(codeGenerator.generateImportDetailCode(maSP, mauSac, size));
+
+        chiTiet.setChiTietSanPham(new ChiTietSanPham());
+        chiTiet.getChiTietSanPham().setId(codeGenerator.generateProductDetailCode(maSP, mauSac, size));
         chiTiet.getChiTietSanPham().setSanPham(sp);
         chiTiet.getChiTietSanPham().setMau(m);
         chiTiet.getChiTietSanPham().setSize(s);
-        chiTiet.setSoLuongNhap(soLuongNhap);
-        chiTiet.setGiaNhap(BigDecimal.valueOf(giaNhap));
-        chiTiet.setLoHang(codeGenerator.generateImportDetailCode(chiTiet));
+        chiTiet.getChiTietSanPham().setSoLuong(soLuongNhap);
+        chiTiet.getChiTietSanPham().setGiaNhap(BigDecimal.valueOf(giaNhap));
+        chiTiet.getChiTietSanPham().setGiaXuat(BigDecimal.valueOf(giaNhap * 1.2));
+        chiTiet.getChiTietSanPham().setLoHang(codeGenerator.generateImportDetailCode(maSP, mauSac, size));
+
         productList.add(chiTiet);
         session.setAttribute("productList", productList);
-        model.addAttribute("phieuNhap", new PhieuNhap());
+        // Lấy lại phieuNhap từ session để giữ thông tin
+        PhieuNhap phieuNhap = (PhieuNhap) session.getAttribute("phieuNhap");
+        model.addAttribute("phieuNhap", phieuNhap);
         model.addAttribute("productList", productList);
         model.addAttribute("sanPhams", sanPhamService.findAll());
         model.addAttribute("mauSacs", mauService.findAll());
@@ -201,26 +212,65 @@ public class InputManagementController {
     @PostMapping("/create")
     public String saveInput(@ModelAttribute PhieuNhap phieuNhap, HttpSession session) {
         List<ChiTietPhieuNhap> productList = (List<ChiTietPhieuNhap>) session.getAttribute("productList");
-        if (productList != null && !productList.isEmpty()) {
-            // Lưu phiếu nhập trước (nếu chưa có)
-            if (phieuNhap.getMaPN() == null || phieuNhap.getMaPN().isEmpty()) {
-                phieuNhap.setMaPN(codeGenerator.generateImportCode());
-            }
+        PhieuNhap phieuNhapSession = (PhieuNhap) session.getAttribute("phieuNhap");
+        if (phieuNhapSession != null) {
+            // Cập nhật lại thông tin phiếu nhập từ form
+            phieuNhapSession.setTenNhaCungCap(phieuNhap.getTenNhaCungCap());
+            phieuNhapSession.setNgayNhap(phieuNhap.getNgayNhap());
             // Tính tổng tiền
             BigDecimal tongTien = BigDecimal.ZERO;
-            for (ChiTietPhieuNhap ct : productList) {
-                tongTien = tongTien.add(ct.getGiaNhap().multiply(BigDecimal.valueOf(ct.getSoLuongNhap())));
+            if (productList != null) {
+                for (ChiTietPhieuNhap ct : productList) {
+                    tongTien = tongTien.add(ct.getGiaNhap().multiply(BigDecimal.valueOf(ct.getSoLuongNhap())));
+                }
             }
-            phieuNhap.setTongTien(tongTien);
-            phieuNhapService.save(phieuNhap);
-
+            phieuNhapSession.setTongTien(tongTien);
+            phieuNhapService.save(phieuNhapSession);
             // Lưu chi tiết phiếu nhập
-            for (ChiTietPhieuNhap ct : productList) {
-                ct.setPhieuNhap(phieuNhap);
-                chiTietPhieuNhapService.save(ct);
+            if (productList != null) {
+                for (ChiTietPhieuNhap ct : productList) {
+                    ct.setPhieuNhap(phieuNhapSession);
+                    chiTietSanPhamService.save(ct.getChiTietSanPham());
+                    chiTietPhieuNhapService.save(ct);
+                }
             }
         }
         session.removeAttribute("productList");
+        session.removeAttribute("phieuNhap");
         return "redirect:/admin/management/input";
+    }
+
+    // API tìm kiếm sản phẩm autocomplete
+    @GetMapping("/api/search-product")
+    @ResponseBody
+    public List<SanPham> searchProduct(@RequestParam String query, @RequestParam(required = false) String maLoaiSP) {
+        return sanPhamService.findAll().stream()
+                .filter(sp -> (maLoaiSP == null || maLoaiSP.isEmpty()
+                        || (sp.getLoaiSP() != null && maLoaiSP.equals(sp.getLoaiSP().getMaLoaiSP())))
+                        && (sp.getMaSP().toLowerCase().contains(query.toLowerCase())
+                                || sp.getTenSP().toLowerCase().contains(query.toLowerCase())))
+                .limit(10)
+                .collect(Collectors.toList());
+    }
+
+    // API lấy chi tiết size/màu theo mã sản phẩm
+    @GetMapping("/api/product-detail")
+    @ResponseBody
+    public java.util.Map<String, Object> getProductDetail(@RequestParam String maSP) {
+        List<com.poly.entity.ChiTietSanPham> chiTietList = chiTietSanPhamService.findBySanPham_MaSP(maSP);
+        List<Mau> mauSacs = chiTietList.stream().map(ct -> ct.getMau()).distinct().collect(Collectors.toList());
+        List<Size> sizes = chiTietList.stream().map(ct -> ct.getSize()).distinct().collect(Collectors.toList());
+        java.util.Map<String, Object> map = new java.util.HashMap<>();
+        map.put("mauSacs", mauSacs);
+        map.put("sizes", sizes);
+        return map;
+    }
+
+    @GetMapping("/api/products-by-type")
+    @ResponseBody
+    public List<SanPham> getProductsByType(@RequestParam String maLoaiSP) {
+        return sanPhamService.findAll().stream()
+                .filter(sp -> sp.getLoaiSP() != null && maLoaiSP.equals(sp.getLoaiSP().getMaLoaiSP()))
+                .collect(Collectors.toList());
     }
 }

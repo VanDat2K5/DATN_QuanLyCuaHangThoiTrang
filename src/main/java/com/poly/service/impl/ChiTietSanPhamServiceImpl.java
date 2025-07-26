@@ -92,4 +92,11 @@ public class ChiTietSanPhamServiceImpl implements ChiTietSanPhamService {
     public Page<ChiTietSanPham> findBySanPham_MaSPContainingIgnoreCase(String maSP, Pageable pageable) {
         return chiTietSanPhamRepository.findBySanPham_MaSPContainingIgnoreCase(maSP, pageable);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<ChiTietSanPham> findBySanPham_TenSPAndMau_MaMauAndSize_MaSize(String tenSP, String maMau,
+            String maSize) {
+        return chiTietSanPhamRepository.findBySanPham_TenSPAndMau_MaMauAndSize_MaSize(tenSP, maMau, maSize);
+    }
 }
