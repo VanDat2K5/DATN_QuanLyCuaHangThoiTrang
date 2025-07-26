@@ -8,6 +8,7 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -99,55 +100,52 @@ public class EmailService {
 					+ "                </table>\r\n"
 					+ "            </div>");
 
+			// Thêm danh sách sản phẩm
 			emailContent.append("\r\n"
-					+ "            <div style=\"margin-top:25px\">\r\n"
-					+ "                <p style=\"font-weight:700;font-size:18px;margin-bottom:15px;color:#222222\">Sản phẩm trong đơn hàng:</p>\r\n"
-					+ "                <ul style=\"padding-left:0;list-style-type:none;margin-bottom:0\">\r\n"
-					+ "                    <li style=\"margin-bottom:10px\">\r\n"
-					+ "                        <table style=\"width:100%;border-bottom:1px solid #eaeaea;border-radius:6px;overflow:hidden;background-color:#fafafa\">\r\n"
-					+ "                            <tbody>\r\n");
+					+ "				<div style=\"margin-top:25px;background-color:#f8f9fa;padding:20px;border-radius:8px;\">\r\n"
+					+ "                <p style=\"font-weight:700;margin-top:0;margin-bottom:12px;color:#222222;font-size:18px;\">Sản phẩm trong đơn hàng:</p>\r\n");
 
-			for (ChiTietHoaDon product : chiTietHoaDonService.findByHoaDon_MaHD(orders.getMaHD())) {
-				emailContent.append("\r\n"
-						+ "                                <tr>\r\n"
-						+ "                                    <td style=\"width:100%;padding:20px 15px 0px 15px\" colspan=\"2\">\r\n"
-						+ "                                    <div style=\"float:left;width:80px;height:80px;border:1px solid #eaeaea;border-radius:4px;overflow:hidden;background-color:#ffffff\">\r\n"
-						// + " <img style=\"max-width:100%;max-height:100%\"
-						// src=\"https://ci3.googleusercontent.com/meips/ADKq_Nbkfmx1F4il1R6fQLm7FlDwo7nGClvaulYJJQcaS8Q-IJjWudjuAxU7Iqd4RZFhIZ2Qv0EhLTYZcWdFOIqlMEV1fxwf5w1lRQ9lwDMbrDFoHoKe0ERAhXfQcw6F13DerF8p3z0uuTm0MS_n4cQz_sdYJrJdsgYKyEOooeM76SLaEPRgmKmKBdkgiRtSBeSSzWMlAqWYXLqs=s0-d-e1-ft#https://bizweb.dktcdn.net/thumb/small/100/456/060/products/885f5b30-6c43-4a12-af2f-9221e289d241-1733299192261.jpg?v=1733299454493\"
-						// class=\"CToWUd\" data-bit=\"iit\">\r\n"
-						+ "                                    </div>\r\n"
-						+ "                                    <div style=\"margin-left:100px\">\r\n"
-						+ "                                        <span style=\"color:#333333;text-decoration:none;font-weight:700;font-size:17px\">"
-						+ product.getChiTietSanPham().getSanPham().getTenSP() + "</span>\r\n"
-						+ "                                        <p style=\"color:#555555;margin-bottom:0;margin-top:5px;font-size:15px;font-weight:500\">\r\n"
-						+ "                                        Mặc định \r\n"
-						+ "                                        </p>\r\n"
-						+ "                                        <p style=\"color:#555555;margin-bottom:0;margin-top:5px;font-size:15px;font-weight:500\">Mã SP: "
-						+ product.getChiTietSanPham().getSanPham().getMaSP() + "</p>\r\n"
-						+ "                                    </div>\r\n"
-						+ "                                    </td>\r\n"
-						+ "                                </tr>\r\n"
-						+ "                                <tr>\r\n"
-						+ "                                    <td style=\"width:70%;padding:5px 15px 20px 15px\">\r\n"
-						+ "                                    <div style=\"margin-left:100px;color:#333333;font-weight:500;font-size:16px\">\r\n"
-						+ "                                        " + formatPrice(product.getGiaXuat())
-						+ "                                        <span style=\"margin-left:20px\">x "
-						+ product.getSoLuongXuat() + "</span>\r\n"
-						+ " <span style=\"margin-left:20px\">x " + product.getSoLuongXuat() + "</span>\r\n"
-						+ "                                    </div>\r\n"
-						+ "                                    </td>\r\n"
-						+ "                                    <td style=\"text-align:right;width:30%;padding:5px 15px 20px 15px;font-weight:700;color:#222222;font-size:16px\">\r\n"
-						+ "                                    "
-						+ formatPrice(product.getGiaXuat().multiply(BigDecimal.valueOf(product.getSoLuongXuat())))
-						+ "</td>\r\n"
-						+ "                                </tr>\r\n");
+			// Lấy danh sách chi tiết hóa đơn
+			List<ChiTietHoaDon> chiTietHoaDons = chiTietHoaDonService.findByHoaDon_MaHD(orders.getMaHD());
+			if (chiTietHoaDons != null && !chiTietHoaDons.isEmpty()) {
+				emailContent.append("<table style=\"width:100%;border-collapse:collapse;font-size:16px;\">\r\n"
+						+ "                    <thead>\r\n"
+						+ "                        <tr style=\"background-color:#e9ecef;\">\r\n"
+						+ "                            <th style=\"padding:12px;text-align:left;border-bottom:2px solid #dee2e6;color:#222222;\">Sản phẩm</th>\r\n"
+						+ "                            <th style=\"padding:12px;text-align:center;border-bottom:2px solid #dee2e6;color:#222222;\">Màu</th>\r\n"
+						+ "                            <th style=\"padding:12px;text-align:center;border-bottom:2px solid #dee2e6;color:#222222;\">Size</th>\r\n"
+						+ "                            <th style=\"padding:12px;text-align:center;border-bottom:2px solid #dee2e6;color:#222222;\">SL</th>\r\n"
+						+ "                            <th style=\"padding:12px;text-align:right;border-bottom:2px solid #dee2e6;color:#222222;\">Đơn giá</th>\r\n"
+						+ "                            <th style=\"padding:12px;text-align:right;border-bottom:2px solid #dee2e6;color:#222222;\">Thành tiền</th>\r\n"
+						+ "                        </tr>\r\n"
+						+ "                    </thead>\r\n"
+						+ "                    <tbody>\r\n");
+
+				for (ChiTietHoaDon cthd : chiTietHoaDons) {
+					emailContent.append("                        <tr>\r\n"
+							+ "                            <td style=\"padding:12px;border-bottom:1px solid #dee2e6;\">"
+							+ cthd.getChiTietSanPham().getSanPham().getTenSP() + "</td>\r\n"
+							+ "                            <td style=\"padding:12px;text-align:center;border-bottom:1px solid #dee2e6;\">"
+							+ cthd.getChiTietSanPham().getMau().getTenMau() + "</td>\r\n"
+							+ "                            <td style=\"padding:12px;text-align:center;border-bottom:1px solid #dee2e6;\">"
+							+ cthd.getChiTietSanPham().getSize().getTenSize() + "</td>\r\n"
+							+ "                            <td style=\"padding:12px;text-align:center;border-bottom:1px solid #dee2e6;\">"
+							+ cthd.getSoLuongXuat() + "</td>\r\n"
+							+ "                            <td style=\"padding:12px;text-align:right;border-bottom:1px solid #dee2e6;\">"
+							+ formatPrice(cthd.getGiaXuat()) + "</td>\r\n"
+							+ "                            <td style=\"padding:12px;text-align:right;border-bottom:1px solid #dee2e6;\">"
+							+ formatPrice(cthd.getThanhTien()) + "</td>\r\n"
+							+ "                        </tr>\r\n");
+				}
+
+				emailContent.append("                    </tbody>\r\n"
+						+ "                </table>\r\n");
+			} else {
+				emailContent.append(
+						"<p style=\"color:#6c757d;font-style:italic;\">Không có sản phẩm nào trong đơn hàng.</p>\r\n");
 			}
-			emailContent.append("\r\n"
-					+ "                            </tbody>\r\n"
-					+ "                        </table>\r\n"
-					+ "                    </li>\r\n"
-					+ "                </ul>\r\n"
-					+ "            </div>");
+
+			emailContent.append("            </div>");
 			emailContent.append("\r\n"
 					+ "            <div style=\"margin-top:30px;background-color:#f5f5f5;padding:20px;border-radius:8px;border-left:4px solid #3d97e5\">\r\n"
 					+ "                <p style=\"font-weight:700;font-size:17px;margin-top:0;margin-bottom:12px;color:#222222\">Thông tin liên hệ:</p>\r\n"
