@@ -75,21 +75,28 @@ public class HinhAnhServiceImpl implements HinhAnhService {
             return;
         }
 
+        // Thư mục lưu ảnh (tạo nếu chưa có)
+        File imageDir = new File("src/main/resources/static/images");
+        if (!imageDir.exists()) {
+            imageDir.mkdirs();
+        }
+
         for (MultipartFile file : files) {
             if (!file.isEmpty()) {
-                // Dùng tên gốc của file (không thêm UUID, không lưu file)
+                // Lấy tên gốc của file
                 String filename = file.getOriginalFilename();
 
-                // Kiểm tra nếu file tồn tại sẵn trong thư mục images
-                File imageFile = new File("src/main/resources/static/images", filename);
-                if (imageFile.exists()) {
-                    HinhAnh ha = new HinhAnh();
-                    ha.setSanPham(sanPham);
-                    ha.setHinhAnh("/images/" + filename); // Chỉ lưu đường dẫn
-                    hinhAnhRepository.save(ha);
-                }
-                // Nếu ảnh không tồn tại, bạn có thể bỏ qua hoặc throw lỗi tùy yêu cầu
+                // Lưu file vào thư mục static/images
+                File destFile = new File(imageDir, filename);
+                file.transferTo(destFile); // Ghi file
+
+                // Lưu vào DB: chỉ lưu tên file, không có đường dẫn
+                HinhAnh ha = new HinhAnh();
+                ha.setSanPham(sanPham);
+                ha.setHinhAnh(filename); // <== CHỈ TÊN FILE
+                hinhAnhRepository.save(ha);
             }
         }
     }
+
 }

@@ -85,7 +85,32 @@ body {
         flex-direction: column;
     }
 }
+/* Ẩn spinner trong input type number (trình duyệt Chrome, Safari, Edge) */
+input[type=number].no-spinner::-webkit-inner-spin-button,
+input[type=number].no-spinner::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
 
+/* Firefox */
+input[type=number].no-spinner {
+    -moz-appearance: textfield;
+}
 body {
-    font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif; 
+    font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.cart-title {
+    margin-top: 60px;
+    margin-bottom: 40px;
+    color: #000;
+}
+.summary-container {
+    color: #000;
+}
+.total-price {
+    color: #000;
+}
+.summary-container .btn-checkout {
+    margin-top: 30px;
 }
