@@ -1,0 +1,136 @@
+<!-- Dashboard Tab Fragment -->
+<div class="tab-pane fade show active" id="dashboard" role="tabpanel" th:fragment="dashboard">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="stats-card" th:with="orderCount=${totalOrders != null ? totalOrders : 0}">
+                <div class="stats-icon">
+                    <i class="feather icon-feather-shopping-bag"></i>
+                </div>
+                <div class="stats-number" th:text="${orderCount}">0</div>
+                <div class="stats-label">
+                    <span th:text="${userRole == 'CUSTOMER' ? 'Total Orders' : 'Orders Processed'}">Total Orders</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stats-card" th:with="formattedTotal=${totalSpent != null ? #numbers.formatDecimal(totalSpent, 0, 'COMMA', 0, 'POINT') : '0'}">
+                <div class="stats-icon">
+                    <i class="feather icon-feather-dollar-sign"></i>
+                </div>
+                <div class="stats-number" th:text="${formattedTotal}">0</div>
+                <div class="stats-label">
+                    <span th:text="${userRole == 'CUSTOMER' ? 'Total Spent' : 'Total Processed'}">Total Spent</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stats-card" th:with="completedOrders=${ordersByStatus != null and ordersByStatus.containsKey('DaNhanHang') ? ordersByStatus.get('DaNhanHang') : 0}">
+                <div class="stats-icon">
+                    <i class="feather icon-feather-trending-up"></i>
+                </div>
+                <div class="stats-number" th:text="${completedOrders}">0</div>
+                <div class="stats-label">Completed</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders with Pagination -->
+    <div class="mt-4" th:with="hasOrders=${ordersPage != null and ordersPage.hasContent()}">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">
+                <i class="feather icon-feather-clock me-2"></i>
+                Danh sách đơn hàng
+            </h5>
+            <div class="d-flex align-items-center">
+                <span class="me-3">Hiển thị:</span>
+                <select class="form-select form-select-sm" style="width: auto;" onchange="changePageSize(this.value)">
+                    <option value="5" th:selected="${pageSize == 5}">5</option>
+                    <option value="10" th:selected="${pageSize == 10}">10</option>
+                    <option value="20" th:selected="${pageSize == 20}">20</option>
+                </select>
+            </div>
+        </div>
+        
+        <div th:if="${hasOrders}">
+            <div class="order-item" th:each="order : ${ordersPage.content}" 
+                 th:with="isChoXacNhan=${order != null and order.trangThai == 'ChoXacNhan'}, 
+                          isDaThanhToan=${order != null and order.trangThai == 'DaThanhToan'},
+                          isBankPayment=${order != null and order.ptThanhToan == 'Bank'}">
+                <div class="row align-items-center">
+                    <div class="col-md-2">
+                        <strong th:text="${order != null ? order.maHD : 'N/A'}">Order ID</strong>
+                    </div>
+                    <div class="col-md-2">
+                        <span th:text="${order != null and order.ngayLap != null ? #temporals.format(order.ngayLap, 'dd/MM/yyyy') : 'N/A'}">Date</span>
+                    </div>
+                    <div class="col-md-2">
+                        <span th:text="${order != null and order.tongTien != null ? #numbers.formatDecimal(order.tongTien, 0, 'COMMA', 0, 'POINT') : '0'}">money</span>
+                    </div>
+                    <div class="col-md-2">
+                        <span class="status-badge" th:class="'status-' + ${order != null ? order.trangThai : 'Unknown'}" th:text="${order != null ? order.trangThai : 'Unknown'}">Status</span>
+                    </div>
+                    <div class="col-md-2">
+                        <span th:text="${order != null ? order.ptThanhToan : 'N/A'}">Payment</span>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="d-flex gap-1">
+                            <!-- QR Code Button for Bank payment and specific statuses -->
+                            <button th:if="${isChoXacNhan and isBankPayment}" 
+                                    class="btn btn-sm btn-outline-primary qr-btn" 
+                                    th:data-order-id="${order != null ? order.maHD : ''}"
+                                    th:data-order-money="${order != null ? order.tongTien : 0}"
+                                    th:data-username="${username}"
+                                    title="Xem mã QR thanh toán">
+                                    <i class="fa-solid fa-qrcode"></i>
+                            </button>
+                            
+                            <!-- Cancel Button for specific statuses -->
+                            <form th:if="${isChoXacNhan or isDaThanhToan}" 
+                                  th:action="@{/user/order/cancel}" 
+                                  method="post" 
+                                  style="display: inline;"
+                                  onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?')">
+                                <input type="hidden" name="orderId" th:value="${order != null ? order.maHD : ''}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Hủy đơn hàng">
+                                    <i class="feather icon-feather-x"></i>
+                                </button>
+                            </form>
+                            
+                            <!-- View Details Button -->
+                            <a th:href="@{/user/order/{orderId}(orderId=${order != null ? order.maHD : ''})}" 
+                               class="btn btn-sm btn-outline-info" title="Xem chi tiết">
+                                <i class="feather icon-feather-eye"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pagination -->
+            <nav th:if="${ordersPage != null and ordersPage.totalPages > 1}" aria-label="Order pagination">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${ordersPage.first ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/user/profile(page=${ordersPage.number - 1}, size=${pageSize})}">Previous</a>
+                    </li>
+                    <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, ordersPage.totalPages - 1)}"
+                        th:classappend="${pageNum == ordersPage.number ? 'active' : ''}">
+                        <a class="page-link" th:href="@{/user/profile(page=${pageNum}, size=${pageSize})}" th:text="${pageNum + 1}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${ordersPage.last ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/user/profile(page=${ordersPage.number + 1}, size=${pageSize})}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        
+        <div th:unless="${hasOrders}" class="text-center py-5">
+            <i class="feather icon-feather-shopping-bag fs-1 text-muted mb-3"></i>
+            <h5 class="text-muted">Chưa có đơn hàng nào</h5>
+            <p class="text-muted">Bắt đầu mua sắm để xem đơn hàng của bạn ở đây!</p>
+            <a href="/shop" class="btn btn-primary">
+                <i class="feather icon-feather-shopping-cart me-2"></i>
+                Mua sắm ngay
+            </a>
+        </div>
+    </div>
+</div> 

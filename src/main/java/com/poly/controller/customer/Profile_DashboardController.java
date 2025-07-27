@@ -1,13 +1,13 @@
 package com.poly.controller.customer;
 
+import com.poly.entity.ChiTietHoaDon;
+import com.poly.entity.DiaChiNhanHang;
+import com.poly.entity.HoaDon;
 import com.poly.entity.KhachHang;
 import com.poly.entity.NhanVien;
-import com.poly.entity.TaiKhoan;
 import com.poly.service.HoaDonService;
-import com.poly.service.KhachHangService;
-import com.poly.service.NhanVienService;
-import com.poly.service.TaiKhoanService;
 import com.poly.service.ChiTietHoaDonService;
+import com.poly.service.DiaChiNhanHangService;
 import com.poly.util.Security;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,39 +33,26 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import com.poly.service.DiaChiNhanHangService;
-import org.springframework.web.bind.annotation.PathVariable;
-import jakarta.validation.Valid;
-import com.poly.form.AddressForm;
-import com.poly.entity.DiaChiNhanHang;
-import java.util.function.Consumer;
 
 @Controller
 @RequestMapping("/user")
-public class AuthController {
-
-    @Autowired
-    private KhachHangService khachHangService;
-
-    @Autowired
-    private NhanVienService nhanVienService;
+public class Profile_DashboardController {
 
     @Autowired
     private HoaDonService hoaDonService;
 
     @Autowired
-    private TaiKhoanService taiKhoanService;
+    private ChiTietHoaDonService chiTietHoaDonService;
 
     @Autowired
     private DiaChiNhanHangService diaChiNhanHangService;
-
-    @Autowired
-    private ChiTietHoaDonService chiTietHoaDonService;
 
     @GetMapping("/profile")
     public String profile(HttpSession session, Model model,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
+        System.out.println("[DEBUG] Profile GET called");
+        
         String userRole = Security.getUserRole(session);
         Object user = session.getAttribute("user");
 
@@ -88,16 +76,16 @@ public class AuthController {
         model.addAttribute("needsAccount", needsAccount != null ? needsAccount : false);
 
         // Get order statistics based on user type
-        List<com.poly.entity.HoaDon> allUserOrders = new ArrayList<>();
+        List<HoaDon> allUserOrders = new ArrayList<>();
         if (user != null && "CUSTOMER".equals(userRole)) {
             KhachHang khachHang = (KhachHang) user;
             System.out.println("[DEBUG] MaKH: " + khachHang.getMaKH());
             allUserOrders = hoaDonService.findByKhachHang_MaKH(khachHang.getMaKH());
             // Lấy danh sách địa chỉ nhận hàng
-            List<com.poly.entity.DiaChiNhanHang> diaChiList = diaChiNhanHangService
+            List<DiaChiNhanHang> diaChiList = diaChiNhanHangService
                     .findByKhachHang_MaKH(khachHang.getMaKH());
             System.out.println("[DEBUG] So dia chi nhan hang: " + diaChiList.size());
-            for (com.poly.entity.DiaChiNhanHang dc : diaChiList) {
+            for (DiaChiNhanHang dc : diaChiList) {
                 System.out.println("[DEBUG] Dia chi: " + dc.getId() + " - " + dc.getTenNguoiNhan() + " - "
                         + dc.getSoDTNhanHang() + " - " + dc.getDcNhanHang());
             }
@@ -111,31 +99,31 @@ public class AuthController {
         model.addAttribute("totalOrders", allUserOrders.size());
 
         BigDecimal totalAmount = allUserOrders.stream()
-                .map(com.poly.entity.HoaDon::getTongTien)
+                .map(HoaDon::getTongTien)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         model.addAttribute("totalSpent", totalAmount);
 
         // Count orders by status
         Map<String, Long> ordersByStatus = allUserOrders.stream()
-                .collect(Collectors.groupingBy(com.poly.entity.HoaDon::getTrangThai, Collectors.counting()));
+                .collect(Collectors.groupingBy(HoaDon::getTrangThai, Collectors.counting()));
         model.addAttribute("ordersByStatus", ordersByStatus);
 
         // Pagination for orders
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "ngayLap"));
-        Page<com.poly.entity.HoaDon> ordersPage;
+        Page<HoaDon> ordersPage;
 
         if (user != null && "CUSTOMER".equals(userRole)) {
             KhachHang khachHang = (KhachHang) user;
             // For customers, we need to get all orders and then paginate manually
             // since we don't have a direct repository method for pagination by customer
-            List<com.poly.entity.HoaDon> customerOrders = hoaDonService.findByKhachHang_MaKH(khachHang.getMaKH());
+            List<HoaDon> customerOrders = hoaDonService.findByKhachHang_MaKH(khachHang.getMaKH());
             int start = page * size;
             int end = Math.min(start + size, customerOrders.size());
 
-            List<com.poly.entity.HoaDon> pageContent = customerOrders.subList(start, end);
+            List<HoaDon> pageContent = customerOrders.subList(start, end);
 
             // Create a custom page
-            ordersPage = new Page<com.poly.entity.HoaDon>() {
+            ordersPage = new Page<HoaDon>() {
                 @Override
                 public int getTotalPages() {
                     return (int) Math.ceil((double) customerOrders.size() / size);
@@ -162,7 +150,7 @@ public class AuthController {
                 }
 
                 @Override
-                public List<com.poly.entity.HoaDon> getContent() {
+                public List<HoaDon> getContent() {
                     return pageContent;
                 }
 
@@ -212,12 +200,12 @@ public class AuthController {
                 }
 
                 @Override
-                public Iterator<com.poly.entity.HoaDon> iterator() {
+                public Iterator<HoaDon> iterator() {
                     return pageContent.iterator();
                 }
 
                 @Override
-                public <U> Page<U> map(Function<? super com.poly.entity.HoaDon, ? extends U> converter) {
+                public <U> Page<U> map(Function<? super HoaDon, ? extends U> converter) {
                     List<U> convertedContent = pageContent.stream().map(converter).collect(Collectors.toList());
                     return new Page<U>() {
                         @Override
@@ -397,14 +385,14 @@ public class AuthController {
         } else if (user != null && !"CUSTOMER".equals(userRole)) {
             NhanVien nhanVien = (NhanVien) user;
             // For employees, we need to get all orders and then paginate manually
-            List<com.poly.entity.HoaDon> employeeOrders = hoaDonService.findByNhanVien_MaNV(nhanVien.getMaNV());
+            List<HoaDon> employeeOrders = hoaDonService.findByNhanVien_MaNV(nhanVien.getMaNV());
             int start = page * size;
             int end = Math.min(start + size, employeeOrders.size());
 
-            List<com.poly.entity.HoaDon> pageContent = employeeOrders.subList(start, end);
+            List<HoaDon> pageContent = employeeOrders.subList(start, end);
 
             // Create a custom page similar to above
-            ordersPage = new Page<com.poly.entity.HoaDon>() {
+            ordersPage = new Page<HoaDon>() {
                 @Override
                 public int getTotalPages() {
                     return (int) Math.ceil((double) employeeOrders.size() / size);
@@ -431,7 +419,7 @@ public class AuthController {
                 }
 
                 @Override
-                public List<com.poly.entity.HoaDon> getContent() {
+                public List<HoaDon> getContent() {
                     return pageContent;
                 }
 
@@ -481,12 +469,12 @@ public class AuthController {
                 }
 
                 @Override
-                public Iterator<com.poly.entity.HoaDon> iterator() {
+                public Iterator<HoaDon> iterator() {
                     return pageContent.iterator();
                 }
 
                 @Override
-                public <U> Page<U> map(Function<? super com.poly.entity.HoaDon, ? extends U> converter) {
+                public <U> Page<U> map(Function<? super HoaDon, ? extends U> converter) {
                     List<U> convertedContent = pageContent.stream().map(converter).collect(Collectors.toList());
                     return new Page<U>() {
                         @Override
@@ -671,7 +659,7 @@ public class AuthController {
         model.addAttribute("currentPage", page);
         model.addAttribute("pageSize", size);
 
-        return "Client/demo-fashion-store-profile";
+        return "Client/demo-fashion-store-profile-new";
     }
 
     @GetMapping("/order/{orderId}")
@@ -688,13 +676,13 @@ public class AuthController {
         }
 
         // Find order by ID
-        Optional<com.poly.entity.HoaDon> orderOpt = hoaDonService.findById(orderId);
+        Optional<HoaDon> orderOpt = hoaDonService.findById(orderId);
         if (!orderOpt.isPresent()) {
             redirectAttributes.addFlashAttribute("error", "Không tìm thấy đơn hàng");
             return "redirect:/user/profile";
         }
 
-        com.poly.entity.HoaDon order = orderOpt.get();
+        HoaDon order = orderOpt.get();
 
         // Check if user owns this order (for customers) or has permission (for
         // employees)
@@ -707,7 +695,7 @@ public class AuthController {
         }
 
         // Get order details
-        List<com.poly.entity.ChiTietHoaDon> orderDetails = chiTietHoaDonService.findByHoaDon_MaHD(orderId);
+        List<ChiTietHoaDon> orderDetails = chiTietHoaDonService.findByHoaDon_MaHD(orderId);
 
         model.addAttribute("order", order);
         model.addAttribute("orderDetails", orderDetails);
@@ -715,116 +703,6 @@ public class AuthController {
         model.addAttribute("user", user);
 
         return "Client/order-details";
-    }
-
-    @PostMapping("/profile/update")
-    public String updateProfile(@RequestParam("fullName") String fullName,
-            @RequestParam("email") String email,
-            @RequestParam("phone") String phone,
-            HttpSession session,
-            RedirectAttributes redirectAttributes) {
-        try {
-            String userRole = Security.getUserRole(session);
-            Object user = session.getAttribute("user");
-
-            if ("CUSTOMER".equals(userRole)) {
-                KhachHang khachHang = (KhachHang) user;
-                khachHang.setTenKH(fullName);
-                khachHang.setEmail(email);
-                khachHang.setSoDT(phone);
-                khachHangService.save(khachHang);
-                session.setAttribute("user", khachHang);
-            } else {
-                NhanVien nhanVien = (NhanVien) user;
-                nhanVien.setTenNV(fullName);
-                nhanVien.setEmail(email);
-                nhanVien.setSoDT(phone);
-                nhanVienService.save(nhanVien);
-                session.setAttribute("user", nhanVien);
-            }
-
-            redirectAttributes.addFlashAttribute("success", "Cập nhật thông tin thành công!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra khi cập nhật thông tin!");
-        }
-
-        return "redirect:/user/profile";
-    }
-
-    @PostMapping("/profile/change-password")
-    public String changePassword(@RequestParam("currentPassword") String currentPassword,
-            @RequestParam("newPassword") String newPassword,
-            @RequestParam("confirmPassword") String confirmPassword,
-            HttpSession session,
-            RedirectAttributes redirectAttributes) {
-        if (!newPassword.equals(confirmPassword)) {
-            redirectAttributes.addFlashAttribute("error", "Mật khẩu mới không khớp!");
-            return "redirect:/user/profile";
-        }
-
-        redirectAttributes.addFlashAttribute("success", "Đổi mật khẩu thành công!");
-        return "redirect:/user/profile";
-    }
-
-    @PostMapping("/profile/create-account")
-    public String createAccount(@RequestParam("username") String username,
-            @RequestParam("password") String password,
-            @RequestParam("confirmPassword") String confirmPassword,
-            HttpSession session,
-            RedirectAttributes redirectAttributes) {
-
-        // Validation
-        if (!password.equals(confirmPassword)) {
-            redirectAttributes.addFlashAttribute("error", "Mật khẩu xác nhận không khớp!");
-            return "redirect:/user/profile";
-        }
-
-        if (password.length() < 6) {
-            redirectAttributes.addFlashAttribute("error", "Mật khẩu phải có ít nhất 6 ký tự!");
-            return "redirect:/user/profile";
-        }
-
-        // Check if username already exists
-        if (taiKhoanService.findByTenTK(username).isPresent()) {
-            redirectAttributes.addFlashAttribute("error", "Tên đăng nhập đã tồn tại!");
-            return "redirect:/user/profile";
-        }
-
-        try {
-            String userRole = Security.getUserRole(session);
-            if (!"CUSTOMER".equals(userRole)) {
-                redirectAttributes.addFlashAttribute("error", "Chỉ khách hàng mới có thể tạo tài khoản!");
-                return "redirect:/user/profile";
-            }
-
-            KhachHang khachHang = (KhachHang) session.getAttribute("user");
-
-            // Check if customer already has an account
-            Optional<TaiKhoan> existingAccount = taiKhoanService.findByKhachHang(khachHang);
-            if (existingAccount.isPresent()) {
-                redirectAttributes.addFlashAttribute("error", "Tài khoản đã tồn tại!");
-                return "redirect:/user/profile";
-            }
-
-            // Create new account
-            TaiKhoan taiKhoan = new TaiKhoan();
-            taiKhoan.setTenTK(username);
-            taiKhoan.setMatKhau(password);
-            taiKhoan.setKhachHang(khachHang);
-
-            taiKhoanService.save(taiKhoan);
-
-            // Update session - remove OAuth flags
-            session.setAttribute("username", username);
-            session.removeAttribute("needsAccount");
-            session.removeAttribute("oauthUser");
-
-            redirectAttributes.addFlashAttribute("success", "Tạo tài khoản thành công!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra khi tạo tài khoản: " + e.getMessage());
-        }
-
-        return "redirect:/user/profile";
     }
 
     @PostMapping("/order/cancel")
@@ -836,7 +714,7 @@ public class AuthController {
             Object user = session.getAttribute("user");
 
             // Find order by ID
-            com.poly.entity.HoaDon order = hoaDonService.findById(orderId).orElse(null);
+            HoaDon order = hoaDonService.findById(orderId).orElse(null);
             if (order == null) {
                 redirectAttributes.addFlashAttribute("error", "Không tìm thấy đơn hàng");
                 return "redirect:/user/profile";
@@ -870,67 +748,131 @@ public class AuthController {
     }
 
     // ================== ADD ==================
-    @PostMapping("/add")
-    public String add(@Valid AddressForm form,
-                      HttpSession session,
-                      RedirectAttributes ra) {
-        KhachHang kh = requireLogin(session, ra);
-        if (kh == null) return redirectProfile();
+        @PostMapping("/add")
+    public String add(@ModelAttribute DiaChiNhanHang dc,
+                     HttpSession session,
+                     RedirectAttributes redirectAttributes) {
+        try {
+            String userRole = Security.getUserRole(session);
+            if (!"CUSTOMER".equals(userRole)) {
+                redirectAttributes.addFlashAttribute("error", "Chỉ khách hàng mới có thể thêm địa chỉ!");
+                return "redirect:/user/profile";
+            }
 
-        DiaChiNhanHang dc = form.toEntity(kh);
-        diaChiNhanHangService.save(dc);
-        ra.addFlashAttribute("success", "Đã thêm địa chỉ!");
-        return redirectProfile();
+            KhachHang khachHang = (KhachHang) session.getAttribute("user");
+            dc.setKhachHang(khachHang);
+
+            diaChiNhanHangService.save(dc);
+            redirectAttributes.addFlashAttribute("success", "Thêm địa chỉ thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra khi thêm địa chỉ: " + e.getMessage());
+        }
+        return "redirect:/user/profile";
     }
 
     // ================== DELETE ==================
-    @PostMapping("/{id}/delete")
+    @PostMapping("/delete/{id}")
     public String delete(@PathVariable Integer id,
-                         HttpSession session,
-                         RedirectAttributes ra) {
-        return withOwnedAddress(id, session, ra, dc -> {
+                        HttpSession session,
+                        RedirectAttributes redirectAttributes) {
+        try {
+            String userRole = Security.getUserRole(session);
+            if (!"CUSTOMER".equals(userRole)) {
+                redirectAttributes.addFlashAttribute("error", "Chỉ khách hàng mới có thể xóa địa chỉ!");
+                return "redirect:/user/profile";
+            }
+            
             diaChiNhanHangService.deleteById(id);
-            ra.addFlashAttribute("success", "Đã xóa địa chỉ!");
-        });
+            redirectAttributes.addFlashAttribute("success", "Xóa địa chỉ thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra khi xóa địa chỉ: " + e.getMessage());
+        }
+        return "redirect:/user/profile";
     }
 
     // ================== EDIT ==================
-    @PostMapping("/{id}/edit")
-    public String edit(@PathVariable Integer id,
-                       @Valid AddressForm form,
-                       HttpSession session,
-                       RedirectAttributes ra) {
-        return withOwnedAddress(id, session, ra, dc -> {
-            dc.setTenNguoiNhan(form.getTenNguoiNhan());
-            dc.setSoDTNhanHang(form.getSoDTNhanHang());
-            dc.setDcNhanHang(form.getDcNhanHang());
-            diaChiNhanHangService.save(dc);
-            ra.addFlashAttribute("success", "Đã cập nhật địa chỉ!");
-        });
+    @GetMapping("/edit-address/{id}")
+    public String editAddress(@PathVariable Integer id, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        try {
+            System.out.println("[DEBUG] Edit GET called with id: " + id);
+            
+            String userRole = Security.getUserRole(session);
+            if (!"CUSTOMER".equals(userRole)) {
+                redirectAttributes.addFlashAttribute("error", "Chỉ khách hàng mới có thể sửa địa chỉ!");
+                return "redirect:/user/profile";
+            }
+            
+            Object user = session.getAttribute("user");
+            
+            // Add common user data
+            model.addAttribute("user", user);
+            model.addAttribute("userRole", userRole);
+            model.addAttribute("username", session.getAttribute("username"));
+            
+            // Add OAuth specific attributes
+            Boolean oauthUser = (Boolean) session.getAttribute("oauthUser");
+            Boolean needsAccount = (Boolean) session.getAttribute("needsAccount");
+            model.addAttribute("oauthUser", oauthUser != null ? oauthUser : false);
+            model.addAttribute("needsAccount", needsAccount != null ? needsAccount : false);
+            
+            // Load address to edit
+            DiaChiNhanHang dc = diaChiNhanHangService.findById(id).orElse(null);
+            if (dc == null) {
+                System.out.println("[DEBUG] Address not found with id: " + id);
+                redirectAttributes.addFlashAttribute("error", "Không tìm thấy địa chỉ!");
+                return "redirect:/user/profile";
+            }
+            
+            System.out.println("[DEBUG] Found address: " + dc.getTenNguoiNhan() + " - " + dc.getDcNhanHang());
+            
+            // Load all addresses for the customer
+            if (user != null && "CUSTOMER".equals(userRole)) {
+                KhachHang khachHang = (KhachHang) user;
+                List<DiaChiNhanHang> diaChiList = diaChiNhanHangService
+                        .findByKhachHang_MaKH(khachHang.getMaKH());
+                model.addAttribute("diaChiList", diaChiList);
+                System.out.println("[DEBUG] Loaded " + diaChiList.size() + " addresses for customer");
+            }
+            
+            model.addAttribute("dc", dc);
+            System.out.println("[DEBUG] Returning to template with dc: " + (dc != null ? "not null" : "null"));
+            return "Client/demo-fashion-store-profile-new";
+        } catch (Exception e) {
+            System.out.println("[DEBUG] Exception in edit GET: " + e.getMessage());
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
+            return "redirect:/user/profile";
+        }
     }
 
-    // Helper: kiểm tra đăng nhập và quyền
-    private KhachHang requireLogin(HttpSession session, RedirectAttributes ra) {
-        String userRole = Security.getUserRole(session);
-        Object user = session.getAttribute("user");
-        if (!"CUSTOMER".equals(userRole)) {
-            ra.addFlashAttribute("error", "Bạn không có quyền thực hiện hành động này.");
-            return null;
+        @PostMapping("/edit/{id}")
+    public String edit(@ModelAttribute DiaChiNhanHang dc,
+                      @PathVariable Integer id,
+                      HttpSession session,
+                      RedirectAttributes redirectAttributes) {
+        try {
+            String userRole = Security.getUserRole(session);
+            if (!"CUSTOMER".equals(userRole)) {
+                redirectAttributes.addFlashAttribute("error", "Chỉ khách hàng mới có thể sửa địa chỉ!");
+                return "redirect:/user/profile";
+            }
+
+            // Lấy địa chỉ hiện tại để giữ nguyên khách hàng
+            DiaChiNhanHang existingDc = diaChiNhanHangService.findById(id).orElse(null);
+            if (existingDc == null) {
+                redirectAttributes.addFlashAttribute("error", "Không tìm thấy địa chỉ!");
+                return "redirect:/user/profile";
+            }
+
+            // Cập nhật thông tin mới nhưng giữ nguyên khách hàng
+            dc.setId(id);
+            dc.setKhachHang(existingDc.getKhachHang());
+
+            diaChiNhanHangService.save(dc);
+            redirectAttributes.addFlashAttribute("success", "Cập nhật địa chỉ thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra khi cập nhật địa chỉ: " + e.getMessage());
         }
-        return (KhachHang) user;
-    }
-    private String redirectProfile() {
         return "redirect:/user/profile";
     }
-    private String withOwnedAddress(Integer id, HttpSession session, RedirectAttributes ra, Consumer<DiaChiNhanHang> action) {
-        KhachHang kh = requireLogin(session, ra);
-        if (kh == null) return redirectProfile();
-        DiaChiNhanHang dc = diaChiNhanHangService.findById(id).orElse(null);
-        if (dc == null || !dc.getKhachHang().getMaKH().equals(kh.getMaKH())) {
-            ra.addFlashAttribute("error", "Bạn không có quyền sửa địa chỉ này.");
-            return redirectProfile();
-        }
-        action.accept(dc);
-        return redirectProfile();
-    }
-}
+} 

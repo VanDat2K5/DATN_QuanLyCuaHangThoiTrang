@@ -93,6 +93,54 @@
                 font-size: 0.875rem;
                 border-radius: 0.2rem;
             }
+            
+            /* Address Management Styles */
+            .address-card {
+                background: #fff;
+                transition: all 0.3s ease;
+                border: 1px solid #e9ecef !important;
+            }
+            
+            .address-card:hover {
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                transform: translateY(-2px);
+                border-color: #007bff !important;
+            }
+            
+            .address-info h6 {
+                color: #333;
+                font-weight: 600;
+                margin-bottom: 0.25rem;
+            }
+            
+            .address-info small {
+                font-size: 0.75rem;
+                color: #6c757d;
+            }
+            
+            .btn-group .btn {
+                margin-right: 0.25rem;
+            }
+            
+            .btn-group .btn:last-child {
+                margin-right: 0;
+            }
+            
+            .card-header {
+                border-bottom: 2px solid #e9ecef;
+            }
+            
+            .card-header.bg-primary {
+                background: linear-gradient(135deg, #007bff, #0056b3) !important;
+            }
+            
+            .card-header.bg-light {
+                background: linear-gradient(135deg, #f8f9fa, #e9ecef) !important;
+            }
+            
+            .fs-48 {
+                font-size: 3rem;
+            }
         </style>
     </head>
     <body data-mobile-nav-style="classic">
@@ -214,7 +262,7 @@
                                             </div>
                                             <div class="stats-number" th:text="${orderCount}">0</div>
                                             <div class="stats-label">
-                                                <span th:text="${userRole == 'CUSTOMER' ? 'Total Orders' : 'Orders Processed'}">Tổng</span>
+                                                <span th:text="${userRole == 'CUSTOMER' ? 'Total Orders' : 'Orders Processed'}">Total Orders</span>
                                             </div>
                                         </div>
                                     </div>
@@ -411,50 +459,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Shipping Address Section -->
-                                <div class="mt-4">
-                                    <h5>
-                                        <i class="feather icon-feather-map-pin me-2"></i>
-                                        Địa chỉ nhận hàng
-                                    </h5>
-                                    <!-- Form thêm địa chỉ mới -->
-                                    <form th:action="@{/user/add}" method="post" class="mb-3">
-                                        <input name="tenNguoiNhan" placeholder="Tên người nhận" required>
-                                        <input name="soDTNhanHang" placeholder="Số điện thoại" required>
-                                        <input name="dcNhanHang" placeholder="Địa chỉ nhận hàng" required>
-                                        <button type="submit" class="btn btn-primary btn-sm">Thêm địa chỉ</button>
-                                    </form>
-                                    <div th:if="${diaChiList != null and !diaChiList.empty}">
-                                        <table class="table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>Tên người nhận</th>
-                                                    <th>Số điện thoại</th>
-                                                    <th>Địa chỉ</th>
-                                                    <th>Hành động</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr th:each="dc : ${diaChiList}">
-                                                    <form th:action="@{'/user/' + ${dc.id} + '/edit'}" method="post">
-                                                        <td><input name="tenNguoiNhan" th:value="${dc.tenNguoiNhan}" required></td>
-                                                        <td><input name="soDTNhanHang" th:value="${dc.soDTNhanHang}" required></td>
-                                                        <td><input name="dcNhanHang" th:value="${dc.dcNhanHang}" required></td>
-                                                        <td>
-                                                            <button type="submit" class="btn btn-warning btn-sm">Sửa</button>
-                                                    </form>
-                                                    <form th:action="@{'/user/' + ${dc.id} + '/delete'}" method="post" style="display:inline;">
-                                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn chắc chắn muốn xóa?')">Xóa</button>
-                                                    </form>
-                                                        </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div th:if="${diaChiList == null or diaChiList.empty}" class="text-muted">
-                                        Chưa có địa chỉ nhận hàng nào.
-                                    </div>
-                                </div>
+
                             </div>
 
                             <!-- Edit Profile Tab -->
@@ -508,6 +513,130 @@
                                         </div>
                                     </div>
                                 </form>
+                            </div>
+
+                            <!-- Address Management Tab -->
+                            <div class="tab-pane fade" id="address" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <!-- Add New Address Form -->
+                                        <div class="card mb-4">
+                                            <div class="card-header bg-primary text-white">
+                                                <h6 class="mb-0">
+                                                    <i class="feather icon-feather-plus me-2"></i>
+                                                    Thêm địa chỉ mới
+                                                </h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <form th:action="@{/user/add}" method="post" class="row g-3">
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">
+                                                            <i class="feather icon-feather-user me-1"></i>
+                                                            Tên người nhận <span class="text-danger">*</span>
+                                                        </label>
+                                                        <input type="text" class="form-control" name="tenNguoiNhan" 
+                                                               placeholder="Nhập tên người nhận" required>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">
+                                                            <i class="feather icon-feather-phone me-1"></i>
+                                                            Số điện thoại <span class="text-danger">*</span>
+                                                        </label>
+                                                        <input type="tel" class="form-control" name="soDTNhanHang" 
+                                                               placeholder="Nhập số điện thoại" required>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label">
+                                                            <i class="feather icon-feather-map-pin me-1"></i>
+                                                            Địa chỉ nhận hàng <span class="text-danger">*</span>
+                                                        </label>
+                                                        <input type="text" class="form-control" name="dcNhanHang" 
+                                                               placeholder="Nhập địa chỉ chi tiết" required>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <button type="submit" class="btn btn-primary">
+                                                            <i class="feather icon-feather-plus me-2"></i>
+                                                            Thêm địa chỉ
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                        <!-- Address List -->
+                                        <div class="card">
+                                            <div class="card-header bg-light">
+                                                <h6 class="mb-0">
+                                                    <i class="feather icon-feather-list me-2"></i>
+                                                    Danh sách địa chỉ nhận hàng
+                                                </h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div th:if="${diaChiList != null and !diaChiList.empty}">
+                                                    <div class="row">
+                                                        <div class="col-12" th:each="dc : ${diaChiList}">
+                                                            <div class="address-card mb-3 p-3 border rounded">
+                                                                <div class="row align-items-center">
+                                                                    <div class="col-md-3">
+                                                                        <div class="address-info">
+                                                                            <h6 class="mb-1">
+                                                                                <i class="feather icon-feather-user me-1"></i>
+                                                                                <span th:text="${dc.tenNguoiNhan}">Tên người nhận</span>
+                                                                            </h6>
+                                                                            <small class="text-muted">Người nhận</small>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        <div class="address-info">
+                                                                            <h6 class="mb-1">
+                                                                                <i class="feather icon-feather-phone me-1"></i>
+                                                                                <span th:text="${dc.soDTNhanHang}">Số điện thoại</span>
+                                                                            </h6>
+                                                                            <small class="text-muted">Liên hệ</small>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="address-info">
+                                                                            <h6 class="mb-1">
+                                                                                <i class="feather icon-feather-map-pin me-1"></i>
+                                                                                <span th:text="${dc.dcNhanHang}">Địa chỉ</span>
+                                                                            </h6>
+                                                                            <small class="text-muted">Địa chỉ giao hàng</small>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-2">
+                                                                        <div class="btn-group" role="group">
+                                                                            <button type="button" class="btn btn-outline-warning btn-sm edit-address-btn" 
+                                                                                    th:data-id="${dc.id}"
+                                                                                    th:data-ten="${dc.tenNguoiNhan}"
+                                                                                    th:data-phone="${dc.soDTNhanHang}"
+                                                                                    th:data-address="${dc.dcNhanHang}"
+                                                                                    title="Chỉnh sửa">
+                                                                                <i class="feather icon-feather-edit"></i>
+                                                                            </button>
+                                                                            <form th:action="@{'/user/' + ${dc.id} + '/delete'}" method="post" style="display:inline;">
+                                                                                <button type="submit" class="btn btn-outline-danger btn-sm" 
+                                                                                        onclick="return confirm('Bạn có chắc chắn muốn xóa địa chỉ này?')"
+                                                                                        title="Xóa">
+                                                                                    <i class="feather icon-feather-trash-2"></i>
+                                                                                </button>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div th:if="${diaChiList == null or diaChiList.empty}" class="text-center py-4">
+                                                    <i class="feather icon-feather-map-pin fs-48 text-muted mb-3"></i>
+                                                    <p class="text-muted">Chưa có địa chỉ nhận hàng nào</p>
+                                                    <small class="text-muted">Hãy thêm địa chỉ mới để tiện lợi khi đặt hàng</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Create Account Tab -->
@@ -637,6 +766,56 @@
             </div>
         </div>
 
+        <!-- Edit Address Modal -->
+        <div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="editAddressModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning text-dark">
+                        <h5 class="modal-title" id="editAddressModalLabel">
+                            <i class="feather icon-feather-edit me-2"></i>
+                            Chỉnh sửa địa chỉ
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editAddressForm" method="post">
+                            <div class="mb-3">
+                                <label for="editTenNguoiNhan" class="form-label">
+                                    <i class="feather icon-feather-user me-1"></i>
+                                    Tên người nhận <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="editTenNguoiNhan" name="tenNguoiNhan" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editSoDTNhanHang" class="form-label">
+                                    <i class="feather icon-feather-phone me-1"></i>
+                                    Số điện thoại <span class="text-danger">*</span>
+                                </label>
+                                <input type="tel" class="form-control" id="editSoDTNhanHang" name="soDTNhanHang" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editDcNhanHang" class="form-label">
+                                    <i class="feather icon-feather-map-pin me-1"></i>
+                                    Địa chỉ nhận hàng <span class="text-danger">*</span>
+                                </label>
+                                <textarea class="form-control" id="editDcNhanHang" name="dcNhanHang" rows="3" required></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="feather icon-feather-x me-2"></i>
+                            Hủy
+                        </button>
+                        <button type="submit" form="editAddressForm" class="btn btn-warning">
+                            <i class="feather icon-feather-save me-2"></i>
+                            Lưu thay đổi
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Create Account Modal -->
         <div class="modal fade" id="createAccountModal" tabindex="-1" aria-labelledby="createAccountModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -747,6 +926,18 @@
                     });
                 });
 
+                // Add click event listeners to edit address buttons
+                document.querySelectorAll('.edit-address-btn').forEach(function(button) {
+                    button.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        const ten = this.getAttribute('data-ten');
+                        const phone = this.getAttribute('data-phone');
+                        const address = this.getAttribute('data-address');
+                        
+                        editAddress(id, ten, phone, address);
+                    });
+                });
+
                 // Create Account Form Validation
                 const createAccountForm = document.getElementById('createAccountForm');
                 if (createAccountForm) {
@@ -827,6 +1018,21 @@
             // Function to change page size
             function changePageSize(size) {
                 window.location.href = '/user/profile?page=0&size=' + size;
+            }
+            
+            // Function to edit address
+            function editAddress(id, tenNguoiNhan, soDTNhanHang, dcNhanHang) {
+                // Set form action
+                document.getElementById('editAddressForm').action = '/user/' + id + '/edit';
+                
+                // Fill form fields
+                document.getElementById('editTenNguoiNhan').value = tenNguoiNhan;
+                document.getElementById('editSoDTNhanHang').value = soDTNhanHang;
+                document.getElementById('editDcNhanHang').value = dcNhanHang;
+                
+                // Show modal
+                const modal = new bootstrap.Modal(document.getElementById('editAddressModal'));
+                modal.show();
             }
         </script>
     </body>

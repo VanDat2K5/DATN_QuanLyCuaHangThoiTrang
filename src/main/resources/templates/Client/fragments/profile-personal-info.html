@@ -1,0 +1,147 @@
+<!-- Personal Info Tab Fragment -->
+<div class="tab-pane fade" id="info" role="tabpanel" th:fragment="info">
+    <div class="row">
+        <!-- Personal Information -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="feather icon-feather-user me-2"></i>
+                        Thông tin cá nhân
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">FULL NAME</label>
+                            <div class="form-control-plaintext" th:text="${userRole == 'CUSTOMER' ? user.tenKH : user.tenNV}">
+                                User Name
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">EMAIL</label>
+                            <div class="form-control-plaintext" th:text="${user.email}">
+                                user@example.com
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">PHONE NUMBER</label>
+                            <div class="form-control-plaintext" th:text="${userRole == 'CUSTOMER' ? user.soDT : user.soDT}">
+                                Phone Number
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">ACCOUNT TYPE</label>
+                            <div class="form-control-plaintext">
+                                <span th:text="${userRole == 'CUSTOMER' ? 'Customer Account' : (userRole == 'ADMIN' ? 'Administrator Account' : 'Employee Account')}">
+                                    Account Type
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shipping Address Management -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="feather icon-feather-map-pin me-2"></i>
+                        Địa chỉ nhận hàng
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Add/Edit Address Form -->
+                    <form th:action="${dc != null ? '/user/edit/' + dc.id : '/user/add'}" method="post" class="mb-4">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="tenNguoiNhan" class="form-label">Tên người nhận</label>
+                                <input type="text" class="form-control" id="tenNguoiNhan" name="tenNguoiNhan" 
+                                       th:value="${dc != null ? dc.tenNguoiNhan : ''}" required>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="soDTNhanHang" class="form-label">Số điện thoại</label>
+                                <input type="tel" class="form-control" id="soDTNhanHang" name="soDTNhanHang" 
+                                       th:value="${dc != null ? dc.soDTNhanHang : ''}" required>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="dcNhanHang" class="form-label">Địa chỉ</label>
+                                <textarea class="form-control" id="dcNhanHang" name="dcNhanHang" rows="3" required
+                                          th:text="${dc != null ? dc.dcNhanHang : ''}"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="feather icon-feather-plus me-2" th:if="${dc == null}"></i>
+                                    <i class="feather icon-feather-edit me-2" th:if="${dc != null}"></i>
+                                    <span th:text="${dc != null ? 'Cập nhật địa chỉ' : 'Thêm địa chỉ'}">Thêm địa chỉ</span>
+                                </button>
+                                <a th:if="${dc != null}" href="/user/profile" class="btn btn-secondary ms-2">
+                                    <i class="feather icon-feather-x me-2"></i>
+                                    Hủy
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Saved Addresses Table -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="feather icon-feather-list me-2"></i>
+                        Địa chỉ đã lưu
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${diaChiList != null and !diaChiList.empty}" class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Tên người nhận</th>
+                                    <th>Số điện thoại</th>
+                                    <th>Địa chỉ</th>
+                                    <th>Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="diaChi : ${diaChiList}">
+                                    <td th:text="${diaChi.tenNguoiNhan}">Tên người nhận</td>
+                                    <td th:text="${diaChi.soDTNhanHang}">Số điện thoại</td>
+                                    <td th:text="${diaChi.dcNhanHang}">Địa chỉ</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a th:href="@{/user/edit/{id}(id=${diaChi.id})}" 
+                                               class="btn btn-sm btn-warning" title="Sửa">
+                                                <i class="feather icon-feather-edit"></i>
+                                            </a>
+                                            <form th:action="@{/user/delete/{id}(id=${diaChi.id})}" 
+                                                  method="post" 
+                                                  style="display: inline;"
+                                                  onsubmit="return confirm('Bạn có chắc muốn xóa địa chỉ này?')">
+                                                <button type="submit" class="btn btn-sm btn-danger" title="Xóa">
+                                                    <i class="feather icon-feather-trash-2"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div th:unless="${diaChiList != null and !diaChiList.empty}" class="text-center py-4">
+                        <i class="feather icon-feather-map-pin fs-1 text-muted mb-3"></i>
+                        <h6 class="text-muted">Chưa có địa chỉ nào được lưu</h6>
+                        <p class="text-muted">Thêm địa chỉ nhận hàng để tiện lợi khi mua sắm!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
