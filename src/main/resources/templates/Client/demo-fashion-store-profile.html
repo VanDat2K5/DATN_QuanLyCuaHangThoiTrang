@@ -214,7 +214,7 @@
                                             </div>
                                             <div class="stats-number" th:text="${orderCount}">0</div>
                                             <div class="stats-label">
-                                                <span th:text="${userRole == 'CUSTOMER' ? 'Total Orders' : 'Orders Processed'}">Tổng</span>
+                                                <span th:text="${userRole == 'CUSTOMER' ? 'Total Orders' : 'Orders Processed'}">Total Orders</span>
                                             </div>
                                         </div>
                                     </div>
@@ -417,13 +417,6 @@
                                         <i class="feather icon-feather-map-pin me-2"></i>
                                         Địa chỉ nhận hàng
                                     </h5>
-                                    <!-- Form thêm địa chỉ mới -->
-                                    <form th:action="@{/user/add}" method="post" class="mb-3">
-                                        <input name="tenNguoiNhan" placeholder="Tên người nhận" required>
-                                        <input name="soDTNhanHang" placeholder="Số điện thoại" required>
-                                        <input name="dcNhanHang" placeholder="Địa chỉ nhận hàng" required>
-                                        <button type="submit" class="btn btn-primary btn-sm">Thêm địa chỉ</button>
-                                    </form>
                                     <div th:if="${diaChiList != null and !diaChiList.empty}">
                                         <table class="table table-bordered">
                                             <thead>
@@ -431,22 +424,13 @@
                                                     <th>Tên người nhận</th>
                                                     <th>Số điện thoại</th>
                                                     <th>Địa chỉ</th>
-                                                    <th>Hành động</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr th:each="dc : ${diaChiList}">
-                                                    <form th:action="@{'/user/' + ${dc.id} + '/edit'}" method="post">
-                                                        <td><input name="tenNguoiNhan" th:value="${dc.tenNguoiNhan}" required></td>
-                                                        <td><input name="soDTNhanHang" th:value="${dc.soDTNhanHang}" required></td>
-                                                        <td><input name="dcNhanHang" th:value="${dc.dcNhanHang}" required></td>
-                                                        <td>
-                                                            <button type="submit" class="btn btn-warning btn-sm">Sửa</button>
-                                                    </form>
-                                                    <form th:action="@{'/user/' + ${dc.id} + '/delete'}" method="post" style="display:inline;">
-                                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn chắc chắn muốn xóa?')">Xóa</button>
-                                                    </form>
-                                                        </td>
+                                                    <td th:text="${dc.tenNguoiNhan}">Tên người nhận</td>
+                                                    <td th:text="${dc.soDTNhanHang}">SĐT</td>
+                                                    <td th:text="${dc.dcNhanHang}">Địa chỉ</td>
                                                 </tr>
                                             </tbody>
                                         </table>
