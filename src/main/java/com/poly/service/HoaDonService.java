@@ -35,4 +35,11 @@ public interface HoaDonService {
     int updateTrangThaiByMaHD(String maHD, String trangThai);
 
     Page<HoaDon> findByMaHDContainingIgnoreCase(String maHD, Pageable pageable);
+
+    // New methods for profile dashboard pagination
+    Page<HoaDon> findByKhachHangOrderByNgayLapDesc(String maKhachHang, Pageable pageable);
+
+    Page<HoaDon> findByNhanVienOrderByNgayLapDesc(String maNhanVien, Pageable pageable);
+
+    Page<HoaDon> findAllOrderByNgayLapDesc(Pageable pageable);
 }

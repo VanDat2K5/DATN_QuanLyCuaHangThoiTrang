@@ -171,7 +171,7 @@ public class OrderController {
 					cthd.setChiTietSanPham(ctsp);
 					cthd.setGiaXuat(gia);
 					cthd.setSoLuongXuat(soLuong);
-					cthd.setLoHang("LOT001");
+					cthd.setLoHang(ctsp.getLoHang());
 					cthd.setThanhTien(gia.multiply(BigDecimal.valueOf(soLuong)));
 
 					chiTietHoaDonService.save(cthd);
@@ -219,9 +219,11 @@ public class OrderController {
 			if (optionalOrder.isPresent()) {
 				HoaDon order = optionalOrder.get();
 				// Kiểm tra trạng thái thanh toán (có thể tích hợp với API ngân hàng)
-				// Hiện tại trả về false để demo
-				boolean isPaid = false;
-				return ResponseEntity.ok(Map.of("isPaid", isPaid));
+				if (order.getTrangThai().equals("DaThanhToan")) {
+					return ResponseEntity.ok(Map.of("isPaid", true));
+				} else {
+					return ResponseEntity.ok(Map.of("isPaid", false));
+				}
 			} else {
 				return ResponseEntity.badRequest().body(Map.of("error", "Không tìm thấy đơn hàng"));
 			}

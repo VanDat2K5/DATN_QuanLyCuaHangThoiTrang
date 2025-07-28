@@ -6,16 +6,16 @@
     <title>Đặt hàng thành công - Fashion Store</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- favicon icon -->
-    <link rel="shortcut icon" href="/images/logoST.png">
+    <link rel="shortcut icon" th:href="@{/images/logoST.png}">
     <!-- google fonts preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- style sheets and font icons  -->
-    <link rel="stylesheet" href="/css/vendors.min.css"/>
-    <link rel="stylesheet" href="/css/icon.min.css"/>
-    <link rel="stylesheet" href="/css/style.css"/>
-    <link rel="stylesheet" href="/css/responsive.css"/>
-    <link rel="stylesheet" href="/demos/fashion-store/fashion-store.css" />
+    <link rel="stylesheet" th:href="@{/css/vendors.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/icon.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" th:href="@{/css/responsive.css}"/>
+    <link rel="stylesheet" th:href="@{/demos/fashion-store/fashion-store.css}" />        
     <style>
         .success-container {
             max-width: 800px;
@@ -145,7 +145,7 @@
                 <a href="/" class="btn-home">
                     <i class="bi bi-house"></i> Về trang chủ
                 </a>
-                <a href="/profile" class="btn-home">
+                <a th:href="@{'/user/order/' + ${order.maHD}}" class="btn-home">
                     <i class="bi bi-person"></i> Xem đơn hàng
                 </a>
             </div>
@@ -164,5 +164,10 @@
     <div th:replace="Client/footer :: footer"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script th:src="@{/js/jquery.js}"></script>
+    <script th:src="@{/js/vendors.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/sticky-header.js}"></script>
 </body>
 </html> 

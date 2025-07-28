@@ -31,4 +31,11 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, String> {
 
     Page<HoaDon> findByMaHDContainingIgnoreCase(String keyword, Pageable pageable);
 
+    // New methods for profile dashboard pagination
+    Page<HoaDon> findByKhachHang_MaKHOrderByNgayLapDesc(String maKH, Pageable pageable);
+
+    Page<HoaDon> findByNhanVien_MaNVOrderByNgayLapDesc(String maNV, Pageable pageable);
+
+    Page<HoaDon> findAllByOrderByNgayLapDesc(Pageable pageable);
+
 }

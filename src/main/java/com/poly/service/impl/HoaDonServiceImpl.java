@@ -99,4 +99,22 @@ public class HoaDonServiceImpl implements HoaDonService {
     public Page<HoaDon> findByMaHDContainingIgnoreCase(String keyword, Pageable pageable) {
         return hoaDonRepository.findByMaHDContainingIgnoreCase(keyword, pageable);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<HoaDon> findByKhachHangOrderByNgayLapDesc(String maKhachHang, Pageable pageable) {
+        return hoaDonRepository.findByKhachHang_MaKHOrderByNgayLapDesc(maKhachHang, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<HoaDon> findByNhanVienOrderByNgayLapDesc(String maNhanVien, Pageable pageable) {
+        return hoaDonRepository.findByNhanVien_MaNVOrderByNgayLapDesc(maNhanVien, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<HoaDon> findAllOrderByNgayLapDesc(Pageable pageable) {
+        return hoaDonRepository.findAllByOrderByNgayLapDesc(pageable);
+    }
 }
