@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Voucher - StyleTech Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/admin-custom.css">
+    <link rel="stylesheet" href="/css/icon.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div th:replace="admin/admin-header :: sidebar-admin"></div>
+    
+    <!-- Top Header -->
+    <div th:replace="admin/admin-header :: header-admin"></div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <div class="container-fluid">
+            <!-- Page Header Section -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-0">
+                        <i class="bi bi-ticket-perforated me-2"></i>
+                        Quản Lý Voucher
+                    </h2>
+                    <p class="text-muted mb-0">Quản lý thông tin voucher và khuyến mãi của hệ thống</p>
+                </div>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addVoucherModal">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    Thêm Voucher
+                </button>
+            </div>
+
+            <!-- Alert Messages Section -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle me-2"></i>
+                <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Search and Filter Section -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form th:action="@{/admin/management/voucher/search}" method="get" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="keyword" class="form-label">Tìm kiếm</label>
+                            <input type="text" class="form-control" id="keyword" name="keyword" 
+                                   th:value="${keyword}" placeholder="Nhập mã voucher hoặc tên...">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">&nbsp;</label>
+                            <button type="submit" class="btn btn-outline-primary d-block w-100">
+                                <i class="bi bi-search me-2"></i>Tìm kiếm
+                            </button>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">&nbsp;</label>
+                            <a href="/admin/management/voucher" class="btn btn-outline-secondary d-block w-100">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Làm mới
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Voucher List Section -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="bi bi-list-ul me-2"></i>
+                            Danh Sách Voucher
+                        </h5>
+                        <span class="badge bg-primary" th:text="${'Tổng: ' + page.totalElements + ' voucher'}"></span>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Mã Voucher</th>
+                                    <th>Tên Voucher</th>
+                                    <th>Giảm Giá</th>
+                                    <th>Giới Hạn</th>
+                                    <th>Ngày Bắt Đầu</th>
+                                    <th>Ngày Kết Thúc</th>
+                                    <th>Trạng Thái</th>
+                                    <th>Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="voucher : ${page.content}" th:if="${!page.content.isEmpty()}">
+                                    <td>
+                                        <span class="badge bg-info" th:text="${voucher.maKM}"></span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm me-3">
+                                                <i class="bi bi-ticket-perforated fs-4 text-warning"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0" th:text="${voucher.tenKM}"></h6>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold text-success" th:text="${voucher.giam + '%'}"></span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${voucher.gioiHan}"></span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${#temporals.format(voucher.ngayBatDau, 'dd/MM/yyyy')}"></span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${#temporals.format(voucher.ngayKetThuc, 'dd/MM/yyyy')}"></span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${voucher.ngayKetThuc != null and voucher.ngayKetThuc.isAfter(#temporals.createToday())}" 
+                                              class="badge bg-success">Còn hiệu lực</span>
+                                        <span th:unless="${voucher.ngayKetThuc != null and voucher.ngayKetThuc.isAfter(#temporals.createToday())}" 
+                                              class="badge bg-danger">Hết hạn</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-sm btn-outline-info view-btn" 
+                                                    th:data-ma-km="${voucher.maKM}"
+                                                    th:data-ten-km="${voucher.tenKM}"
+                                                    th:data-giam="${voucher.giam}"
+                                                    th:data-gioi-han="${voucher.gioiHan}"
+                                                    th:data-ngay-bat-dau="${#temporals.format(voucher.ngayBatDau, 'dd/MM/yyyy')}"
+                                                    th:data-ngay-ket-thuc="${#temporals.format(voucher.ngayKetThuc, 'dd/MM/yyyy')}"
+                                                    title="Xem chi tiết">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-warning edit-btn" 
+                                                    th:data-ma-km="${voucher.maKM}"
+                                                    th:data-ten-km="${voucher.tenKM}"
+                                                    th:data-giam="${voucher.giam}"
+                                                    th:data-gioi-han="${voucher.gioiHan}"
+                                                    th:data-ngay-bat-dau="${#temporals.format(voucher.ngayBatDau, 'yyyy-MM-dd')}"
+                                                    th:data-ngay-ket-thuc="${#temporals.format(voucher.ngayKetThuc, 'yyyy-MM-dd')}"
+                                                    title="Chỉnh sửa">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger delete-btn" 
+                                                    th:data-ma-km="${voucher.maKM}"
+                                                    title="Xóa">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:if="${page.content.isEmpty()}">
+                                    <td colspan="8" class="text-center py-4">
+                                        <div class="text-muted">
+                                            <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                                            <h5>Không có dữ liệu</h5>
+                                            <p>Không tìm thấy voucher nào phù hợp với tiêu chí tìm kiếm.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination Section -->
+            <nav th:if="${page.totalPages > 1}" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/management/voucher(page=${page.number - 1}, size=${page.size})}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    
+                    <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, page.totalPages - 1)}"
+                        th:classappend="${pageNum == page.number} ? 'active'">
+                        <a class="page-link" th:href="@{/admin/management/voucher(page=${pageNum}, size=${page.size})}"
+                           th:text="${pageNum + 1}"></a>
+                    </li>
+                    
+                    <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/management/voucher(page=${page.number + 1}, size=${page.size})}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <!-- View Voucher Modal -->
+    <div class="modal fade" id="viewVoucherModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-eye me-2"></i>
+                        Chi Tiết Voucher
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Mã Voucher:</label>
+                                <p id="viewMaKM" class="mb-0"></p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Tên Voucher:</label>
+                                <p id="viewTenKM" class="mb-0"></p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Giảm Giá:</label>
+                                <p id="viewGiam" class="mb-0 text-success fw-bold"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Giới Hạn:</label>
+                                <p id="viewGioiHan" class="mb-0"></p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Ngày Bắt Đầu:</label>
+                                <p id="viewNgayBatDau" class="mb-0"></p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Ngày Kết Thúc:</label>
+                                <p id="viewNgayKetThuc" class="mb-0"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-warning" onclick="switchToEdit()">Chỉnh Sửa</button>
+                </div>
+            </div>
+        </div>
+    </div>
+     
+    <!-- Add Voucher Modal -->
+    <div class="modal fade" id="addVoucherModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-ticket-perforated me-2"></i>
+                        Thêm Voucher Mới
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form th:action="@{/admin/management/voucher/add}" method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="maKM" class="form-label">Mã Voucher <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="maKM" name="maKM" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tenKM" class="form-label">Tên Voucher <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="tenKM" name="tenKM" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="giam" class="form-label">Giảm Giá (%) <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="giam" name="giam" min="0" max="100" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="gioiHan" class="form-label">Giới Hạn <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="gioiHan" name="gioiHan" min="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ngayBatDau" class="form-label">Ngày Bắt Đầu <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="ngayBatDau" name="ngayBatDau" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ngayKetThuc" class="form-label">Ngày Kết Thúc <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="ngayKetThuc" name="ngayKetThuc" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary">Thêm Voucher</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Voucher Modal -->
+    <div class="modal fade" id="editVoucherModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-pencil me-2"></i>
+                        Chỉnh Sửa Voucher
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="editForm" method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="editMaKM" class="form-label">Mã Voucher</label>
+                            <input type="text" class="form-control" id="editMaKM" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editTenKM" class="form-label">Tên Voucher <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editTenKM" name="tenKM" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editGiam" class="form-label">Giảm Giá (%) <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="editGiam" name="giam" min="0" max="100" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editGioiHan" class="form-label">Giới Hạn <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="editGioiHan" name="gioiHan" min="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editNgayBatDau" class="form-label">Ngày Bắt Đầu <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="editNgayBatDau" name="ngayBatDau" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editNgayKetThuc" class="form-label">Ngày Kết Thúc <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="editNgayKetThuc" name="ngayKetThuc" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-warning">Cập Nhật</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+                        Xác nhận xóa
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn xóa voucher này không?</p>
+                    <p class="text-muted small">Hành động này không thể hoàn tác.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <form id="deleteForm" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger">Xóa</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/script.js"></script>
+     
+    <script>
+        // Event listeners for buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            // View button event listeners
+            document.querySelectorAll('.view-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var maKM = this.getAttribute('data-ma-km');
+                    var tenKM = this.getAttribute('data-ten-km');
+                    var giam = this.getAttribute('data-giam');
+                    var gioiHan = this.getAttribute('data-gioi-han');
+                    var ngayBatDau = this.getAttribute('data-ngay-bat-dau');
+                    var ngayKetThuc = this.getAttribute('data-ngay-ket-thuc');
+                    
+                    viewVoucher(maKM, tenKM, giam, gioiHan, ngayBatDau, ngayKetThuc);
+                });
+            });
+            
+            // Edit button event listeners
+            document.querySelectorAll('.edit-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var maKM = this.getAttribute('data-ma-km');
+                    var tenKM = this.getAttribute('data-ten-km');
+                    var giam = this.getAttribute('data-giam');
+                    var gioiHan = this.getAttribute('data-gioi-han');
+                    var ngayBatDau = this.getAttribute('data-ngay-bat-dau');
+                    var ngayKetThuc = this.getAttribute('data-ngay-ket-thuc');
+                    
+                    editVoucher(maKM, tenKM, giam, gioiHan, ngayBatDau, ngayKetThuc);
+                });
+            });
+            
+            // Delete button event listeners
+            document.querySelectorAll('.delete-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var maKM = this.getAttribute('data-ma-km');
+                    deleteVoucher(maKM);
+                });
+            });
+        });
+        
+        function viewVoucher(maKM, tenKM, giam, gioiHan, ngayBatDau, ngayKetThuc) {
+            document.getElementById('viewMaKM').textContent = maKM;
+            document.getElementById('viewTenKM').textContent = tenKM;
+            document.getElementById('viewGiam').textContent = giam + '%';
+            document.getElementById('viewGioiHan').textContent = gioiHan;
+            document.getElementById('viewNgayBatDau').textContent = ngayBatDau;
+            document.getElementById('viewNgayKetThuc').textContent = ngayKetThuc;
+            
+            var viewModal = new bootstrap.Modal(document.getElementById('viewVoucherModal'));
+            viewModal.show();
+        }
+        
+        function editVoucher(maKM, tenKM, giam, gioiHan, ngayBatDau, ngayKetThuc) {
+            document.getElementById('editMaKM').value = maKM;
+            document.getElementById('editTenKM').value = tenKM;
+            document.getElementById('editGiam').value = giam;
+            document.getElementById('editGioiHan').value = gioiHan;
+            document.getElementById('editNgayBatDau').value = ngayBatDau;
+            document.getElementById('editNgayKetThuc').value = ngayKetThuc;
+            
+            document.getElementById('editForm').action = '/admin/management/voucher/edit/' + maKM;
+            
+            var editModal = new bootstrap.Modal(document.getElementById('editVoucherModal'));
+            editModal.show();
+        }
+        
+        function deleteVoucher(maKM) {
+            document.getElementById('deleteForm').action = '/admin/management/voucher/delete/' + maKM;
+            
+            var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            deleteModal.show();
+        }
+        
+        function switchToEdit() {
+            var viewModal = bootstrap.Modal.getInstance(document.getElementById('viewVoucherModal'));
+            viewModal.hide();
+            
+            var maKM = document.getElementById('viewMaKM').textContent;
+            var tenKM = document.getElementById('viewTenKM').textContent;
+            var giam = document.getElementById('viewGiam').textContent.replace('%', '');
+            var gioiHan = document.getElementById('viewGioiHan').textContent;
+            var ngayBatDau = document.getElementById('viewNgayBatDau').textContent;
+            var ngayKetThuc = document.getElementById('viewNgayKetThuc').textContent;
+            
+            var batDauParts = ngayBatDau.split('/');
+            var ketThucParts = ngayKetThuc.split('/');
+            var batDauFormatted = batDauParts[2] + '-' + batDauParts[1] + '-' + batDauParts[0];
+            var ketThucFormatted = ketThucParts[2] + '-' + ketThucParts[1] + '-' + ketThucParts[0];
+            
+            editVoucher(maKM, tenKM, giam, gioiHan, batDauFormatted, ketThucFormatted);
+        }
+        
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+    </script>
+</body>
+</html> 

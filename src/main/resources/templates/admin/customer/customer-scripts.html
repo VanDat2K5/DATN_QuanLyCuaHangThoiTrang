@@ -1,0 +1,44 @@
+<!-- ==================== JAVASCRIPT SECTION ==================== -->
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // ==================== CUSTOMER MANAGEMENT FUNCTIONS ====================
+    
+    /**
+     * Hiển thị modal chỉnh sửa khách hàng
+     * @param {string} maKH - Mã khách hàng
+     * @param {string} tenKH - Tên khách hàng
+     * @param {string} email - Email khách hàng
+     * @param {string} soDT - Số điện thoại khách hàng
+     */
+    function editCustomer(maKH, tenKH, email, soDT) {
+        // Điền thông tin vào form chỉnh sửa
+        document.getElementById('editMaKH').value = maKH;
+        document.getElementById('editTenKH').value = tenKH;
+        document.getElementById('editEmail').value = email;
+        document.getElementById('editSoDT').value = soDT;
+        
+        // Thiết lập action URL cho form
+        document.getElementById('editForm').action = `/admin/management/customer/edit/${maKH}`;
+        
+        // Hiển thị modal
+        new bootstrap.Modal(document.getElementById('editCustomerModal')).show();
+    }
+
+    /**
+     * Hiển thị modal xác nhận xóa khách hàng
+     * @param {string} maKH - Mã khách hàng cần xóa
+     */
+    function deleteCustomer(maKH) {
+        // Tạo instance modal
+        const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        const form = document.getElementById('deleteForm');
+        
+        // Thiết lập action URL cho form xóa
+        form.action = `/admin/management/customer/delete/${maKH}`;
+        
+        // Hiển thị modal
+        modal.show();
+    }
+</script> 

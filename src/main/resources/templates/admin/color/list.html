@@ -6,6 +6,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />    
     <link rel="stylesheet" href="/css/admin-custom.css" />
     <link rel="stylesheet" th:href="@{/css/icon.min.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -15,25 +18,52 @@
     <!-- Header -->
     <div th:replace="~{admin/admin-header :: header-admin}"></div>
     <div class="main-content">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3">Danh sách Màu</h1>
-        <a th:href="@{/admin/management/color/add}" class="btn btn-success">
-            <i class="bi bi-plus-circle me-1"></i>Thêm màu mới
-        </a>
-    </div>
-    <div class="card shadow-sm">
-        <div class="card-body p-0">
-            <table class="table table-striped table-hover mb-0">
-                <thead class="table-light">
-                <tr>
-                    <th scope="col">Mã màu</th>
-                    <th scope="col">Tên màu</th>
-                    <th scope="col" class="text-center">Hành động</th>
-                </tr>
-                </thead>
+        <div class="container-fluid">
+            <!-- ==================== PAGE HEADER SECTION ==================== -->
+            <!-- Tiêu đề trang và nút thêm mới -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-0">
+                        <i class="bi bi-palette me-2"></i>
+                        Quản Lý Màu Sắc
+                    </h2>
+                    <p class="text-muted mb-0">Quản lý thông tin màu sắc của sản phẩm</p>
+                </div>
+                <!-- Nút thêm màu mới -->
+                <a th:href="@{/admin/management/color/add}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    Thêm Màu Mới
+                </a>
+            </div>
+            <!-- ==================== COLOR LIST SECTION ==================== -->
+            <!-- Bảng hiển thị danh sách màu sắc -->
+            <div class="card">
+                <!-- Header của bảng với tiêu đề và số lượng -->
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="bi bi-list-ul me-2"></i>
+                            Danh Sách Màu Sắc
+                        </h5>
+                        <!-- Hiển thị tổng số màu -->
+                        <span class="badge bg-primary" th:text="${'Tổng: ' + list.size() + ' màu'}"></span>
+                    </div>
+                </div>
+                <!-- Body của bảng -->
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <!-- Header của bảng -->
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Mã Màu</th>
+                                    <th>Tên Màu</th>
+                                    <th class="text-center">Thao Tác</th>
+                                </tr>
+                            </thead>
                 <tbody>
                 <tr th:each="mau : ${list}">
-                    <td th:text="${mau.maMau}">M001</td>
+                    <td th:text="${mau.maMau}"></td>
                     <td th:text="${mau.tenMau}">Đỏ</td>
                     <td class="text-center">
                         <a th:href="@{/admin/management/color/edit/{id}(id=${mau.maMau})}"

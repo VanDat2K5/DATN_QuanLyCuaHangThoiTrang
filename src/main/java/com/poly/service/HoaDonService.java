@@ -34,5 +34,7 @@ public interface HoaDonService {
 
     int updateTrangThaiByMaHD(String maHD, String trangThai);
 
-    Page<HoaDon> findByMaHDContainingIgnoreCase(String maHD, Pageable pageable);
-}
+    Page<HoaDon> findByMaHDContainingIgnoreCase(String maHD, Pageable pageable); // tìm kiếm theo mã hóa đơn
+
+    Page<HoaDon> findByKhachHang_MaKH(String maKH, Pageable pageable); // tìm kiếm theo mã khách hàng
+}   

@@ -31,4 +31,6 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, String> {
 
     Page<HoaDon> findByMaHDContainingIgnoreCase(String keyword, Pageable pageable);
 
+    Page<HoaDon> findByKhachHang_MaKH(String maKH, Pageable pageable); // tìm kiếm theo mã khách hàng
+
 }
