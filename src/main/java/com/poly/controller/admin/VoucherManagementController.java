@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.ui.Model;
@@ -30,13 +29,15 @@ public class VoucherManagementController {
 
     // Mapping cho URL cũ
     @GetMapping("/admin/voucher-management")
-    public String voucherManagementOld(Model model, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+    public String voucherManagementOld(Model model, @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
         return voucherManagement(model, page, size);
     }
 
     // Mapping cho URL mới
     @GetMapping("/admin/management/voucher")
-    public String voucherManagement(Model model, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+    public String voucherManagement(Model model, @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<KhuyenMai> pageKhuyenMai = khuyenMaiService.findAll(pageable);
         model.addAttribute("page", pageKhuyenMai);
@@ -47,8 +48,8 @@ public class VoucherManagementController {
 
     @GetMapping("/admin/management/voucher/search")
     public String searchVoucher(@RequestParam String keyword, Model model,
-                                @RequestParam(defaultValue = "0") int page, 
-                                @RequestParam(defaultValue = "5") int size) {
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<KhuyenMai> khuyenMai = khuyenMaiService.findByMaKMContainingIgnoreCase(keyword, pageable);
         model.addAttribute("keyword", keyword);
@@ -70,7 +71,8 @@ public class VoucherManagementController {
     }
 
     @PostMapping("/admin/management/voucher/edit/{maKM}")
-    public String editVoucher(@PathVariable String maKM, @ModelAttribute KhuyenMai khuyenMai, RedirectAttributes redirectAttributes) {
+    public String editVoucher(@PathVariable String maKM, @ModelAttribute KhuyenMai khuyenMai,
+            RedirectAttributes redirectAttributes) {
         try {
             khuyenMai.setMaKM(maKM);
             khuyenMaiService.save(khuyenMai);
@@ -102,4 +104,4 @@ public class VoucherManagementController {
             return "redirect:/admin/management/voucher";
         }
     }
-} 
+}

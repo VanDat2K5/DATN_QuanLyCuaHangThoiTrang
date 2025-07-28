@@ -160,7 +160,7 @@
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <img th:if="${item.chiTietSanPham.sanPham.hinhAnh != null and !item.chiTietSanPham.sanPham.hinhAnh.empty}" 
-                                                                 th:src="@{'/images/' + item.chiTietSanPham.sanPham.hinhAnh[0].hinhAnh}" 
+                                                                 th:src="@{'/images/' + ${item.chiTietSanPham.sanPham.hinhAnh[0].hinhAnh}}" 
                                                                  class="me-3" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;" 
                                                                  alt="Product Image">
                                                             <div>

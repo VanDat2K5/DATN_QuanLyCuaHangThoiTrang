@@ -1,5 +1,9 @@
 package com.poly.controller.customer;
 
+import com.poly.entity.ChiTietHoaDon;
+import com.poly.entity.DiaChiNhanHang;
+import com.poly.entity.HinhAnh;
+import com.poly.entity.HoaDon;
 import com.poly.entity.KhachHang;
 import com.poly.entity.NhanVien;
 import com.poly.entity.TaiKhoan;
@@ -8,13 +12,14 @@ import com.poly.service.KhachHangService;
 import com.poly.service.NhanVienService;
 import com.poly.service.TaiKhoanService;
 import com.poly.service.ChiTietHoaDonService;
+import com.poly.service.DiaChiNhanHangService;
+import com.poly.service.HinhAnhService;
 import com.poly.util.Security;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,14 +30,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-import com.poly.service.DiaChiNhanHangService;
 
 @Controller
 @RequestMapping("/user")
@@ -56,6 +57,9 @@ public class AuthController {
     @Autowired
     private ChiTietHoaDonService chiTietHoaDonService;
 
+    @Autowired
+    private HinhAnhService hinhAnhService;
+
     @GetMapping("/profile")
     public String profile(HttpSession session, Model model,
             @RequestParam(defaultValue = "0") int page,
@@ -63,604 +67,58 @@ public class AuthController {
         String userRole = Security.getUserRole(session);
         Object user = session.getAttribute("user");
 
-        // Debug logging
-        System.out.println("=== Profile Debug ===");
-        System.out.println("user: " + (user != null ? user.getClass().getSimpleName() : "null"));
-        System.out.println("userRole: " + userRole);
-        System.out.println("username: " + session.getAttribute("username"));
-
         // Add common user data
         model.addAttribute("user", user);
         model.addAttribute("userRole", userRole);
         model.addAttribute("username", session.getAttribute("username"));
 
-        // Add OAuth specific attributes
+        // Add OAuth specific attributes with default values
         Boolean oauthUser = (Boolean) session.getAttribute("oauthUser");
         Boolean needsAccount = (Boolean) session.getAttribute("needsAccount");
-
-        // Set default values if null
         model.addAttribute("oauthUser", oauthUser != null ? oauthUser : false);
         model.addAttribute("needsAccount", needsAccount != null ? needsAccount : false);
 
-        // Get order statistics based on user type
-        List<com.poly.entity.HoaDon> allUserOrders = new ArrayList<>();
+        // Get order statistics and pagination based on user type
+        Page<HoaDon> ordersPage;
+        List<HoaDon> allUserOrders;
+
+        Pageable pageable = PageRequest.of(page, size);
+
         if (user != null && "CUSTOMER".equals(userRole)) {
             KhachHang khachHang = (KhachHang) user;
-            System.out.println("[DEBUG] MaKH: " + khachHang.getMaKH());
+
+            // Get paginated orders for customer
+            ordersPage = hoaDonService.findByKhachHangOrderByNgayLapDesc(khachHang.getMaKH(), pageable);
             allUserOrders = hoaDonService.findByKhachHang_MaKH(khachHang.getMaKH());
-            // Lấy danh sách địa chỉ nhận hàng
-            List<com.poly.entity.DiaChiNhanHang> diaChiList = diaChiNhanHangService
+
+            // Get shipping addresses for customer
+            List<DiaChiNhanHang> diaChiList = diaChiNhanHangService
                     .findByKhachHang_MaKH(khachHang.getMaKH());
-            System.out.println("[DEBUG] So dia chi nhan hang: " + diaChiList.size());
-            for (com.poly.entity.DiaChiNhanHang dc : diaChiList) {
-                System.out.println("[DEBUG] Dia chi: " + dc.getId() + " - " + dc.getTenNguoiNhan() + " - "
-                        + dc.getSoDTNhanHang() + " - " + dc.getDcNhanHang());
-            }
             model.addAttribute("diaChiList", diaChiList);
+
         } else if (user != null && !"CUSTOMER".equals(userRole)) {
             NhanVien nhanVien = (NhanVien) user;
+
+            // Get paginated orders for employee using the new service method
+            ordersPage = hoaDonService.findByNhanVienOrderByNgayLapDesc(nhanVien.getMaNV(), pageable);
             allUserOrders = hoaDonService.findByNhanVien_MaNV(nhanVien.getMaNV());
+        } else {
+            ordersPage = Page.empty(pageable);
+            allUserOrders = List.of();
         }
 
         // Common statistics calculation
         model.addAttribute("totalOrders", allUserOrders.size());
 
         BigDecimal totalAmount = allUserOrders.stream()
-                .map(com.poly.entity.HoaDon::getTongTien)
+                .map(HoaDon::getTongTien)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         model.addAttribute("totalSpent", totalAmount);
 
         // Count orders by status
         Map<String, Long> ordersByStatus = allUserOrders.stream()
-                .collect(Collectors.groupingBy(com.poly.entity.HoaDon::getTrangThai, Collectors.counting()));
+                .collect(Collectors.groupingBy(HoaDon::getTrangThai, Collectors.counting()));
         model.addAttribute("ordersByStatus", ordersByStatus);
-
-        // Pagination for orders
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "ngayLap"));
-        Page<com.poly.entity.HoaDon> ordersPage;
-
-        if (user != null && "CUSTOMER".equals(userRole)) {
-            KhachHang khachHang = (KhachHang) user;
-            // For customers, we need to get all orders and then paginate manually
-            // since we don't have a direct repository method for pagination by customer
-            List<com.poly.entity.HoaDon> customerOrders = hoaDonService.findByKhachHang_MaKH(khachHang.getMaKH());
-            int start = page * size;
-            int end = Math.min(start + size, customerOrders.size());
-
-            List<com.poly.entity.HoaDon> pageContent = customerOrders.subList(start, end);
-
-            // Create a custom page
-            ordersPage = new Page<com.poly.entity.HoaDon>() {
-                @Override
-                public int getTotalPages() {
-                    return (int) Math.ceil((double) customerOrders.size() / size);
-                }
-
-                @Override
-                public long getTotalElements() {
-                    return customerOrders.size();
-                }
-
-                @Override
-                public int getNumber() {
-                    return page;
-                }
-
-                @Override
-                public int getSize() {
-                    return size;
-                }
-
-                @Override
-                public int getNumberOfElements() {
-                    return pageContent.size();
-                }
-
-                @Override
-                public List<com.poly.entity.HoaDon> getContent() {
-                    return pageContent;
-                }
-
-                @Override
-                public boolean hasContent() {
-                    return !pageContent.isEmpty();
-                }
-
-                @Override
-                public Sort getSort() {
-                    return Sort.by(Sort.Direction.DESC, "ngayLap");
-                }
-
-                @Override
-                public boolean isFirst() {
-                    return page == 0;
-                }
-
-                @Override
-                public boolean isLast() {
-                    return page >= getTotalPages() - 1;
-                }
-
-                @Override
-                public boolean hasNext() {
-                    return page < getTotalPages() - 1;
-                }
-
-                @Override
-                public boolean hasPrevious() {
-                    return page > 0;
-                }
-
-                @Override
-                public Pageable nextPageable() {
-                    return hasNext() ? PageRequest.of(page + 1, size, getSort()) : null;
-                }
-
-                @Override
-                public Pageable previousPageable() {
-                    return hasPrevious() ? PageRequest.of(page - 1, size, getSort()) : null;
-                }
-
-                @Override
-                public Pageable getPageable() {
-                    return pageable;
-                }
-
-                @Override
-                public Iterator<com.poly.entity.HoaDon> iterator() {
-                    return pageContent.iterator();
-                }
-
-                @Override
-                public <U> Page<U> map(Function<? super com.poly.entity.HoaDon, ? extends U> converter) {
-                    List<U> convertedContent = pageContent.stream().map(converter).collect(Collectors.toList());
-                    return new Page<U>() {
-                        @Override
-                        public int getTotalPages() {
-                            return (int) Math.ceil((double) customerOrders.size() / size);
-                        }
-
-                        @Override
-                        public long getTotalElements() {
-                            return customerOrders.size();
-                        }
-
-                        @Override
-                        public int getNumber() {
-                            return page;
-                        }
-
-                        @Override
-                        public int getSize() {
-                            return size;
-                        }
-
-                        @Override
-                        public int getNumberOfElements() {
-                            return convertedContent.size();
-                        }
-
-                        @Override
-                        public List<U> getContent() {
-                            return convertedContent;
-                        }
-
-                        @Override
-                        public boolean hasContent() {
-                            return !convertedContent.isEmpty();
-                        }
-
-                        @Override
-                        public Sort getSort() {
-                            return Sort.by(Sort.Direction.DESC, "ngayLap");
-                        }
-
-                        @Override
-                        public boolean isFirst() {
-                            return page == 0;
-                        }
-
-                        @Override
-                        public boolean isLast() {
-                            return page >= getTotalPages() - 1;
-                        }
-
-                        @Override
-                        public boolean hasNext() {
-                            return page < getTotalPages() - 1;
-                        }
-
-                        @Override
-                        public boolean hasPrevious() {
-                            return page > 0;
-                        }
-
-                        @Override
-                        public Pageable nextPageable() {
-                            return hasNext() ? PageRequest.of(page + 1, size, getSort()) : null;
-                        }
-
-                        @Override
-                        public Pageable previousPageable() {
-                            return hasPrevious() ? PageRequest.of(page - 1, size, getSort()) : null;
-                        }
-
-                        @Override
-                        public Pageable getPageable() {
-                            return pageable;
-                        }
-
-                        @Override
-                        public Iterator<U> iterator() {
-                            return convertedContent.iterator();
-                        }
-
-                        @Override
-                        public <V> Page<V> map(Function<? super U, ? extends V> converter) {
-                            List<V> convertedContent2 = convertedContent.stream().map(converter)
-                                    .collect(Collectors.toList());
-                            return new Page<V>() {
-                                @Override
-                                public int getTotalPages() {
-                                    return (int) Math.ceil((double) customerOrders.size() / size);
-                                }
-
-                                @Override
-                                public long getTotalElements() {
-                                    return customerOrders.size();
-                                }
-
-                                @Override
-                                public int getNumber() {
-                                    return page;
-                                }
-
-                                @Override
-                                public int getSize() {
-                                    return size;
-                                }
-
-                                @Override
-                                public int getNumberOfElements() {
-                                    return convertedContent2.size();
-                                }
-
-                                @Override
-                                public List<V> getContent() {
-                                    return convertedContent2;
-                                }
-
-                                @Override
-                                public boolean hasContent() {
-                                    return !convertedContent2.isEmpty();
-                                }
-
-                                @Override
-                                public Sort getSort() {
-                                    return Sort.by(Sort.Direction.DESC, "ngayLap");
-                                }
-
-                                @Override
-                                public boolean isFirst() {
-                                    return page == 0;
-                                }
-
-                                @Override
-                                public boolean isLast() {
-                                    return page >= getTotalPages() - 1;
-                                }
-
-                                @Override
-                                public boolean hasNext() {
-                                    return page < getTotalPages() - 1;
-                                }
-
-                                @Override
-                                public boolean hasPrevious() {
-                                    return page > 0;
-                                }
-
-                                @Override
-                                public Pageable nextPageable() {
-                                    return hasNext() ? PageRequest.of(page + 1, size, getSort()) : null;
-                                }
-
-                                @Override
-                                public Pageable previousPageable() {
-                                    return hasPrevious() ? PageRequest.of(page - 1, size, getSort()) : null;
-                                }
-
-                                @Override
-                                public Pageable getPageable() {
-                                    return pageable;
-                                }
-
-                                @Override
-                                public Iterator<V> iterator() {
-                                    return convertedContent2.iterator();
-                                }
-
-                                @Override
-                                public <W> Page<W> map(Function<? super V, ? extends W> converter) {
-                                    throw new UnsupportedOperationException("Nested map not supported");
-                                }
-                            };
-                        }
-                    };
-                }
-            };
-        } else if (user != null && !"CUSTOMER".equals(userRole)) {
-            NhanVien nhanVien = (NhanVien) user;
-            // For employees, we need to get all orders and then paginate manually
-            List<com.poly.entity.HoaDon> employeeOrders = hoaDonService.findByNhanVien_MaNV(nhanVien.getMaNV());
-            int start = page * size;
-            int end = Math.min(start + size, employeeOrders.size());
-
-            List<com.poly.entity.HoaDon> pageContent = employeeOrders.subList(start, end);
-
-            // Create a custom page similar to above
-            ordersPage = new Page<com.poly.entity.HoaDon>() {
-                @Override
-                public int getTotalPages() {
-                    return (int) Math.ceil((double) employeeOrders.size() / size);
-                }
-
-                @Override
-                public long getTotalElements() {
-                    return employeeOrders.size();
-                }
-
-                @Override
-                public int getNumber() {
-                    return page;
-                }
-
-                @Override
-                public int getSize() {
-                    return size;
-                }
-
-                @Override
-                public int getNumberOfElements() {
-                    return pageContent.size();
-                }
-
-                @Override
-                public List<com.poly.entity.HoaDon> getContent() {
-                    return pageContent;
-                }
-
-                @Override
-                public boolean hasContent() {
-                    return !pageContent.isEmpty();
-                }
-
-                @Override
-                public Sort getSort() {
-                    return Sort.by(Sort.Direction.DESC, "ngayLap");
-                }
-
-                @Override
-                public boolean isFirst() {
-                    return page == 0;
-                }
-
-                @Override
-                public boolean isLast() {
-                    return page >= getTotalPages() - 1;
-                }
-
-                @Override
-                public boolean hasNext() {
-                    return page < getTotalPages() - 1;
-                }
-
-                @Override
-                public boolean hasPrevious() {
-                    return page > 0;
-                }
-
-                @Override
-                public Pageable nextPageable() {
-                    return hasNext() ? PageRequest.of(page + 1, size, getSort()) : null;
-                }
-
-                @Override
-                public Pageable previousPageable() {
-                    return hasPrevious() ? PageRequest.of(page - 1, size, getSort()) : null;
-                }
-
-                @Override
-                public Pageable getPageable() {
-                    return pageable;
-                }
-
-                @Override
-                public Iterator<com.poly.entity.HoaDon> iterator() {
-                    return pageContent.iterator();
-                }
-
-                @Override
-                public <U> Page<U> map(Function<? super com.poly.entity.HoaDon, ? extends U> converter) {
-                    List<U> convertedContent = pageContent.stream().map(converter).collect(Collectors.toList());
-                    return new Page<U>() {
-                        @Override
-                        public int getTotalPages() {
-                            return (int) Math.ceil((double) employeeOrders.size() / size);
-                        }
-
-                        @Override
-                        public long getTotalElements() {
-                            return employeeOrders.size();
-                        }
-
-                        @Override
-                        public int getNumber() {
-                            return page;
-                        }
-
-                        @Override
-                        public int getSize() {
-                            return size;
-                        }
-
-                        @Override
-                        public int getNumberOfElements() {
-                            return convertedContent.size();
-                        }
-
-                        @Override
-                        public List<U> getContent() {
-                            return convertedContent;
-                        }
-
-                        @Override
-                        public boolean hasContent() {
-                            return !convertedContent.isEmpty();
-                        }
-
-                        @Override
-                        public Sort getSort() {
-                            return Sort.by(Sort.Direction.DESC, "ngayLap");
-                        }
-
-                        @Override
-                        public boolean isFirst() {
-                            return page == 0;
-                        }
-
-                        @Override
-                        public boolean isLast() {
-                            return page >= getTotalPages() - 1;
-                        }
-
-                        @Override
-                        public boolean hasNext() {
-                            return page < getTotalPages() - 1;
-                        }
-
-                        @Override
-                        public boolean hasPrevious() {
-                            return page > 0;
-                        }
-
-                        @Override
-                        public Pageable nextPageable() {
-                            return hasNext() ? PageRequest.of(page + 1, size, getSort()) : null;
-                        }
-
-                        @Override
-                        public Pageable previousPageable() {
-                            return hasPrevious() ? PageRequest.of(page - 1, size, getSort()) : null;
-                        }
-
-                        @Override
-                        public Pageable getPageable() {
-                            return pageable;
-                        }
-
-                        @Override
-                        public Iterator<U> iterator() {
-                            return convertedContent.iterator();
-                        }
-
-                        @Override
-                        public <V> Page<V> map(Function<? super U, ? extends V> converter) {
-                            List<V> convertedContent2 = convertedContent.stream().map(converter)
-                                    .collect(Collectors.toList());
-                            return new Page<V>() {
-                                @Override
-                                public int getTotalPages() {
-                                    return (int) Math.ceil((double) employeeOrders.size() / size);
-                                }
-
-                                @Override
-                                public long getTotalElements() {
-                                    return employeeOrders.size();
-                                }
-
-                                @Override
-                                public int getNumber() {
-                                    return page;
-                                }
-
-                                @Override
-                                public int getSize() {
-                                    return size;
-                                }
-
-                                @Override
-                                public int getNumberOfElements() {
-                                    return convertedContent2.size();
-                                }
-
-                                @Override
-                                public List<V> getContent() {
-                                    return convertedContent2;
-                                }
-
-                                @Override
-                                public boolean hasContent() {
-                                    return !convertedContent2.isEmpty();
-                                }
-
-                                @Override
-                                public Sort getSort() {
-                                    return Sort.by(Sort.Direction.DESC, "ngayLap");
-                                }
-
-                                @Override
-                                public boolean isFirst() {
-                                    return page == 0;
-                                }
-
-                                @Override
-                                public boolean isLast() {
-                                    return page >= getTotalPages() - 1;
-                                }
-
-                                @Override
-                                public boolean hasNext() {
-                                    return page < getTotalPages() - 1;
-                                }
-
-                                @Override
-                                public boolean hasPrevious() {
-                                    return page > 0;
-                                }
-
-                                @Override
-                                public Pageable nextPageable() {
-                                    return hasNext() ? PageRequest.of(page + 1, size, getSort()) : null;
-                                }
-
-                                @Override
-                                public Pageable previousPageable() {
-                                    return hasPrevious() ? PageRequest.of(page - 1, size, getSort()) : null;
-                                }
-
-                                @Override
-                                public Pageable getPageable() {
-                                    return pageable;
-                                }
-
-                                @Override
-                                public Iterator<V> iterator() {
-                                    return convertedContent2.iterator();
-                                }
-
-                                @Override
-                                public <W> Page<W> map(Function<? super V, ? extends W> converter) {
-                                    throw new UnsupportedOperationException("Nested map not supported");
-                                }
-                            };
-                        }
-                    };
-                }
-            };
-        } else {
-            ordersPage = Page.empty(pageable);
-        }
 
         model.addAttribute("ordersPage", ordersPage);
         model.addAttribute("currentPage", page);
@@ -683,13 +141,13 @@ public class AuthController {
         }
 
         // Find order by ID
-        Optional<com.poly.entity.HoaDon> orderOpt = hoaDonService.findById(orderId);
+        Optional<HoaDon> orderOpt = hoaDonService.findById(orderId);
         if (!orderOpt.isPresent()) {
             redirectAttributes.addFlashAttribute("error", "Không tìm thấy đơn hàng");
             return "redirect:/user/profile";
         }
 
-        com.poly.entity.HoaDon order = orderOpt.get();
+        HoaDon order = orderOpt.get();
 
         // Check if user owns this order (for customers) or has permission (for
         // employees)
@@ -702,7 +160,11 @@ public class AuthController {
         }
 
         // Get order details
-        List<com.poly.entity.ChiTietHoaDon> orderDetails = chiTietHoaDonService.findByHoaDon_MaHD(orderId);
+        List<ChiTietHoaDon> orderDetails = chiTietHoaDonService.findByHoaDon_MaHD(orderId);
+        for (ChiTietHoaDon cthd : orderDetails) {
+            List<HinhAnh> hinhAnh = hinhAnhService.findBySanPham_MaSP(cthd.getChiTietSanPham().getSanPham().getMaSP());
+            cthd.getChiTietSanPham().getSanPham().setHinhAnh(hinhAnh);
+        }
 
         model.addAttribute("order", order);
         model.addAttribute("orderDetails", orderDetails);
@@ -752,12 +214,49 @@ public class AuthController {
             @RequestParam("confirmPassword") String confirmPassword,
             HttpSession session,
             RedirectAttributes redirectAttributes) {
+
         if (!newPassword.equals(confirmPassword)) {
             redirectAttributes.addFlashAttribute("error", "Mật khẩu mới không khớp!");
             return "redirect:/user/profile";
         }
 
-        redirectAttributes.addFlashAttribute("success", "Đổi mật khẩu thành công!");
+        if (newPassword.length() < 6) {
+            redirectAttributes.addFlashAttribute("error", "Mật khẩu phải có ít nhất 6 ký tự!");
+            return "redirect:/user/profile";
+        }
+
+        try {
+            String userRole = Security.getUserRole(session);
+            Object user = session.getAttribute("user");
+
+            if ("CUSTOMER".equals(userRole)) {
+                KhachHang khachHang = (KhachHang) user;
+                Optional<TaiKhoan> account = taiKhoanService.findByKhachHang(khachHang);
+
+                if (account.isPresent()) {
+                    TaiKhoan taiKhoan = account.get();
+                    if (!taiKhoan.getMatKhau().equals(currentPassword)) {
+                        redirectAttributes.addFlashAttribute("error", "Mật khẩu hiện tại không đúng!");
+                        return "redirect:/user/profile";
+                    }
+
+                    taiKhoan.setMatKhau(newPassword);
+                    taiKhoanService.save(taiKhoan);
+                } else {
+                    redirectAttributes.addFlashAttribute("error", "Không tìm thấy tài khoản!");
+                    return "redirect:/user/profile";
+                }
+            } else {
+                // For employees, you might need to implement password change logic
+                redirectAttributes.addFlashAttribute("error", "Chức năng đổi mật khẩu chưa hỗ trợ cho nhân viên!");
+                return "redirect:/user/profile";
+            }
+
+            redirectAttributes.addFlashAttribute("success", "Đổi mật khẩu thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra khi đổi mật khẩu: " + e.getMessage());
+        }
+
         return "redirect:/user/profile";
     }
 
@@ -831,7 +330,7 @@ public class AuthController {
             Object user = session.getAttribute("user");
 
             // Find order by ID
-            com.poly.entity.HoaDon order = hoaDonService.findById(orderId).orElse(null);
+            HoaDon order = hoaDonService.findById(orderId).orElse(null);
             if (order == null) {
                 redirectAttributes.addFlashAttribute("error", "Không tìm thấy đơn hàng");
                 return "redirect:/user/profile";

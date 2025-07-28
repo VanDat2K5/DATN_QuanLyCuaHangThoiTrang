@@ -22,13 +22,28 @@ function addCart() {
     const soLuong = parseInt(document.getElementById('cartSoLuong')?.value);
     const giaText = document.getElementById('cartGia')?.textContent.replace(/[^\d]/g, '');
     const gia = parseFloat(giaText);
+    const maSP = document.querySelector('input[name="maSP"]')?.value || '';
 
     if (!tenSP || !hinhAnh || !mau || !size || !soLuong || !gia || !maKH) {
-        Swal.fire({ icon: "error", title: "Vui lòng chọn đầy đủ thông tin sản phẩm!" });
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          });
+          Toast.fire({
+            icon: "error",
+            title: "Vui lòng chọn đầy đủ thông tin sản phẩm!"
+          });
         return;
     }
 
-    const item = { tenSP, hinhAnh, mau, size, SoLuong: soLuong, Gia: gia };
+    const item = { tenSP, hinhAnh, mau, size, SoLuong: soLuong, Gia: gia, maSP };
     const cartRef = db.ref('Cart/' + maKH + '/items');
 
     cartRef.once('value').then(snapshot => {
@@ -47,7 +62,21 @@ function addCart() {
             existingItemRef.child('SoLuong').once('value').then(qSnap => {
                 const oldQty = qSnap.val() || 0;
                 existingItemRef.update({ SoLuong: oldQty + soLuong }).then(() => {
-                    Swal.fire({ icon: "success", title: "Cập nhật số lượng sản phẩm thành công!" });
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                          toast.onmouseenter = Swal.stopTimer;
+                          toast.onmouseleave = Swal.resumeTimer;
+                        }
+                      });
+                      Toast.fire({
+                        icon: "success",
+                        title: "Cập nhật số lượng sản phẩm thành công!"
+                      });
                     resetCartForm();
                     loadCarts(maKH);
                     updateCartItemCount(maKH);
@@ -55,7 +84,21 @@ function addCart() {
             });
         } else {
             cartRef.push(item).then(() => {
-                Swal.fire({ icon: "success", title: "Thêm vào giỏ hàng thành công!" });
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                      toast.onmouseenter = Swal.stopTimer;
+                      toast.onmouseleave = Swal.resumeTimer;
+                    }
+                  });
+                  Toast.fire({
+                    icon: "success",
+                    title: "Thêm vào giỏ hàng thành công!"
+                  });
                 resetCartForm();
                 loadCarts(maKH);
                 updateCartItemCount(maKH);
@@ -63,7 +106,18 @@ function addCart() {
         }
     }).catch(error => {
         console.error("Lỗi thêm giỏ hàng:", error);
-        Swal.fire({ title: "Thêm vào giỏ hàng thất bại!", icon: "error" });
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          });
+          Toast.fire({ icon: "error", title: "Thêm vào giỏ hàng thất bại!" });
     });
 }
 
@@ -97,7 +151,7 @@ function loadCarts(maKH) {
             row.innerHTML = `
                 <td><input type="checkbox" class="cartCheckbox" data-item-id="${itemId}" onchange="calculateSelectedTotal('${maKH}')"></td>
                 <td><img src="${item.hinhAnh}" alt=""></td>
-                <td>${item.tenSP}</td>
+                <td>${item.maSP ? `<a href="/shop/${item.maSP}" class="text-decoration-none text-dark fw-bold">${item.tenSP}</a>` : item.tenSP}</td>
                 <td>${item.mau}</td>
                 <td>${item.size}</td>
                 <td class="qty-controls text-center">
@@ -206,35 +260,18 @@ function updateCartItemCount(maKH) {
 function ThanhToan() {
     const maKH = document.getElementById("cartMaKH").value;
     const checkboxes = document.querySelectorAll(".cartCheckbox:checked");
+
     if (checkboxes.length === 0) {
         Swal.fire("Vui lòng chọn sản phẩm để thanh toán!");
         return;
     }
-    Swal.fire({
-        title: "Bạn có chắc chắn muốn thanh toán các sản phẩm đã chọn?",
-        text: "Bạn sẽ không thể hoàn tác!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Thanh toán",
-        cancelButtonText: "Hủy"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire({
-                title: "Thanh toán thành công!",
-                text: "Bạn sẽ nhận được email thông báo khi đơn hàng được xử lý!",
-                icon: "success"
-            });
-            const cartRef = db.ref('Cart/' + maKH + '/items');
-            checkboxes.forEach(checkbox => {
-                const itemId = checkbox.getAttribute("data-item-id");
-                cartRef.child(itemId).remove();
-            });
-            setTimeout(() => loadCarts(maKH), 100);
-            updateCartItemCount(maKH);
-        }
-    });
+
+    // Lưu danh sách id sản phẩm đã chọn vào localStorage
+    const selectedIds = Array.from(checkboxes).map(cb => cb.getAttribute("data-item-id"));
+    localStorage.setItem('selectedCartItems', JSON.stringify(selectedIds));
+
+    // Chuyển hướng sang trang xác nhận đơn hàng
+    window.location.href = "/order/checkout";
 }
 
 window.onload = function () {
