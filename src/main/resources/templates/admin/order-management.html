@@ -126,6 +126,17 @@ body {
 										   th:href="@{'/admin/management/orders/view/' + ${order.maHD}}">
 											<i class="bi bi-eye"></i> Xem
 										</a>
+										<!-- Nút sửa chuyển sang chế độ chỉnh sửa -->
+										<button type="button" class="btn btn-sm btn-outline-warning btn-edit"
+										        th:data-id="${order.maHD}">
+											<i class="bi bi-pencil-square"></i> Sửa
+										</button>
+
+										<!-- Nút lưu ẩn -->
+										<button type="submit" class="btn btn-sm btn-outline-success d-none btn-save"
+										        th:name="'save_' + ${order.maHD}">
+											<i class="bi bi-save"></i> Lưu
+										</button>
 									</td>
                                 </tr>
                             </tbody>

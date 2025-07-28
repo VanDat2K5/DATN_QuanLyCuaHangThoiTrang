@@ -167,10 +167,9 @@ if (typeof firebase !== 'undefined') {
     }
 
     function startPaymentCheck() {
-        // Kiểm tra mỗi 5 giây
         checkPaymentInterval = setInterval(() => {
             checkPaymentStatus();
-        }, 5000);
+        }, 30000);
     }
 
     function checkPaymentStatus() {
@@ -181,8 +180,13 @@ if (typeof firebase !== 'undefined') {
         .then(data => {
             if (data.isPaid) {
                 clearInterval(checkPaymentInterval);
-                alert('Thanh toán thành công!');
-                window.location.href = `/order/success/${currentOrderId}`;
+                Swal.fire({
+                    title: "Thanh toán thành công!",
+                    icon: "success",
+                    draggable: true,
+                  }).then(() => {
+                    window.location.href = `/order/success/${currentOrderId}`;
+                  });
             }
         })
         .catch(error => {

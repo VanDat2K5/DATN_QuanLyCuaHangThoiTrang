@@ -106,13 +106,13 @@
                     <div class="custom-product-image">
                         <img th:if="${sp.hinhAnhDauTien != null}" th:src="@{${sp.hinhAnhDauTien}}" alt="Ảnh sản phẩm">
                         <img th:unless="${sp.hinhAnhDauTien != null}" th:src="@{/images/default-product.jpg}" alt="No image">
-                        <div class="custom-product-actions">
-                            <a th:href="@{/shop/{id}(id=${sp.maSP})}" class="custom-add-btn">Xem sản phẩm</a>
-                        </div>
                     </div>
                     <div class="custom-product-info">
                         <a th:href="@{/shop/{id}(id=${sp.maSP})}" th:text="${sp.tenSP}">Tên sản phẩm</a>
                         <div class="custom-product-price" th:text="${#numbers.formatDecimal(sp.giaXuat, 0, 'COMMA', 0, 'POINT')} + ' đ'">Giá</div>
+                        <div class="custom-product-actions">
+                            <a th:href="@{/shop/{id}(id=${sp.maSP})}" class="custom-add-btn">Xem sản phẩm</a>
+                        </div>
                     </div>
                 </div>
             </div>
