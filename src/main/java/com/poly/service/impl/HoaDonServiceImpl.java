@@ -117,4 +117,10 @@ public class HoaDonServiceImpl implements HoaDonService {
     public Page<HoaDon> findAllOrderByNgayLapDesc(Pageable pageable) {
         return hoaDonRepository.findAllByOrderByNgayLapDesc(pageable);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<HoaDon> findByKhachHang_MaKH(String maKH, Pageable pageable) {
+        return hoaDonRepository.findByKhachHang_MaKH(maKH, pageable);
+    }
 }

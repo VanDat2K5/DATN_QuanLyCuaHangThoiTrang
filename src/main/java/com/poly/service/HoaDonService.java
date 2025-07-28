@@ -42,4 +42,6 @@ public interface HoaDonService {
     Page<HoaDon> findByNhanVienOrderByNgayLapDesc(String maNhanVien, Pageable pageable);
 
     Page<HoaDon> findAllOrderByNgayLapDesc(Pageable pageable);
+
+    Page<HoaDon> findByKhachHang_MaKH(String maKH, Pageable pageable);
 }
