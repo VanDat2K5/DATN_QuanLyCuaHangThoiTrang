@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- ==================== HEAD SECTION ==================== -->
+    <!-- Meta tags cho responsive và encoding -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Khách Hàng - StyleTech Admin</title>
+    
+    <!-- CSS Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/admin-custom.css">
+    
+    <!-- Google Fonts - Comfortaa -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- ==================== LAYOUT COMPONENTS ==================== -->
+    <!-- Sidebar Navigation - Import từ admin-header.html -->
+    <div th:replace="admin/admin-header :: sidebar-admin"></div>
+    
+    <!-- Top Header - Import từ admin-header.html -->
+    <div th:replace="admin/admin-header :: header-admin"></div>
+
+    <!-- ==================== MAIN CONTENT AREA ==================== -->
+    <div class="main-content">
+        <div class="container-fluid">
+            <!-- ==================== PAGE HEADER SECTION ==================== -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item">
+                                <a href="/admin/management/customer" class="text-decoration-none">
+                                    <i class="bi bi-people me-1"></i>Quản Lý Khách Hàng
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                <i class="bi bi-person-circle me-1"></i>Chi Tiết Khách Hàng
+                            </li>
+                        </ol>
+                    </nav>
+                    <h2 class="mb-0 mt-2">
+                        <i class="bi bi-person-circle me-2"></i>
+                        Chi Tiết Khách Hàng
+                    </h2>
+                    <p class="text-muted mb-0">Thông tin chi tiết và lịch sử đơn hàng</p>
+                </div>
+                <!-- Action buttons -->
+                <div class="d-flex gap-2">
+                    <a href="/admin/management/customer" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Quay Lại
+                    </a>
+                </div>
+            </div>
+
+            <!-- ==================== ALERT MESSAGES SECTION ==================== -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle me-2"></i>
+                <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- ==================== CUSTOMER INFORMATION SECTION ==================== -->
+            <div class="row">
+                <!-- Customer Profile Card -->
+                <div class="col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <!-- Avatar -->
+                            <div class="avatar-lg mx-auto mb-3">
+                                <i class="bi bi-person-circle fs-1 text-primary"></i>
+                            </div>
+                            
+                            <!-- Customer Name and ID -->
+                            <h4 class="mb-2" th:text="${khachHang.tenKH}">Tên Khách Hàng</h4>
+                            <span class="badge bg-primary fs-6 mb-3" th:text="${khachHang.maKH}">Mã KH</span>
+                            
+                            <!-- Status Badge -->
+                            <div class="mb-3">
+                                <span class="badge bg-success fs-6">
+                                    <i class="bi bi-check-circle me-1"></i>Hoạt động
+                                </span>
+                            </div>
+                            
+                            <!-- Contact Information -->
+                            <div class="text-start">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-muted">
+                                        <i class="bi bi-envelope me-2"></i>Email:
+                                    </label>
+                                    <p class="mb-0" th:text="${khachHang.email}">email@example.com</p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-muted">
+                                        <i class="bi bi-telephone me-2"></i>Số Điện Thoại:
+                                    </label>
+                                    <p class="mb-0" th:text="${khachHang.soDT}">0123456789</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order History Card -->
+                <div class="col-lg-8 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="bi bi-receipt me-2"></i>
+                                Lịch Sử Đơn Hàng
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Order Statistics -->
+                            <div class="row mb-4">
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <h4 class="text-primary mb-1" th:text="${hoaDon != null ? hoaDon.totalElements : 0}">0</h4>
+                                        <small class="text-muted">Tổng đơn hàng</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <h4 class="text-success mb-1" th:text="${hoaDon != null ? hoaDon.content.stream().filter(hd -> 'DaThanhToan'.equals(hd.trangThai)).count() : 0}">0</h4>
+                                        <small class="text-muted">Đã thanh toán</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <h4 class="text-warning mb-1" th:text="${hoaDon != null ? hoaDon.content.stream().filter(hd -> 'DangVanChuyen'.equals(hd.trangThai)).count() : 0}">0</h4>
+                                        <small class="text-muted">Đang vận chuyển</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <h4 class="text-info mb-1" th:text="${hoaDon != null ? hoaDon.content.stream().filter(hd -> 'DaNhanHang'.equals(hd.trangThai)).count() : 0}">0</h4>
+                                        <small class="text-muted">Đã nhận hàng</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Orders Table -->
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Mã Đơn</th>
+                                            <th>Ngày Lập</th>
+                                            <th>Tổng Tiền</th>
+                                            <th>Trạng Thái</th>
+                                            <th>Thao Tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:if="${hoaDon == null or hoaDon.content.isEmpty()}">
+                                            <td colspan="5" class="text-center py-4">
+                                                <div class="text-muted">
+                                                    <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                                    <p class="mb-0">Chưa có đơn hàng nào</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr th:each="donHang : ${hoaDon.content}" th:if="${hoaDon != null and !hoaDon.content.isEmpty()}">
+                                            <td>
+                                                <span class="fw-bold" th:text="${donHang.maHD}">MaHD</span>
+                                            </td>
+                                            <td th:text="${#temporals.format(donHang.ngayLap, 'dd/MM/yyyy')}">Ngày</td>
+                                            <td>
+                                                <span class="fw-bold text-primary" th:text="${#numbers.formatDecimal(donHang.tongTien, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</span>
+                                            </td>
+                                            <td>
+                                                <span th:class="${'badge ' + 
+                                                    (donHang.trangThai == 'DaThanhToan' ? 'bg-success' : 
+                                                     donHang.trangThai == 'DangVanChuyen' ? 'bg-warning' : 
+                                                     donHang.trangThai == 'DaNhanHang' ? 'bg-info' : 
+                                                     donHang.trangThai == 'DaHuy' ? 'bg-danger' : 
+                                                     donHang.trangThai == 'Doi-Tra_Hang' ? 'bg-secondary' : 'bg-primary')}"
+                                                      th:text="${donHang.trangThai}">Trạng thái</span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-info" title="Xem chi tiết">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Pagination for Orders -->
+                            <div th:if="${hoaDon != null and hoaDon.totalPages > 1}" class="d-flex justify-content-center mt-3">
+                                <nav aria-label="Order pagination">
+                                    <ul class="pagination">
+                                        <li class="page-item" th:classappend="${hoaDon.first ? 'disabled' : ''}">
+                                            <a class="page-link" th:href="@{/admin/management/customer/{id}(id=${khachHang.maKH}, page=${hoaDon.number - 1}, size=${hoaDon.size})}">
+                                                <i class="bi bi-chevron-left"></i>
+                                            </a>
+                                        </li>
+                                        <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, hoaDon.totalPages - 1)}"
+                                            th:classappend="${pageNum == hoaDon.number ? 'active' : ''}">
+                                            <a class="page-link" th:href="@{/admin/management/customer/{id}(id=${khachHang.maKH}, page=${pageNum}, size=${hoaDon.size})}"
+                                               th:text="${pageNum + 1}">1</a>
+                                        </li>
+                                        <li class="page-item" th:classappend="${hoaDon.last ? 'disabled' : ''}">
+                                            <a class="page-link" th:href="@{/admin/management/customer/{id}(id=${khachHang.maKH}, page=${hoaDon.number + 1}, size=${hoaDon.size})}">
+                                                <i class="bi bi-chevron-right"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== EDIT CUSTOMER MODAL ==================== -->
+    <div class="modal fade" id="editCustomerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-pencil-square me-2"></i>
+                        Chỉnh Sửa Khách Hàng
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form th:action="@{/admin/management/customer/edit/{maKH}(maKH=${khachHang.maKH})}" method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="editMaKH" class="form-label">Mã Khách Hàng</label>
+                            <input type="text" class="form-control" id="editMaKH" name="maKH" 
+                                   th:value="${khachHang.maKH}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editTenKH" class="form-label">Tên Khách Hàng</label>
+                            <input type="text" class="form-control" id="editTenKH" name="tenKH" 
+                                   th:value="${khachHang.tenKH}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="editEmail" name="email" 
+                                   th:value="${khachHang.email}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editSoDT" class="form-label">Số Điện Thoại</label>
+                            <input type="text" class="form-control" id="editSoDT" name="soDT" 
+                                   th:value="${khachHang.soDT}" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="bi bi-check-circle me-2"></i>Cập Nhật
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== JAVASCRIPT SECTION ==================== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Auto-hide alerts after 5 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+    </script>
+</body>
+</html> 

@@ -12,6 +12,9 @@
 	rel="stylesheet" />
 <link rel="stylesheet" href="/css/admin-custom.css">
 <link rel="stylesheet" href="/css/icon.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap" rel="stylesheet">
 <style>
 body {
 	background-color: #f8f9fa;
@@ -62,11 +65,17 @@ body {
 	<div th:replace="~{admin/admin-header :: header-admin}"></div>
 
 	 <!-- Main Content -->
-    <div class="main-content py-4 px-3" style="margin-left: 70px;">
+    <div class="main-content py-4 px-3">
         <div class="container-fluid">
             <!-- Tiêu đề + Tìm kiếm -->
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="fw-bold text-primary">Quản Lý Hoá Đơn</h2>
+                <div>
+                    <h2 class="mb-0">
+                        <i class="bi bi-ticket-perforated me-2"></i>
+                        Quản Lý Hóa Đơn
+                    </h2>
+                    <p class="text-muted mb-0">Quản lý thông tin đơn hàng của hệ thống và các hoạt động liên quan</p>
+                </div>
                <!-- Form tìm kiếm -->
 			   <form class="d-flex mb-4" th:action="@{/admin/management/orders}" method="get">
 					<input type="search" name="keyword" class="form-control me-3" placeholder="Tìm mã hoá đơn" />
@@ -117,18 +126,6 @@ body {
 										   th:href="@{'/admin/management/orders/view/' + ${order.maHD}}">
 											<i class="bi bi-eye"></i> Xem
 										</a>
-									
-										<!-- Nút sửa chuyển sang chế độ chỉnh sửa -->
-										<button type="button" class="btn btn-sm btn-outline-warning btn-edit"
-										        th:data-id="${order.maHD}">
-											<i class="bi bi-pencil-square"></i> Sửa
-										</button>
-									
-										<!-- Nút lưu ẩn -->
-										<button type="submit" class="btn btn-sm btn-outline-success d-none btn-save"
-										        th:name="'save_' + ${order.maHD}">
-											<i class="bi bi-save"></i> Lưu
-										</button>
 									</td>
                                 </tr>
                             </tbody>

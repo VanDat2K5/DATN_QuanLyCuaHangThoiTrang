@@ -99,4 +99,10 @@ public class HoaDonServiceImpl implements HoaDonService {
     public Page<HoaDon> findByMaHDContainingIgnoreCase(String keyword, Pageable pageable) {
         return hoaDonRepository.findByMaHDContainingIgnoreCase(keyword, pageable);
     }
+
+    @Override// tìm kiếm theo mã khách hàng
+    @Transactional(readOnly = true)// đọc dữ liệu
+    public Page<HoaDon> findByKhachHang_MaKH(String maKH, Pageable pageable) {// tìm kiếm theo mã khách hàng
+        return hoaDonRepository.findByKhachHang_MaKH(maKH, pageable);// tìm kiếm theo mã khách hàng
+    }
 }

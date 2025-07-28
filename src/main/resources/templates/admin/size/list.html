@@ -6,6 +6,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />    
     <link rel="stylesheet" href="/css/admin-custom.css" />
     <link rel="stylesheet" th:href="@{/css/icon.min.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap" rel="stylesheet">
 </head>
 <body class="p-4">
 
@@ -15,41 +18,91 @@
     <!-- Header -->
     <div th:replace="~{admin/admin-header :: header-admin}"></div>
     <div class="main-content">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Danh sách Size</h2>
-        <a th:href="@{/admin/management/size/add}" class="btn btn-success">
-            <i class="bi bi-plus-circle me-1"></i> Thêm size mới
-        </a>
-    </div>
+        <div class="container-fluid">
+            <!-- ==================== PAGE HEADER SECTION ==================== -->
+            <!-- Tiêu đề trang và nút thêm mới -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-0">
+                        <i class="bi bi-rulers me-2"></i>
+                        Quản Lý Kích Thước
+                    </h2>
+                    <p class="text-muted mb-0">Quản lý thông tin kích thước của sản phẩm</p>
+                </div>
+                <!-- Nút thêm kích thước mới -->
+                <a th:href="@{/admin/management/size/add}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    Thêm Kích Thước Mới
+                </a>
+            </div>
 
-    <table class="table table-striped table-hover align-middle">
-        <thead class="table-light">
-        <tr>
-            <th>Mã size</th>
-            <th>Tên size</th>
-            <th class="text-center">Hành động</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="s : ${list}">
-            <td th:text="${s.maSize}">S</td>
-            <td th:text="${s.tenSize}">Small</td>
-            <td class="text-center">
-                <a th:href="@{/admin/management/size/edit/{id}(id=${s.maSize})}"
-                   class="btn btn-sm btn-primary me-1">
-                    <i class="bi bi-pencil-square"></i> Sửa
-                </a>
-                <!-- dùng inline Thymeleaf cho onclick -->
-                <a th:href="@{/admin/management/size/delete/{id}(id=${s.maSize})}"
-                   onclick="return confirm('Xác nhận xóa size [[${s.tenSize}]]?');"
-                   class="btn btn-sm btn-danger">
-                    <i class="bi bi-trash"></i> Xóa
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+            <!-- ==================== SIZE LIST SECTION ==================== -->
+            <!-- Bảng hiển thị danh sách kích thước -->
+            <div class="card">
+                <!-- Header của bảng với tiêu đề và số lượng -->
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="bi bi-list-ul me-2"></i>
+                            Danh Sách Kích Thước
+                        </h5>
+                        <!-- Hiển thị tổng số kích thước -->
+                        <span class="badge bg-primary" th:text="${'Tổng: ' + list.size() + ' kích thước'}"></span>
+                    </div>
+                </div>
+                <!-- Body của bảng -->
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <!-- Header của bảng -->
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Mã Kích Thước</th>
+                                    <th>Tên Kích Thước</th>
+                                    <th class="text-center">Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <!-- Body của bảng -->
+                            <tbody>
+                                <!-- Vòng lặp hiển thị từng kích thước -->
+                                <tr th:each="s : ${list}" th:if="${!list.isEmpty()}">
+                                    <!-- Cột mã kích thước -->
+                                    <td>
+                                        <span class="badge bg-info" th:text="${s.maSize}">S</span>
+                                    </td>
+                                    <!-- Cột tên kích thước -->
+                                    <td>
+                                        <span class="fw-semibold" th:text="${s.tenSize}">Small</span>
+                                    </td>
+                                    <!-- Cột thao tác -->
+                                    <td class="text-center">
+                                        <a th:href="@{/admin/management/size/edit/{id}(id=${s.maSize})}"
+                                           class="btn btn-sm btn-outline-primary me-1" title="Chỉnh sửa">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a th:href="@{/admin/management/size/delete/{id}(id=${s.maSize})}"
+                                           class="btn btn-sm btn-outline-danger" title="Xóa"
+                                           th:attr="onclick=|return confirm('Xác nhận xóa kích thước ${s.tenSize}?');|">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <!-- Hiển thị thông báo khi không có dữ liệu -->
+                                <tr th:if="${list.isEmpty()}">
+                                    <td colspan="3" class="text-center py-4">
+                                        <div class="text-muted">
+                                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                            <p class="mb-0">Chưa có kích thước nào</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
