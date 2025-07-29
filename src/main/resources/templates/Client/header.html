@@ -213,16 +213,19 @@
                             <li class="nav-item">
                                 <a href="/contact" class="nav-link">Contact</a>
                             </li>
-                            <li class="nav-item position-relative" th:if="${session.userRole == 'CUSTOMER'}">
-                                <a href="/cart" class="nav-link position-relative">
-                                    <i class="fa-solid fa-cart-shopping"></i>
-                                    <span id="cart-count-badge"
-                                          class="badge bg-danger rounded-circle position-absolute"
-                                          style="top: 2px; right: 2px; font-size: 0.6rem; min-width: 16px; height: 16px; line-height: 16px; padding: 0; display: none; text-align: center;">
-            0
-        </span>
+                            <li class="nav-item" th:if="${session.userRole == 'CUSTOMER'}">
+                                <a href="/cart" class="nav-link">
+                                    <div class="cart-icon-wrapper position-relative" style="display: inline-block;">
+                                        <i class="fa-solid fa-cart-shopping"></i>
+                                        <span id="cart-count-badge"
+                                              class="cart-count-badge"
+                                              th:text="${cartItemCount}"
+                                              th:style="${cartItemCount > 0} ? 'display: inline-block;' : 'display: none;'"></span>
+                                    </div>
                                 </a>
                             </li>
+
+
 
                         </ul>
                     </div>

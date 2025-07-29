@@ -30325,3 +30325,21 @@ footer .footer-navbar .nav-item:last-child a {
     margin-right: 40px !important;
     transform: translateX(-60px) !important;
 }
+.cart-count-badge {
+  position: absolute;
+  top: -10px; /* Giảm thêm để nâng lên */
+  right: -6px;
+  background-color: red;
+  color: white;
+  font-size: 0.6rem;
+  min-width: 16px;
+  height: 16px;
+  line-height: 16px;
+  padding: 0 4px;
+  border-radius: 50%;
+  text-align: center;
+  display: none;
+  z-index: 10;
+}
+
+
