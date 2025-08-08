@@ -144,24 +144,27 @@ public class OrderController {
 
 			// Tạo chi tiết hóa đơn
 			for (Map<String, Object> item : cartItems) {
+				Object maSPObj = item.get("maSP");
 				Object tenSPObj = item.get("tenSP");
 				Object maMauObj = item.get("mau");
 				Object maSizeObj = item.get("size");
 				Object soLuongObj = item.get("SoLuong");
 				Object giaObj = item.get("Gia");
+				Object loHangObj = item.get("loHang");
 
-				if (tenSPObj == null || maMauObj == null || maSizeObj == null || soLuongObj == null || giaObj == null) {
+				if (maSPObj == null || tenSPObj == null || maMauObj == null || maSizeObj == null || soLuongObj == null
+						|| giaObj == null || loHangObj == null) {
 					continue;
 				}
 
-				String tenSP = tenSPObj.toString();
+				String maSP = maSPObj.toString();
 				String maMau = maMauObj.toString();
 				String maSize = maSizeObj.toString();
+				String loHang = loHangObj.toString();
 				int soLuong = Integer.parseInt(soLuongObj.toString());
 				BigDecimal gia = new BigDecimal(giaObj.toString());
 
-				Optional<ChiTietSanPham> optionalCTSP = chiTietSanPhamService
-						.findBySanPham_TenSPAndMau_MaMauAndSize_MaSize(tenSP, maMau, maSize);
+				Optional<ChiTietSanPham> optionalCTSP = chiTietSanPhamService.Order(maSP, maMau, maSize, loHang);
 
 				if (optionalCTSP.isPresent()) {
 					ChiTietSanPham ctsp = optionalCTSP.get();
@@ -171,8 +174,11 @@ public class OrderController {
 					cthd.setChiTietSanPham(ctsp);
 					cthd.setGiaXuat(gia);
 					cthd.setSoLuongXuat(soLuong);
-					cthd.setLoHang(ctsp.getLoHang());
+					cthd.setLoHang(loHang);
 					cthd.setThanhTien(gia.multiply(BigDecimal.valueOf(soLuong)));
+
+					ctsp.setSoLuong(ctsp.getSoLuong() - soLuong);
+					chiTietSanPhamService.save(ctsp);
 
 					chiTietHoaDonService.save(cthd);
 					tongTien = tongTien.add(cthd.getThanhTien());

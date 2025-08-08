@@ -1,6 +1,7 @@
 package com.poly.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.poly.entity.ChiTietSanPham;
@@ -20,6 +21,6 @@ public interface ChiTietSanPhamRepository extends JpaRepository<ChiTietSanPham, 
 
     Page<ChiTietSanPham> findBySanPham_MaSPContainingIgnoreCase(String maSP, Pageable pageable);
 
-    java.util.Optional<ChiTietSanPham> findBySanPham_TenSPAndMau_MaMauAndSize_MaSize(String tenSP, String maMau,
-            String maSize);
+    Optional<ChiTietSanPham> findBySanPham_MaSPAndMau_MaMauAndSize_MaSizeAndLoHang(String maSP, String maMau,
+            String maSize, String loHang);
 }

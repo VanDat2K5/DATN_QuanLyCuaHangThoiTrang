@@ -9,22 +9,54 @@ const firebaseConfig = {
     appId: "1:416913725261:web:b9890b8eabbfeb215c8904",
     measurementId: "G-J0RLZQBK1V"
 };
+
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+
+// Firebase ready state
+let firebaseReady = false;
+
+// Check Firebase connection and load cart when ready
+db.ref().child('.info/connected').on('value', function(snap) {
+    if (snap.val() === true) {
+        firebaseReady = true;
+        console.log('Firebase connected, loading cart data...');
+        
+        // Load cart data when Firebase is ready
+        const maKH = document.getElementById('cartMaKH')?.value;
+        if (maKH) {
+            loadCarts(maKH);
+            updateCartItemCount(maKH);
+        }
+    }
+});
 
 // --- CARTBOX ---
 function addCart() {
     const maKH = document.getElementById('cartMaKH')?.value;
+    const maSP = document.querySelector('input[name="maSP"]')?.value || '';
     const tenSP = document.getElementById('carttenSP')?.textContent.trim();
     const hinhAnh = document.getElementById('cartanhChinh')?.src;
     const mau = document.querySelector('input[name="maMau"]:checked')?.value || '';
     const size = document.querySelector('input[name="maSize"]:checked')?.value || '';
+    const loHang = document.querySelector('div[data-lo-hang]')?.dataset.loHang || '';
     const soLuong = parseInt(document.getElementById('cartSoLuong')?.value);
     const giaText = document.getElementById('cartGia')?.textContent.replace(/[^\d]/g, '');
     const gia = parseFloat(giaText);
-    const maSP = document.querySelector('input[name="maSP"]')?.value || '';
+    console.log(loHang);
+    if (maKH === '') {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Bạn cần đăng nhập để thêm vào giỏ hàng!',
+            showConfirmButton: true
+        }).then(() => {
+            window.location.href = '/login';
+        });
+        return;
+    }
 
-    if (!tenSP || !hinhAnh || !mau || !size || !soLuong || !gia || !maKH) {
+    if (!tenSP || !hinhAnh || !mau || !size || !soLuong || !gia || !maKH || !maSP || !loHang) {
         const Toast = Swal.mixin({
             toast: true,
             position: "top-end",
@@ -43,7 +75,7 @@ function addCart() {
         return;
     }
 
-    const item = { tenSP, hinhAnh, mau, size, SoLuong: soLuong, Gia: gia, maSP };
+    const item = { maSP, tenSP, hinhAnh, mau, size, loHang, SoLuong: soLuong, Gia: gia };
     const cartRef = db.ref('Cart/' + maKH + '/items');
 
     cartRef.once('value').then(snapshot => {
@@ -51,7 +83,7 @@ function addCart() {
         let existingKey = null;
         snapshot.forEach(child => {
             const val = child.val();
-            if (val.tenSP === tenSP && val.mau === mau && val.size === size) {
+            if (val.maSP === maSP && val.mau === mau && val.size === size && val.loHang === loHang) {
                 exists = true;
                 existingKey = child.key;
             }
@@ -129,11 +161,18 @@ function resetCartForm() {
 
 function loadCarts(maKH) {
     const cartBody = document.getElementById("cartBody");
+    const loadingDiv = document.getElementById("cartLoading");
+    const contentDiv = document.getElementById("cartContent");
+    
     cartBody.innerHTML = '';
     let total = 0;
 
     const cartRef = db.ref('Cart/' + maKH + '/items');
     cartRef.once('value', snapshot => {
+        // Hide loading, show content
+        if (loadingDiv) loadingDiv.style.display = 'none';
+        if (contentDiv) contentDiv.classList.add('loaded');
+        
         if (!snapshot.exists()) {
             cartBody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-4"><i class="bi bi-inbox fs-1 d-block mb-2"></i>Không có sản phẩm nào trong giỏ hàng</td></tr>`;
             document.getElementById("totalPrice").textContent = "0 đ";
@@ -150,7 +189,7 @@ function loadCarts(maKH) {
             row.className = 'fade-in';
             row.innerHTML = `
                 <td><input type="checkbox" class="cartCheckbox" data-item-id="${itemId}" onchange="calculateSelectedTotal('${maKH}')"></td>
-                <td><img src="${item.hinhAnh}" alt=""></td>
+                <td><img src="${item.hinhAnh}" alt="" loading="lazy"></td>
                 <td>${item.maSP ? `<a href="/shop/${item.maSP}" class="text-decoration-none text-dark fw-bold">${item.tenSP}</a>` : item.tenSP}</td>
                 <td>${item.mau}</td>
                 <td>${item.size}</td>
@@ -214,10 +253,27 @@ function updateQuantity(maKH, itemId, value) {
 
 function deleteAllItems() {
     const maKH = document.getElementById("cartMaKH").value;
-    if (!confirm("Bạn có chắc muốn xóa toàn bộ giỏ hàng?")) return;
-    db.ref('Cart/' + maKH + '/items').remove().then(() => {
-        loadCarts(maKH);
-        updateCartItemCount(maKH);
+    Swal.fire({
+        title: 'Bạn có chắc muốn xóa toàn bộ giỏ hàng?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Xóa',
+        cancelButtonText: 'Hủy',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            db.ref('Cart/' + maKH + '/items').remove().then(() => {
+                loadCarts(maKH);
+                updateCartItemCount(maKH);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Xóa toàn bộ giỏ hàng thành công!',
+                    showConfirmButton: false,
+                    timer: 2500
+                });
+            });
+        }
     });
 }
 
@@ -228,13 +284,23 @@ function deleteSelectedItems() {
         Swal.fire("Vui lòng chọn sản phẩm để xóa!");
         return;
     }
-    if (!confirm("Bạn có chắc chắn muốn xóa các sản phẩm đã chọn?")) return;
-    const cartRef = db.ref('Cart/' + maKH + '/items');
-    checkboxes.forEach(checkbox => {
-        const itemId = checkbox.getAttribute("data-item-id");
-        cartRef.child(itemId).remove();
+    Swal.fire({
+        title: 'Bạn có chắc chắn muốn xóa các sản phẩm đã chọn?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Xóa',
+        cancelButtonText: 'Hủy',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            checkboxes.forEach(checkbox => {
+                const itemId = checkbox.getAttribute("data-item-id");
+                db.ref('Cart/' + maKH + '/items/' + itemId).remove();
+            });
+            setTimeout(() => loadCarts(maKH), 100);
+        }
     });
-    setTimeout(() => loadCarts(maKH), 100);
 }
 
 function updateCartItemCount(maKH) {
@@ -273,11 +339,3 @@ function ThanhToan() {
     // Chuyển hướng sang trang xác nhận đơn hàng
     window.location.href = "/order/checkout";
 }
-
-window.onload = function () {
-    const maKH = document.getElementById('cartMaKH')?.value;
-    if (maKH) {
-        loadCarts(maKH);
-        updateCartItemCount(maKH);
-    }
-};

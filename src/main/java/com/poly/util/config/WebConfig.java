@@ -6,12 +6,16 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.poly.util.AdminInterceptor;
+import com.poly.util.AdminOnlyInterceptor;
 import com.poly.util.UserInterceptor;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     @Autowired(required = false)
     private AdminInterceptor adminInterceptor;
+
+    @Autowired(required = false)
+    private AdminOnlyInterceptor adminOnlyInterceptor;
 
     @Autowired(required = false)
     private UserInterceptor userInterceptor;
@@ -21,6 +25,28 @@ public class WebConfig implements WebMvcConfigurer {
         if (adminInterceptor != null) {
             registry.addInterceptor(adminInterceptor)
                     .addPathPatterns("/admin/**")
+                    .excludePathPatterns(
+                            "/admin/revenue/**",
+                            "/admin/management/employee/**",
+                            "/login",
+                            "/register",
+                            "/access-denied",
+                            "/css/**",
+                            "/images/**",
+                            "/img/**",
+                            "/js/**",
+                            "/vendors/**",
+                            "/country-flag-16x16/**",
+                            "/fashion-store/**",
+                            "/fonts/**",
+                            "/demos/**",
+                            "/static/**",
+                            "/");
+        }
+
+        if (adminOnlyInterceptor != null) {
+            registry.addInterceptor(adminOnlyInterceptor)
+                    .addPathPatterns("/admin/revenue/**", "/admin/management/employee/**")
                     .excludePathPatterns(
                             "/login",
                             "/register",
@@ -35,9 +61,9 @@ public class WebConfig implements WebMvcConfigurer {
                             "/fonts/**",
                             "/demos/**",
                             "/static/**",
-                            "/"
-                    );
+                            "/");
         }
+
         if (userInterceptor != null) {
             registry.addInterceptor(userInterceptor)
                     .addPathPatterns("/user/**", "/cart/**", "/order/**")
@@ -55,8 +81,7 @@ public class WebConfig implements WebMvcConfigurer {
                             "/fonts/**",
                             "/demos/**",
                             "/static/**",
-                            "/"
-                    );
+                            "/");
         }
     }
 }

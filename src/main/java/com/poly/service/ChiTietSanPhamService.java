@@ -29,6 +29,5 @@ public interface ChiTietSanPhamService {
 
     Page<ChiTietSanPham> findBySanPham_MaSPContainingIgnoreCase(String maSP, Pageable pageable);
 
-    Optional<ChiTietSanPham> findBySanPham_TenSPAndMau_MaMauAndSize_MaSize(String tenSP, String maMau,
-            String maSize);
+    Optional<ChiTietSanPham> Order(String maSP, String maMau, String maSize, String loHang);
 }
