@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Shopping Cart</title>
+    
+    <!-- Preload Firebase SDK for faster loading -->
+    <link rel="preload" href="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js" as="script">
+    <link rel="preload" href="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js" as="script">
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <!-- favicon icon -->
         <link rel="shortcut icon" href="/images/logoST.png">
@@ -16,44 +21,75 @@
         <link rel="stylesheet" href="/css/responsive.css"/>
         <link rel="stylesheet" href="/demos/fashion-store/fashion-store.css" />
         <link rel="stylesheet" href="/css/cart.css" />
+        
+        <!-- Critical CSS for loading state -->
+        <style>
+            .cart-loading {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 300px;
+                padding: 2rem;
+            }
+            .cart-content {
+                display: none;
+            }
+            .cart-content.loaded {
+                display: block;
+            }
+        </style>
 </head>
 <body>
 <div th:replace="Client/header :: header"></div>
-<div class="cart-wrapper">
-    <div class="cart-title">Shopping Cart</div>
-    <div class="cart-body">
-        <div class="cart-container">
-            <div class="cart-header">Sản phẩm trong giỏ hàng</div>
-            <input type="hidden" id="cartMaKH" th:value="${maKH}" />
-            <div class="table-responsive">
-                <table class="table cart-table">
-                    <thead class="table-light">
-                    <tr>
-                        <th></th>
-                        <th>Ảnh</th>
-                        <th>Tên sản phẩm</th>
-                        <th>Màu</th>
-                        <th>Size</th>
-                        <th>Số lượng</th>
-                        <th>Tổng tiền</th>
-                    </tr>
-                    </thead>
-                    <tbody id="cartBody"></tbody>
-                </table>
+
+<!-- Loading indicator -->
+<div id="cartLoading" class="cart-loading">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3 text-muted">Đang tải giỏ hàng...</p>
+</div>
+
+<!-- Cart content -->
+<div id="cartContent" class="cart-content">
+    <div class="cart-wrapper">
+        <div class="cart-title">Shopping Cart</div>
+        <div class="cart-body">
+            <div class="cart-container">
+                <div class="cart-header">Sản phẩm trong giỏ hàng</div>
+                <input type="hidden" id="cartMaKH" th:value="${maKH}" />
+                <div class="table-responsive">
+                    <table class="table cart-table">
+                        <thead class="table-light">
+                        <tr>
+                            <th></th>
+                            <th>Ảnh</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Màu</th>
+                            <th>Size</th>
+                            <th>Số lượng</th>
+                            <th>Tổng tiền</th>
+                        </tr>
+                        </thead>
+                        <tbody id="cartBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="summary-container">
+                <h5 id="totalPriceTitle" style="font-size: 1.5rem; font-weight: bold">Tổng tiền</h5>
+                <hr>
+                <div id="totalPrice" class="total-price mb-3">0 đ</div>
+                <button class="btn btn-dark w-100" onclick="ThanhToan()">Thanh toán</button>
             </div>
         </div>
-        <div class="summary-container">
-            <h5 id="totalPriceTitle" style="font-size: 1.5rem; font-weight: bold">Tổng tiền</h5>
-            <hr>
-            <div id="totalPrice" class="total-price mb-3">0 đ</div>
-            <button class="btn btn-dark w-100" onclick="ThanhToan()">Thanh toán</button>
+            <div class="cart-actions">
+            <button class="btn" onclick="deleteSelectedItems()">Xóa</button>
+            <button class="btn" onclick="deleteAllItems()">Xóa tất cả</button>
         </div>
     </div>
-        <div class="cart-actions">
-        <button class="btn" onclick="deleteSelectedItems()">Xóa</button>
-        <button class="btn" onclick="deleteAllItems()">Xóa tất cả</button>
-    </div>
 </div>
+
 <div th:replace="Client/footer :: footer"></div>
 <script th:src="@{/js/jquery.js}"></script>
 <script th:src="@{/js/vendors.min.js}"></script>

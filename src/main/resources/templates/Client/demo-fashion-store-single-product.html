@@ -95,6 +95,8 @@
 
 
                 </form>
+                
+                <div th:data-lo-hang="${#lists.size(sanPham.chiTietSanPham) > 0 ? sanPham.chiTietSanPham[0].loHang : ''}"></div>
             </div>
         </div>
     </div>

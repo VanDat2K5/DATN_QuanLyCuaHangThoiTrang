@@ -95,8 +95,8 @@ public class ChiTietSanPhamServiceImpl implements ChiTietSanPhamService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<ChiTietSanPham> findBySanPham_TenSPAndMau_MaMauAndSize_MaSize(String tenSP, String maMau,
-            String maSize) {
-        return chiTietSanPhamRepository.findBySanPham_TenSPAndMau_MaMauAndSize_MaSize(tenSP, maMau, maSize);
+    public Optional<ChiTietSanPham> Order(String maSP, String maMau, String maSize, String loHang) {
+        return chiTietSanPhamRepository.findBySanPham_MaSPAndMau_MaMauAndSize_MaSizeAndLoHang(maSP, maMau, maSize,
+                loHang);
     }
 }

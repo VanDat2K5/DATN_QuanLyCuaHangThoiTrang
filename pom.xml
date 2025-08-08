@@ -143,13 +143,6 @@
 			<type>pom</type>
 		</dependency>
 
-		<!-- Firebase -->
-		<dependency>
-			<groupId>com.google.firebase</groupId>
-			<artifactId>firebase-admin</artifactId>
-			<version>9.1.0</version>
-		</dependency>
-
 		<!-- Bean Validation -->
 		<dependency>
 			<groupId>jakarta.validation</groupId>
