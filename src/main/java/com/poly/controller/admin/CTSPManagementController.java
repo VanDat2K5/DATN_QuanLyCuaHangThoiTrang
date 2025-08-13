@@ -5,6 +5,7 @@ import com.poly.service.ChiTietSanPhamService;
 import com.poly.service.MauService;
 import com.poly.service.SanPhamService;
 import com.poly.service.SizeService;
+import com.poly.util.CodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,50 +30,51 @@ public class CTSPManagementController {
     @Autowired
     private SizeService sizeService;
 
+    @Autowired
+    private CodeGenerator codeGenerator;
+
     // Hiển thị form + list trong trang detail-management
     @GetMapping("/detail-management")
     public String detailManagement(@RequestParam("productId") String productId, Model model) {
         ChiTietSanPham ct = new ChiTietSanPham();
         sanPhamService.findById(productId).ifPresent(ct::setSanPham);
 
-        model.addAttribute("chiTiet", ct);
-        model.addAttribute("list", chiTietService.findBySanPham_MaSP(productId));
-        model.addAttribute("maus", mauService.findAll());
-        model.addAttribute("sizes", sizeService.findAll());
-        model.addAttribute("productId", productId);
-
+        loadFormData(model, ct, productId, null);
         return "admin/product-detail";
     }
 
     @PostMapping("/save")
     public String save(@ModelAttribute("chiTiet") ChiTietSanPham chiTiet,
-            @RequestParam("productId") String productId,
-            Model model) {
+                       @RequestParam("productId") String productId,
+                       Model model) {
 
         // Đảm bảo chiTiet có SanPham nếu chưa được bind từ form
         if (chiTiet.getSanPham() == null || chiTiet.getSanPham().getMaSP() == null) {
             sanPhamService.findById(productId).ifPresent(chiTiet::setSanPham);
         }
 
-        // Tạo ID nếu thêm mới
+        // Nếu thêm mới thì sinh ID bằng CodeGenerator
         if (chiTiet.getId() == null || chiTiet.getId().isEmpty()) {
-            String generatedId = chiTiet.getSanPham().getMaSP()
-                    + "_" + chiTiet.getMau().getMaMau()
-                    + "_" + chiTiet.getSize().getMaSize();
+            String generatedId = codeGenerator.generateProductDetailCode(
+                    chiTiet.getSanPham().getMaSP(),
+                    chiTiet.getMau().getMaMau(),
+                    chiTiet.getSize().getMaSize()
+            );
 
+            // Kiểm tra trùng ID
             if (chiTietService.existsById(generatedId)) {
-                model.addAttribute("chiTiet", chiTiet);
-                model.addAttribute("list", chiTietService.findBySanPham_MaSP(productId));
-                model.addAttribute("maus", mauService.findAll());
-                model.addAttribute("sizes", sizeService.findAll());
-                model.addAttribute("productId", productId);
-                model.addAttribute("errorMessage", "Chi tiết sản phẩm với ID này đã tồn tại!");
+                loadFormData(model, chiTiet, productId, "Chi tiết sản phẩm với ID này đã tồn tại!");
                 return "admin/product-detail";
             }
 
             chiTiet.setId(generatedId);
+
+            // Nếu entity có trường loHang thì set luôn (tự động, không nhập từ form)
+            String loHang = generatedId.substring(generatedId.indexOf("LH"));
+            chiTiet.setLoHang(loHang);
         }
 
+        // Lưu chi tiết sản phẩm
         chiTietService.save(chiTiet);
         return "redirect:/admin/chitiet/detail-management?productId=" + productId;
     }
@@ -84,12 +86,7 @@ public class CTSPManagementController {
         if (ct == null)
             return "redirect:/admin/chitiet";
 
-        model.addAttribute("chiTiet", ct);
-        model.addAttribute("list", chiTietService.findBySanPham_MaSP(ct.getSanPham().getMaSP()));
-        model.addAttribute("maus", mauService.findAll());
-        model.addAttribute("sizes", sizeService.findAll());
-        model.addAttribute("productId", ct.getSanPham().getMaSP());
-
+        loadFormData(model, ct, ct.getSanPham().getMaSP(), null);
         return "admin/product-detail";
     }
 
@@ -118,5 +115,17 @@ public class CTSPManagementController {
         model.addAttribute("totalItems", ctspPage.getTotalElements());
         model.addAttribute("searchMaSP", maSP);
         return "admin/product-detail";
+    }
+
+    // Hàm load dữ liệu form để tránh lặp code
+    private void loadFormData(Model model, ChiTietSanPham chiTiet, String productId, String errorMessage) {
+        model.addAttribute("chiTiet", chiTiet);
+        model.addAttribute("list", chiTietService.findBySanPham_MaSP(productId));
+        model.addAttribute("maus", mauService.findAll());
+        model.addAttribute("sizes", sizeService.findAll());
+        model.addAttribute("productId", productId);
+        if (errorMessage != null) {
+            model.addAttribute("errorMessage", errorMessage);
+        }
     }
 }
