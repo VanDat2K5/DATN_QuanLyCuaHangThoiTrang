@@ -1,33 +1,98 @@
 <!DOCTYPE html>
-<html lang="en" th:replace="~{admin/admin-layout :: view(~{::title}, ~{::.content})}">
+<html lang="en" th:replace="~{admin/admin-layout :: view('Trang quản trị', ~{::.content})}">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin layout</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
-    <style>
-      .nav-link {
-        color: #fff;
-        font-weight: 500;
-      }
-    </style>
+    <title>Trang quản trị</title>
+  <style>
+    .bg-gradient-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+  </style>
   </head>
   <body>
-    <!-- ----------------------header----------------- -->
-    <div th:replace="~{admin/admin-header :: header-admin}"></div>
-
-    <!-- ----------------------content----------------- -->
-    <div class="container-fluid mt-5">
-      <!-- Main content -->
-      <main class="col-md-9 ms-sm-auto col-lg-10 px-4 offset-md-3 offset-lg-2 overflow-auto">
-        <div class="content">
-          <h1>Trang quản trị</h1>
-          <p>Chào mừng đến trang quản trị</p>
+      <div class="content">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card border-0 bg-gradient-primary text-white">
+          <div class="card-body p-5">
+            <div class="row align-items-center">
+              <div class="col-md-8">
+                <h1 class="display-4 fw-bold mb-3">Chào mừng Admin!</h1>
+                <p class="lead mb-4">Quản lý cửa hàng thời trang của bạn một cách hiệu quả</p>
+                <div class="d-flex gap-3">
+                  <a href="/admin/chat" class="btn btn-light btn-lg">
+                    <i class="bi bi-chat-dots me-2"></i>Hỗ trợ khách hàng
+                  </a>
+                  <a href="/admin/revenue" class="btn btn-outline-light btn-lg">
+                    <i class="bi bi-graph-up me-2"></i>Xem báo cáo
+                  </a>
+                </div>
+              </div>
+              <div class="col-md-4 text-center">
+                <i class="bi bi-shop display-1"></i>
+              </div>
+            </div>
+          </div>
         </div>
-      </main>
+      </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Quick Stats -->
+    <div class="row g-4">
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body text-center p-4">
+            <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+              <i class="bi bi-box text-primary fs-2"></i>
+            </div>
+            <h4 class="card-title">Sản phẩm</h4>
+            <p class="card-text text-muted">Quản lý danh mục sản phẩm</p>
+            <a href="/admin/management/product" class="btn btn-primary btn-sm">Xem chi tiết</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body text-center p-4">
+            <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+              <i class="bi bi-cart text-warning fs-2"></i>
+            </div>
+            <h4 class="card-title">Đơn hàng</h4>
+            <p class="card-text text-muted">Quản lý đơn hàng</p>
+            <a href="/admin/management/orders" class="btn btn-warning btn-sm">Xem chi tiết</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body text-center p-4">
+            <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+              <i class="bi bi-people text-info fs-2"></i>
+            </div>
+            <h4 class="card-title">Khách hàng</h4>
+            <p class="card-text text-muted">Quản lý khách hàng</p>
+            <a href="/admin/management/customer" class="btn btn-info btn-sm">Xem chi tiết</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body text-center p-4">
+            <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+              <i class="bi bi-cart-plus text-success fs-2"></i>
+            </div>
+            <h4 class="card-title">Nhập hàng</h4>
+            <p class="card-text text-muted">Quản lý nhập hàng</p>
+            <a href="/admin/management/input" class="btn btn-success btn-sm">Xem chi tiết</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   </body>
 </html>

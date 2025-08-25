@@ -205,9 +205,7 @@
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink3"> 
                                     <li><a href="/about">About</a></li>
                                     <li><a href="/faq">Faq</a></li>
-                                    <li><a href="/user/wishlist">Wishlist</a></li>
-                                    <li><a href="/login">Account</a></li>
-                                    <li><a href="/order/checkout">Checkout</a></li>
+                                    <li><a href="/user/profile">Account</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item">
@@ -247,6 +245,7 @@
                                         <li style="padding: 9px;" th:if="${session.userRole == 'ADMIN' || session.userRole == 'EMPLOYEE'}"><hr class="dropdown-divider"></li>
                                         <li style="padding: 9px;"><a href="/user/profile" class="dropdown-item">My Profile</a></li>
                                         <li style="padding: 9px;" th:if="${session.userRole == 'CUSTOMER'}"><a href="/cart" class="dropdown-item">Cart</a></li>
+                                        <li style="padding: 9px;" th:if="${session.userRole == 'CUSTOMER'}"><a href="/chat" class="dropdown-item">Chat</a></li>
                                         <!-- <li style="padding: 9px;"><a href="/user/orders" class="dropdown-item">My Orders</a></li>
                                         <li style="padding: 9px;"><a href="/user/wishlist" class="dropdown-item">Wishlist</a></li> -->
                                         <li><hr class="dropdown-divider"></li>
