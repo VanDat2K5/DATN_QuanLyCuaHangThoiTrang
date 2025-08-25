@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Chat - Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .chat-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .chat-header h2 {
+            margin: 0;
+            font-weight: 600;
+        }
+        .chat-content {
+            display: flex;
+            height: 600px;
+        }
+        .customer-list {
+            width: 300px;
+            border-right: 1px solid #e9ecef;
+            background: #f8f9fa;
+            overflow-y: auto;
+        }
+        .customer-item {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .customer-item:hover {
+            background-color: #e9ecef;
+        }
+        .customer-item.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .customer-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .customer-info {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        .customer-item.active .customer-info {
+            color: #dee2e6;
+        }
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: white;
+        }
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+        .message.customer {
+            justify-content: flex-start;
+        }
+        .message.admin {
+            justify-content: flex-end;
+        }
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+        .message.customer .message-content {
+            background-color: #f1f3f4;
+            color: #333;
+        }
+        .message.admin .message-content {
+            background-color: #007bff;
+            color: white;
+        }
+        .message-time {
+            font-size: 0.8em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        .chat-input {
+            padding: 20px;
+            border-top: 1px solid #e9ecef;
+            background: white;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        .form-control {
+            border-radius: 25px;
+            border: 1px solid #dee2e6;
+            padding: 12px 20px;
+        }
+        .btn-send {
+            border-radius: 25px;
+            padding: 12px 25px;
+            background: #007bff;
+            border: none;
+            color: white;
+            font-weight: 600;
+        }
+        .btn-send:hover {
+            background: #0056b3;
+        }
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+        .no-chat-selected {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #6c757d;
+            font-size: 1.1em;
+        }
+        .customer-status {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-online {
+            background-color: #28a745;
+        }
+        .status-offline {
+            background-color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="back-btn">
+        <a href="/admin" class="btn btn-dark">
+            <i class="fas fa-arrow-left"></i> Về trang chủ admin
+        </a>
+    </div>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2><i class="fas fa-comments"></i> Quản lý Chat</h2>
+            <p class="mb-0">Hỗ trợ khách hàng trực tuyến</p>
+        </div>
+        
+        <div class="chat-content">
+            <div class="customer-list" id="customerList">
+                <!-- Customers will be loaded from Firebase -->
+            </div>
+            
+            <div class="chat-area">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="no-chat-selected">
+                        <div class="text-center">
+                            <i class="fas fa-comments fa-3x mb-3 text-muted"></i>
+                            <p>Chọn một khách hàng để bắt đầu chat</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-input">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="messageInput" placeholder="Nhập tin nhắn..." disabled>
+                        <button class="btn btn-send" id="sendButton" onclick="sendMessage()" disabled>
+                            <i class="fas fa-paper-plane"></i> Gửi
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAiQr7IZK9i8x5V0BglQIRLfr0G1ByMkrU",
+            authDomain: "datn-d3877.firebaseapp.com",
+            databaseURL: "https://datn-d3877-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "datn-d3877",
+            storageBucket: "datn-d3877.firebasestorage.app",
+            messagingSenderId: "416913725261",
+            appId: "1:416913725261:web:b9890b8eabbfeb215c8904",
+            measurementId: "G-J0RLZQBK1V"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        let currentCustomer = null;
+        let currentChatRef = null;
+
+        function selectCustomer(maKH, tenKH, email, sdt) {
+            // Remove active class from all customers
+            document.querySelectorAll('.customer-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to selected customer
+            event.currentTarget.classList.add('active');
+            
+            currentCustomer = { maKH, tenKH, email, sdt };
+            
+            // Enable input and button
+            document.getElementById('messageInput').disabled = false;
+            document.getElementById('sendButton').disabled = false;
+            
+            // Load chat messages
+            loadChatMessages(maKH);
+        }
+
+        function loadChatMessages(maKH) {
+            // Tìm chat của khách hàng này trong ChatBox
+            const chatRef = database.ref('ChatBox').orderByChild('MaKH').equalTo(maKH);
+            
+            chatRef.on('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    const chatData = Object.values(snapshot.val())[0];
+                    displayMessages(chatData.items);
+                    currentChatRef = database.ref(`ChatBox/${Object.keys(snapshot.val())[0]}/items`);
+                } else {
+                    displayMessages(null);
+                    currentChatRef = null;
+                }
+            });
+        }
+
+        function displayMessages(items) {
+            const chatMessages = document.getElementById('chatMessages');
+            
+            if (!items) {
+                chatMessages.innerHTML = `
+                    <div class="no-chat-selected">
+                        <div class="text-center">
+                            <i class="fas fa-comments fa-2x mb-3 text-muted"></i>
+                            <p>Chưa có tin nhắn nào</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            let messagesHTML = '';
+            Object.keys(items).forEach(key => {
+                const item = items[key];
+                const messageClass = item.VaiTro ? 'admin' : 'customer';
+                const time = new Date(item.ThoiGian).toLocaleTimeString('vi-VN', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                messagesHTML += `
+                    <div class="message ${messageClass}">
+                        <div class="message-content">
+                            <div>${item.NoiDung}</div>
+                            <div class="message-time">${time}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            chatMessages.innerHTML = messagesHTML;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function sendMessage() {
+            if (!currentCustomer) return;
+            
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim();
+            
+            if (!message) return;
+            
+            const newItem = {
+                NoiDung: message,
+                ThoiGian: Date.now(),
+                VaiTro: true // Admin
+            };
+            
+            // Kiểm tra xem đã có chat của khách hàng này chưa
+            database.ref('ChatBox').orderByChild('MaKH').equalTo(currentCustomer.maKH).once('value', snap => {
+                if (snap.exists()) {
+                    // Nếu đã có, thêm item mới vào items
+                    const chatKey = Object.keys(snap.val())[0];
+                    database.ref(`ChatBox/${chatKey}/items`).push(newItem, () => {
+                        messageInput.value = '';
+                    });
+                } else {
+                    // Nếu chưa có, tạo mới
+                    const chatRef = database.ref('ChatBox').push();
+                    chatRef.set({
+                        MaKH: currentCustomer.maKH,
+                        items: [newItem]
+                    }, () => {
+                        messageInput.value = '';
+                    });
+                }
+            });
+        }
+
+        // Handle Enter key
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Load customers from Firebase
+        function loadCustomers() {
+            database.ref('ChatBox').once('value', (snapshot) => {
+                const customerList = document.getElementById('customerList');
+                customerList.innerHTML = '';
+                
+                if (snapshot.exists()) {
+                    snapshot.forEach(child => {
+                        const chatData = child.val();
+                        const customerItem = document.createElement('div');
+                        customerItem.className = 'customer-item';
+                        customerItem.onclick = () => selectCustomer(
+                            chatData.MaKH, 
+                            chatData.MaKH, // Tạm thời dùng MaKH làm tên
+                            '', // Email sẽ load sau
+                            '' // SĐT sẽ load sau
+                        );
+                        
+                        customerItem.innerHTML = `
+                            <div class="customer-name">
+                                <span class="customer-status status-online"></span>
+                                ${chatData.MaKH}
+                            </div>
+                            <div class="customer-info">
+                                <div>Mã KH: ${chatData.MaKH}</div>
+                                <div>Tin nhắn: ${chatData.items ? Object.keys(chatData.items).length : 0}</div>
+                            </div>
+                        `;
+                        
+                        customerList.appendChild(customerItem);
+                    });
+                } else {
+                    customerList.innerHTML = '<div class="p-3 text-muted">Chưa có khách hàng nào</div>';
+                }
+            });
+        }
+
+        // Load customers when page loads
+        loadCustomers();
+    </script>
+</body>
+</html>

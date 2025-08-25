@@ -50,7 +50,7 @@ public class LoaiSPManagementController {
 
         // Nếu không có mã → sinh mã mới
         if (form.getMaLoaiSP() == null || form.getMaLoaiSP().isEmpty()) {
-            form.setMaLoaiSP("LSP" + System.currentTimeMillis());
+            form.setMaLoaiSP(form.getLoaiSP());
         }
 
         loaiSanPhamService.save(form);

@@ -1,0 +1,531 @@
+<!doctype html>
+<html class="no-js" lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Hỗ trợ trực tuyến - StyleTech</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="author" content="ThemeZaa">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta name="description" content="Hỗ trợ khách hàng trực tuyến - StyleTech Fashion Store">
+    <!-- favicon icon -->
+    <link rel="shortcut icon" th:href="@{/images/logoST.png}">
+    <!-- google fonts preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- style sheets and font icons  -->
+    <link rel="stylesheet" th:href="@{/css/vendors.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/icon.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" th:href="@{/css/responsive.css}"/>
+    <link rel="stylesheet" th:href="@{/demos/fashion-store/fashion-store.css}" />
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    <style>
+        .chat-container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .chat-header h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+        
+        .chat-header p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+        }
+        
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .message.customer {
+            justify-content: flex-end;
+        }
+        
+        .message.staff {
+            justify-content: flex-start;
+        }
+        
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+            word-wrap: break-word;
+        }
+        
+        .message.customer .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .message.staff .message-content {
+            background: white;
+            color: #333;
+            border: 1px solid #e9ecef;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .message-time {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+        
+        .message.customer .message-time {
+            text-align: right;
+        }
+        
+        .chat-input {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            outline: none;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .chat-input input:focus {
+            border-color: #667eea;
+        }
+        
+        .send-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        .send-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .send-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .typing-indicator {
+            padding: 10px 20px;
+            color: #666;
+            font-style: italic;
+            display: none;
+        }
+        
+        .customer-info {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .customer-info input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .start-chat-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .welcome-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+        
+        .welcome-message h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body data-mobile-nav-style="classic">
+    <div th:replace="~{Client/header :: header}"></div>
+    <div style="height: 80px;"></div>
+    
+    <!-- start section -->
+    <section class="p-0">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12">
+                    <div class="chat-container">
+                        <div class="chat-header">
+                            <h2>💬 Hỗ trợ trực tuyến</h2>
+                            <p>Chúng tôi luôn sẵn sàng hỗ trợ bạn 24/7</p>
+                        </div>
+                        <div th:if="${user != null}" style="text-align: center; padding: 10px; background: #f1f3f5; border-bottom: 1px solid #e9ecef;">
+                            Đang đăng nhập: <strong th:text="${username}">user</strong>
+                        </div>
+                        <span id="sessionData" th:data-username="${username}" th:data-userrole="${userRole}" th:data-hasuser="${user != null}"></span>
+                        <span id="kh-ma-1" th:text="${user != null and user.maKH != null ? user.maKH : ''}" style="display:none;"></span>
+                        <span id="kh-ma-2" th:text="${username}" style="display:none;"></span>
+                        <span id="kh-ten" th:text="${user != null ? user.tenKH : ''}" style="display:none;"></span>
+                        <span id="kh-email" th:text="${user != null ? user.email : ''}" style="display:none;"></span>
+                        <span id="kh-sdt" th:text="${user != null ? user.soDT : ''}" style="display:none;"></span>
+                        
+                        <div id="customerInfo" class="customer-info" th:if="${user} == null">
+                            <input type="text" id="customerName" placeholder="Nhập tên của bạn" maxlength="50">
+                            <input type="text" id="customerPhone" placeholder="Nhập số điện thoại (tùy chọn)" maxlength="15">
+                            <button class="start-chat-btn" onclick="startChat()">Bắt đầu trò chuyện</button>
+                        </div>
+                        
+                        <div id="chatArea" style="display: none;">
+                            <div class="chat-messages" id="chatMessages">
+                                <div class="welcome-message">
+                                    <h3>👋 Chào mừng bạn!</h3>
+                                    <p>Nhân viên sẽ phản hồi trong thời gian sớm nhất.</p>
+                                    <p>Bạn có thể hỏi về sản phẩm, đơn hàng hoặc bất kỳ thắc mắc nào khác.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="typing-indicator" id="typingIndicator">
+                                Nhân viên đang nhập tin nhắn...
+                            </div>
+                            
+                            <div class="chat-input">
+                                <div class="input-group">
+                                    <input type="text" id="messageInput" placeholder="Nhập tin nhắn của bạn..." maxlength="500">
+                                    <button class="send-btn" onclick="sendMessage()" id="sendBtn">Gửi</button>
+                                </div>
+                                <div id="productActions" style="margin-top:8px; display:none; gap:8px;">
+                                    <button id="btnSendProduct" class="send-btn" style="background:#6c5ce7;" onclick="maybeSendProductQuestion()">Gửi thông tin sản phẩm</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div th:replace="~{Client/footer :: footer}"></div>
+
+    <script src="/js/firebase.js"></script>
+    <script>
+        // Kiểm tra Firebase đã load chưa
+        console.log('Firebase loaded:', typeof firebase !== 'undefined');
+        console.log('Database object:', typeof db !== 'undefined' ? 'Available' : 'Not available');
+        let currentCustomerId = null;
+        let chatKey = null;
+        
+        // Lấy thông tin phiên đăng nhập (nếu có) từ Thymeleaf
+        const sessionEl = document.getElementById('sessionData');
+        const SESSION_HAS_USER = sessionEl ? (sessionEl.dataset.hasuser === 'true') : false;
+        const SESSION_USERNAME = sessionEl ? (sessionEl.dataset.username || '') : '';
+        
+        console.log('Session data from DOM:', {
+            sessionEl: !!sessionEl,
+            hasUser: SESSION_HAS_USER,
+            username: SESSION_USERNAME,
+            dataset: sessionEl ? sessionEl.dataset : 'no element'
+        });
+        
+        // Lấy MaKH từ các nguồn khả dĩ trong session (ưu tiên entity KhachHang)
+        function resolveMaKH() {
+            if (!SESSION_HAS_USER) return null;
+            const kh1 = (document.getElementById('kh-ma-1')?.textContent || '').trim();
+            const kh2 = (document.getElementById('kh-ma-2')?.textContent || '').trim();
+            const khTen = (document.getElementById('kh-ten')?.textContent || '').trim();
+            const khEmail = (document.getElementById('kh-email')?.textContent || '').trim();
+            const khSdt = (document.getElementById('kh-sdt')?.textContent || '').trim();
+            
+            console.log('Resolving MaKH from elements:', { kh1, kh2, khTen, khEmail, khSdt });
+            
+            // Ưu tiên MaKH từ entity, sau đó là username
+            return kh1 || kh2 || null;
+        }
+        
+        function startChat() {
+            const name = document.getElementById('customerName').value.trim();
+            const phone = document.getElementById('customerPhone').value.trim();
+            
+            if (!name) {
+                alert('Vui lòng nhập tên của bạn!');
+                return;
+            }
+            
+            // Tìm khách hàng trong database
+            findCustomerInDatabase(name, phone);
+        }
+        
+        function findCustomerInDatabase(name, phone) {
+            // Thử tìm theo số điện thoại trước
+            if (phone && phone.trim() !== '') {
+                fetch(`/api/customers/search?phone=${phone}`)
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        }
+                        return null;
+                    })
+                    .then(customer => {
+                        if (customer) {
+                            // Tìm thấy khách hàng trong database
+                            currentCustomerId = customer.maKH;
+                            createNewChat(customer.tenKH, customer.soDT, customer.email, true);
+                        } else {
+                            // Không tìm thấy, tạo khách hàng mới
+                            currentCustomerId = 'guest_' + Date.now();
+                            createNewChat(name, phone, '', false);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Lỗi tìm kiếm khách hàng:', error);
+                        // Tạo khách hàng mới nếu có lỗi
+                        currentCustomerId = 'guest_' + Date.now();
+                        createNewChat(name, phone, '', false);
+                    });
+            } else {
+                // Không có số điện thoại, tạo khách hàng mới
+                currentCustomerId = 'guest_' + Date.now();
+                createNewChat(name, phone, '', false);
+            }
+        }
+        
+        function createNewChat(name, phone, email, isRegisteredCustomer) {
+            console.log('Creating new chat with:', { name, phone, email, isRegisteredCustomer, currentCustomerId });
+            const chatRef = db.ref('ChatBox').push();
+            chatKey = chatRef.key;
+            
+            const initialMessage = {
+                NoiDung: `Khách hàng ${name} đã bắt đầu cuộc trò chuyện`,
+                ThoiGian: Date.now(),
+                VaiTro: false,
+                CustomerName: name,
+                CustomerPhone: phone
+            };
+            
+            const chatData = {
+                MaKH: currentCustomerId,
+                CustomerName: name,
+                CustomerPhone: phone,
+                CustomerEmail: email,
+                IsRegisteredCustomer: isRegisteredCustomer,
+                items: [initialMessage]
+            };
+            
+            console.log('Saving chat data:', chatData);
+            
+            chatRef.set(chatData, (error) => {
+                if (error) {
+                    console.error('Error creating chat:', error);
+                    alert('Có lỗi khi tạo cuộc trò chuyện. Vui lòng thử lại!');
+                    return;
+                }
+                
+                console.log('Chat created successfully:', chatKey);
+                
+                // Ẩn form thông tin, hiện chat area (null-safe)
+                const customerInfoEl = document.getElementById('customerInfo');
+                const chatAreaEl = document.getElementById('chatArea');
+                if (customerInfoEl) customerInfoEl.style.display = 'none';
+                if (chatAreaEl) chatAreaEl.style.display = 'block';
+                
+                // Focus vào input tin nhắn
+                document.getElementById('messageInput').focus();
+                
+                loadMessages();
+            });
+        }
+
+        // Tự động sử dụng thông tin đăng nhập: gắn vào cuộc chat hiện có hoặc tạo mới
+        function autoStartChatFromSession() {
+            console.log('Auto start chat from session:', { SESSION_HAS_USER, SESSION_USERNAME });
+            if (!SESSION_HAS_USER || !SESSION_USERNAME) {
+                console.log('No session data, returning');
+                return;
+            }
+            
+            const name = SESSION_USERNAME;
+            const resolvedId = resolveMaKH();
+            currentCustomerId = resolvedId || SESSION_USERNAME;
+            
+            console.log('Resolved customer ID:', currentCustomerId);
+
+            // Ẩn form và hiện vùng chat ngay (null-safe)
+            const customerInfoEl2 = document.getElementById('customerInfo');
+            const chatAreaEl2 = document.getElementById('chatArea');
+            if (customerInfoEl2) customerInfoEl2.style.display = 'none';
+            if (chatAreaEl2) chatAreaEl2.style.display = 'block';
+
+            // Tìm duy nhất theo MaKH
+            db.ref('ChatBox').orderByChild('MaKH').equalTo(currentCustomerId).once('value', snap => {
+                console.log('Firebase query result:', snap.val());
+                if (snap.exists()) {
+                    const firstKey = Object.keys(snap.val())[0];
+                    chatKey = firstKey;
+                    console.log('Found existing chat:', chatKey);
+                    loadMessages();
+                } else {
+                    // Không tìm thấy, tạo mới theo MaKH duy nhất
+                    console.log('Creating new chat for:', name);
+                    createNewChat(name, '', '', true);
+                }
+            });
+        }
+        
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim();
+            
+            if (!message || !chatKey) return;
+            
+            const newMessage = {
+                NoiDung: message,
+                ThoiGian: Date.now(),
+                VaiTro: false
+            };
+            
+            // Thêm tin nhắn vào Firebase
+            db.ref('ChatBox/' + chatKey + '/items').push(newMessage, () => {
+                messageInput.value = '';
+                loadMessages();
+            });
+        }
+        
+        function loadMessages() {
+            if (!chatKey) return;
+            const messagesDiv = document.getElementById('chatMessages');
+            const isNearBottom = messagesDiv ? (messagesDiv.scrollHeight - messagesDiv.scrollTop - messagesDiv.clientHeight < 50) : true;
+            
+            db.ref('ChatBox/' + chatKey + '/items').once('value', snap => {
+                if (!messagesDiv) return;
+                messagesDiv.innerHTML = '';
+                
+                snap.forEach(child => {
+                    const message = child.val();
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = `message ${message.VaiTro ? 'staff' : 'customer'}`;
+                    
+                    const time = new Date(message.ThoiGian).toLocaleTimeString('vi-VN', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    messageDiv.innerHTML = `
+                        <div class="message-content">
+                            ${message.NoiDung}
+                            <div class="message-time">${time}</div>
+                        </div>
+                    `;
+                    
+                    messagesDiv.appendChild(messageDiv);
+                });
+                
+                // Chỉ auto-scroll khi người dùng đang ở gần cuối
+                if (isNearBottom) {
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                }
+            });
+        }
+
+        // Gửi tin nhắn sản phẩm nếu có tham số trên URL
+        function maybeSendProductQuestion() {
+            const url = new URL(window.location.href);
+            const maSP = url.searchParams.get('maSP');
+            const tenSP = url.searchParams.get('tenSP');
+            const gia = url.searchParams.get('gia');
+            const link = url.searchParams.get('link');
+            if (!maSP || !tenSP) return;
+
+            const content = `Tôi muốn hỏi về sản phẩm: ${tenSP} (Mã: ${maSP})${gia ? `, Giá: ${gia}` : ''}. Link: ${link || window.location.href}`;
+
+            const newMessage = {
+                NoiDung: content,
+                ThoiGian: Date.now(),
+                VaiTro: false
+            };
+
+            db.ref('ChatBox/' + chatKey + '/items').push(newMessage, () => {
+                loadMessages();
+            });
+        }
+        
+        // Gửi tin nhắn bằng Enter
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // Auto refresh tin nhắn mỗi 3 giây
+        setInterval(() => {
+            if (chatKey) {
+                loadMessages();
+            }
+        }, 3000);
+
+        // Khởi tạo tự động theo phiên đăng nhập (nếu có)
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, checking session:', { SESSION_HAS_USER, SESSION_USERNAME });
+            console.log('Firebase db object:', typeof db);
+            
+            // Hiện nút gửi sản phẩm nếu URL có tham số sản phẩm
+            const url = new URL(window.location.href);
+            const hasProductParams = !!(url.searchParams.get('maSP') && url.searchParams.get('tenSP'));
+            if (hasProductParams) {
+                const actions = document.getElementById('productActions');
+                if (actions) actions.style.display = 'flex';
+            }
+
+            if (SESSION_HAS_USER) {
+                console.log('Starting auto chat from session');
+                autoStartChatFromSession();
+                // đợi 300ms để đã có chatKey, rồi gửi câu hỏi sản phẩm nếu có
+                setTimeout(() => { if (chatKey) { maybeSendProductQuestion(); } }, 300);
+            } else {
+                console.log('No session, showing customer info form');
+            }
+        });
+    </script>
+</body>
+</html>
